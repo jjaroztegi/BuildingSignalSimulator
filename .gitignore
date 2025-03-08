@@ -1,0 +1,28 @@
+# Compiled files
+*.class
+
+# Build directories
+target/
+build/
+
+# IDE configuration files
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+
+# Libraries
+*.jar
+
+# Deployment directories
+webapp/WEB-INF/classes/
+webapp/WEB-INF/lib/
