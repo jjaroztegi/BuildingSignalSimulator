@@ -20,9 +20,6 @@ build/
 *.tmp
 *.swp
 
-# Libraries
-*.jar
-
 # Deployment directories
 webapp/WEB-INF/classes/
 webapp/WEB-INF/lib/
