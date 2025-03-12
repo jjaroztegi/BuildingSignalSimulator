@@ -47,65 +47,65 @@ La base de datos se organiza en tablas interrelacionadas que almacenan informaci
 
 1. **Tabla Componentes**  
    Almacena información general sobre los componentes utilizados en la red.
-   * Columnas:
-      * `id_componente` (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único.
-      * `tipo` (VARCHAR(50)): Tipo de componente ("cable", "derivador", "distribuidor").
-      * `modelo` (VARCHAR(100)): Nombre o modelo del componente (e.g., "Cable RG6").
-      * `costo` (DECIMAL(10,2)): Costo unitario.
+   * Campos:
+     * `id_componente` (AutoNumber, Primary Key): Identificador único.
+     * `tipo` (Texto): Tipo de componente ("cable", "derivador", "distribuidor").
+     * `modelo` (Texto): Nombre o modelo del componente (e.g., "Cable RG6").
+     * `costo` (Moneda): Costo unitario.
 
 2. **Tabla Cables**  
    Registra las propiedades técnicas específicas de los cables.
-   * Columnas:
-      * `id_cable` (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único.
-      * `id_componente` (INT, FOREIGN KEY a Componentes.id_componente): Vinculación con Componentes.
-      * `longitud_maxima` (DECIMAL(10,2)): Longitud máxima (metros).
-      * `atenuacion_por_metro` (DECIMAL(5,2)): Atenuación en dB por metro.
+   * Campos:
+     * `id_cable` (AutoNumber, Primary Key): Identificador único.
+     * `id_componente` (Número, Foreign Key a Componentes.id_componente): Vinculación con Componentes.
+     * `longitud_maxima` (Número): Longitud máxima (metros).
+     * `atenuacion_por_metro` (Número): Atenuación en dB por metro.
 
 3. **Tabla Derivadores**  
    Contiene las características de los derivadores.
-   * Columnas:
-      * `id_derivador` (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único.
-      * `id_componente` (INT, FOREIGN KEY a Componentes.id_componente): Vinculación con Componentes.
-      * `atenuacion_insercion` (DECIMAL(5,2)): Atenuación en dB al pasar por el derivador.
-      * `atenuacion_derivacion` (DECIMAL(5,2)): Atenuación en dB en las salidas derivadas.
-      * `num_salidas` (INT): Número de salidas derivadas.
+   * Campos:
+     * `id_derivador` (AutoNumber, Primary Key): Identificador único.
+     * `id_componente` (Número, Foreign Key a Componentes.id_componente): Vinculación con Componentes.
+     * `atenuacion_insercion` (Número): Atenuación en dB al pasar por el derivador.
+     * `atenuacion_derivacion` (Número): Atenuación en dB en las salidas derivadas.
+     * `num_salidas` (Número): Número de salidas derivadas.
 
 4. **Tabla Distribuidores**  
    Almacena datos de los distribuidores (splitters).
-   * Columnas:
-      * `id_distribuidor` (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único.
-      * `id_componente` (INT, FOREIGN KEY a Componentes.id_componente): Vinculación con Componentes.
-      * `num_salidas` (INT): Número de salidas.
-      * `atenuacion_por_salida` (DECIMAL(5,2)): Atenuación en dB por cada salida.
+   * Campos:
+     * `id_distribuidor` (AutoNumber, Primary Key): Identificador único.
+     * `id_componente` (Número, Foreign Key a Componentes.id_componente): Vinculación con Componentes.
+     * `num_salidas` (Número): Número de salidas.
+     * `atenuacion_por_salida` (Número): Atenuación en dB por cada salida.
 
 5. **Tabla Configuraciones**  
    Guarda las configuraciones generales creadas por los usuarios.
-   * Columnas:
-      * `id_configuracion` (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único.
-      * `nombre` (VARCHAR(100)): Nombre descriptivo (e.g., "Edificio A").
-      * `nivel_cabecera` (DECIMAL(5,2)): Nivel de señal inicial (dB).
-      * `num_pisos` (INT): Número de pisos.
-      * `costo_total` (DECIMAL(10,2)): Costo total calculado.
+   * Campos:
+     * `id_configuracion` (AutoNumber, Primary Key): Identificador único.
+     * `nombre` (Texto): Nombre descriptivo (e.g., "Edificio A").
+     * `nivel_cabecera` (Número): Nivel de señal inicial (dB).
+     * `num_pisos` (Número): Número de pisos.
+     * `costo_total` (Moneda): Costo total calculado.
 
 6. **Tabla DetalleConfiguracion**  
    Detalla la configuración específica de cada piso.
-   * Columnas:
-      * `id_detalle` (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único.
-      * `id_configuracion` (INT, FOREIGN KEY a Configuraciones.id_configuracion): Vinculación con Configuraciones.
-      * `piso` (INT): Número del piso.
-      * `id_cable` (INT, FOREIGN KEY a Cables.id_cable): Cable usado.
-      * `longitud_cable` (DECIMAL(10,2)): Longitud del cable (metros).
-      * `id_derivador` (INT, FOREIGN KEY a Derivadores.id_derivador, NULLABLE): Derivador usado (si aplica).
-      * `id_distribuidor` (INT, FOREIGN KEY a Distribuidores.id_distribuidor, NULLABLE): Distribuidor usado (si aplica).
-      * `nivel_senal` (DECIMAL(5,2)): Nivel de señal calculado (dB).
+   * Campos:
+     * `id_detalle` (AutoNumber, Primary Key): Identificador único.
+     * `id_configuracion` (Número, Foreign Key a Configuraciones.id_configuracion): Vinculación con Configuraciones.
+     * `piso` (Número): Número del piso.
+     * `id_cable` (Número, Foreign Key a Cables.id_cable): Cable usado.
+     * `longitud_cable` (Número): Longitud del cable (metros).
+     * `id_derivador` (Número, Foreign Key a Derivadores.id_derivador, Permitir Nulos): Derivador usado (si aplica).
+     * `id_distribuidor` (Número, Foreign Key a Distribuidores.id_distribuidor, Permitir Nulos): Distribuidor usado (si aplica).
+     * `nivel_senal` (Número): Nivel de señal calculado (dB).
 
 7. **Tabla MargenesCalidad**  
    Define los márgenes de calidad aceptables para la señal.
-   * Columnas:
-      * `id_margen` (INT, PRIMARY KEY, AUTO_INCREMENT): Identificador único.
-      * `tipo_senal` (VARCHAR(50)): Tipo de señal (e.g., "TV").
-      * `nivel_minimo` (DECIMAL(5,2)): Nivel mínimo aceptable (dB).
-      * `nivel_maximo` (DECIMAL(5,2)): Nivel máximo aceptable (dB).
+   * Campos:
+     * `id_margen` (AutoNumber, Primary Key): Identificador único.
+     * `tipo_senal` (Texto): Tipo de señal (e.g., "TV").
+     * `nivel_minimo` (Número): Nivel mínimo aceptable (dB).
+     * `nivel_maximo` (Número): Nivel máximo aceptable (dB).
 
 **Relaciones entre Tablas**
 * Componentes se vincula a Cables, Derivadores y Distribuidores mediante id_componente.
