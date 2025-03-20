@@ -2,33 +2,32 @@
 
 ## Descripción del Proyecto
 
-Este proyecto tiene como objetivo desarrollar una aplicación que calcule y optimice la distribución de señal en un edificio, asegurando que cada piso reciba una señal dentro de los márgenes de calidad aceptables. La solución se implementa con un backend en Java que maneja la lógica de cálculo, una base de datos para almacenar componentes y configuraciones, y un frontend en HTML y Vanilla JS para ofrecer una interfaz interactiva al usuario.
+Este proyecto desarrolla una aplicación para calcular y optimizar la distribución de señal en un edificio, garantizando que cada piso reciba niveles de señal dentro de los márgenes de calidad establecidos. La solución incluye un backend en Java para la lógica de cálculo, una base de datos relacional para gestionar componentes y configuraciones, y un frontend en HTML y Vanilla JS para proporcionar una experiencia interactiva al usuario.
 
 ## Características Principales
 
 ### Cálculo de Nivel de Señal
 
-- Determinación del nivel de señal en cada piso basado en una configuración de red dada.
-- Consideración de elementos como cables, derivadores y distribuidores en los cálculos.
-- Validación de niveles contra márgenes de calidad aceptables.
+- **Cálculo por Piso:** Determinación del nivel de señal para cada piso basado en una configuración de red específica.
+- **Componentes Integrados:** Considera cables, derivadores, distribuidores, amplificadores y tomas, utilizando propiedades técnicas como atenuación y ganancia.
+- **Validación de Calidad:** Compara los niveles de señal calculados con los márgenes definidos en la tabla _MargenesCalidad_ (nivel_minimo y nivel_maximo).
 
 ### Optimización de Configuración de Red
 
-- Algoritmo para determinar la configuración más económica que mantenga la calidad de señal.
-- Recomendación de componentes específicos para cada piso.
-- Estimación del costo total de la configuración optimizada.
+- **Algoritmo de Optimización:** Identifica la configuración más económica que cumpla los requisitos de calidad, basándose en el costo de cada componente y el costo total almacenado en _Configuraciones.costo_total_.
+- **Recomendación de Componentes:** Sugiere componentes específicos para cada piso a partir de las tablas _Componentes_ y sus tablas asociadas (como _Cables_, _Derivadores_, etc.).
 
 ### Simulación Interactiva
 
-- Posibilidad de modificar parámetros como longitud de cables y atenuación de componentes.
-- Actualización en tiempo real de los niveles de señal según las modificaciones realizadas.
-- Indicadores visuales para identificar rápidamente áreas con problemas de señal.
+- **Ajuste Dinámico de Parámetros:** Permite modificar valores como la longitud del cable (_longitud_cable_ en _DetalleConfiguracion_) y atenuaciones específicas (por ejemplo, _atenuacion_100m_ en _AtenuacionesCable_).
+- **Actualización en Tiempo Real:** Recalcula el nivel de señal (_nivel_senal_ en _DetalleConfiguracion_) conforme se realizan cambios.
+- **Indicadores Visuales:** Utiliza colores para destacar pisos con niveles fuera de los márgenes aceptables.
 
 ### Visualización Gráfica
 
-- Representación visual de los niveles de señal mediante tablas y gráficos.
-- Indicadores de color para mostrar si los niveles están dentro de los márgenes aceptables.
-- Herramientas interactivas para facilitar el análisis y toma de decisiones.
+- **Representación de Datos:** Muestra los niveles de señal por piso en forma de tablas y gráficos.
+- **Codificación por Colores:** Emplea colores (por ejemplo, verde para niveles aceptables y rojo para niveles fuera de rango) basados en los valores de _MargenesCalidad_.
+- **Interfaz Interactiva:** Permite explorar y ajustar configuraciones visualmente.
 
 ## Arquitectura Técnica
 
@@ -36,226 +35,97 @@ Este proyecto tiene como objetivo desarrollar una aplicación que calcule y opti
 
 #### Lógica de Cálculo
 
-- Implementación de algoritmos para determinar la atenuación de la señal a través de diferentes componentes.
-- Lógica de optimización para minimizar costos manteniendo niveles de señal adecuados.
-- Validación de configuraciones contra los márgenes de calidad establecidos.
+- **Algoritmos de Atenuación:** Calcula la atenuación total considerando:
+  - _atenuacion_100m_ (de _AtenuacionesCable_) ajustada según la _longitud_cable_.
+  - _atenuacion_insercion_ y _atenuacion_derivacion_ (de _Derivadores_).
+  - _atenuacion_distribucion_ (de _Distribuidores_).
+  - _ganancia_ y _atenuacion_ (de _AmplificadoresRuidoBase_).
+  - _atenuacion_ (de _Tomas_).
+- **Optimización de Costos:** Evalúa combinaciones de componentes minimizando el costo total (_Configuraciones.costo_total_) sin violar los márgenes de calidad.
+- **Validación:** Verifica que el nivel de señal calculado se encuentre entre los valores establecidos en _MargenesCalidad_.
 
 #### Servlets
 
-- **CalculoServlet**: Servlet principal que gestiona solicitudes de cálculo, optimización y simulación.
-- Comunicación con la base de datos para obtener información de componentes y almacenar configuraciones.
-- Devolución de resultados en formato JSON para su procesamiento por el frontend.
+- **CalculoServlet:**
+  - Procesa las solicitudes de cálculo, simulación y optimización.
+  - Consulta la base de datos para obtener información de componentes (_Componentes_, _Cables_, _Derivadores_, etc.) y configuraciones (_Configuraciones_, _DetalleConfiguracion_).
+  - Devuelve resultados en formato JSON, incluyendo niveles de señal (_nivel_senal_), costos y recomendaciones de componentes.
 
 ### Base de Datos
 
 #### Estructura
 
-### Tablas Principales
+La base de datos está diseñada para almacenar y gestionar componentes, sus propiedades técnicas y las configuraciones de red. La estructura actualizada se organiza en tres bloques principales:
 
-#### Tabla TiposComponente
+- **Tablas Principales:**
 
-Almacena los tipos de componentes disponibles en el sistema.
+  - **TiposComponente:** Registra los tipos de componentes (por ejemplo, cable, derivador).
+  - **Componentes:** Almacena la información general (modelo, costo, auditoría).
+  - **Frecuencias:** Define las frecuencias estándar utilizadas para medir atenuaciones.
 
-- Campos:
-  - `id_tipo` (AutoNumber, Primary Key): Identificador único.
-  - `nombre` (Texto, Unique): Nombre del tipo ("cable", "derivador", "distribuidor", "amplificador").
-  - `descripcion` (Texto): Descripción detallada del tipo de componente.
+- **Tablas de Componentes Específicos:**
 
-#### Tabla Componentes
+  - **Cables:** Detalla propiedades específicas, como _longitud_maxima_.
+  - **AtenuacionesCable:** Registra la atenuación por 100 metros para cada frecuencia (_atenuacion_100m_).
+  - **Derivadores:** Contiene características técnicas, incluyendo _atenuacion_insercion_, _num_salidas_, etc.
+  - **Distribuidores:** Almacena datos de splitters (número de salidas y _atenuacion_distribucion_).
+  - **AmplificadoresRuidoBase:** Registra propiedades de amplificadores, tales como _ganancia_ y _figura_ruido_.
+  - **Tomas:** Guarda las características de las tomas (atenuacion y desacoplo).
 
-Almacena información general sobre los componentes utilizados en la red.
-
-- Campos:
-  - `id_componente` (AutoNumber, Primary Key): Identificador único.
-  - `id_tipo` (Número, Foreign Key a TiposComponente.id_tipo): Tipo de componente.
-  - `modelo` (Texto): Nombre o modelo del componente (e.g., "Cable RG6").
-  - `costo` (Moneda): Costo unitario.
-  - `fecha_creacion` (Fecha/Hora): Fecha de registro del componente.
-  - `usuario_creacion` (Texto): Usuario que registró el componente.
-  - `fecha_modificacion` (Fecha/Hora): Fecha de última modificación.
-  - `usuario_modificacion` (Texto): Usuario que realizó la última modificación.
-
-#### Tabla Frecuencias
-
-Define las frecuencias estándar utilizadas para medir atenuaciones.
-
-- Campos:
-  - `id_frecuencia` (AutoNumber, Primary Key): Identificador único.
-  - `valor` (Número): Valor en MHz.
-  - `descripcion` (Texto): Descripción de la frecuencia (e.g., "UHF Baja").
-
-### Tablas de Componentes Específicos
-
-#### Tabla Cables
-
-Registra las propiedades técnicas específicas de los cables.
-
-- Campos:
-  - `id_cable` (AutoNumber, Primary Key): Identificador único.
-  - `id_componente` (Número, Foreign Key a Componentes.id_componente): Vinculación con Componentes.
-  - `longitud_maxima` (Número): Longitud máxima (metros).
-
-#### Tabla AtenuacionesCable
-
-Almacena las atenuaciones de cada cable para diferentes frecuencias.
-
-- Campos:
-  - `id_atenuacion` (AutoNumber, Primary Key): Identificador único.
-  - `id_cable` (Número, Foreign Key a Cables.id_cable): Cable relacionado.
-  - `id_frecuencia` (Número, Foreign Key a Frecuencias.id_frecuencia): Frecuencia relacionada.
-  - `atenuacion_100m` (Número): Atenuación en dB por 100 metros a la frecuencia indicada.
-
-#### Tabla Derivadores
-
-Contiene las características de los derivadores.
-
-- Campos:
-  - `id_derivador` (AutoNumber, Primary Key): Identificador único.
-  - `id_componente` (Número, Foreign Key a Componentes.id_componente): Vinculación con Componentes.
-  - `atenuacion_insercion` (Número): Atenuación en dB al pasar por el derivador.
-  - `atenuacion_derivacion` (Número): Atenuación en dB en las salidas derivadas.
-  - `num_salidas` (Número): Número de salidas derivadas.
-  - `directividad` (Número): Directividad en dB.
-  - `desacoplo` (Número): Desacoplo en dB.
-
-#### Tabla Distribuidores
-
-Almacena datos de los distribuidores (splitters).
-
-- Campos:
-  - `id_distribuidor` (AutoNumber, Primary Key): Identificador único.
-  - `id_componente` (Número, Foreign Key a Componentes.id_componente): Vinculación con Componentes.
-  - `num_salidas` (Número): Número de salidas.
-  - `atenuacion_distribucion` (Número): Atenuación en dB por cada salida (AT_Distribucion).
-  - `desacoplo` (Número): Desacoplo en dB.
-
-#### Tabla AmplificadoresRuidoBase
-
-Guarda información sobre amplificadores y sus características.
-
-- Campos:
-  - `id_amplificador_ruido_base` (AutoNumber, Primary Key): Identificador único.
-  - `id_componente` (Número, Foreign Key a Componentes.id_componente): Vinculación con Componentes.
-  - `atenuacion` (Número): Atenuación en dB.
-  - `ganancia` (Número): Ganancia en dB.
-  - `figura_ruido` (Número): Figura de ruido en dB.
-
-#### Tabla Tomas
-
-Registra las características técnicas de las tomas.
-
-- Campos:
-  - `id_toma` (AutoNumber, Primary Key): Identificador único.
-  - `id_componente` (Número, Foreign Key a Componentes.id_componente): Vinculación con Componentes.
-  - `atenuacion` (Número): Atenuación en dB.
-  - `desacoplo` (Número): Desacoplo en dB.
-
-### Tablas de Configuración
-
-#### Tabla Configuraciones
-
-Guarda las configuraciones generales creadas por los usuarios.
-
-- Campos:
-  - `id_configuracion` (AutoNumber, Primary Key): Identificador único.
-  - `nombre` (Texto): Nombre descriptivo (e.g., "Edificio A").
-  - `nivel_cabecera` (Número): Nivel de señal inicial (dB).
-  - `num_pisos` (Número): Número de pisos.
-  - `costo_total` (Moneda): Costo total calculado.
-  - `fecha_creacion` (Fecha/Hora): Fecha de creación.
-  - `usuario_creacion` (Texto): Usuario que creó la configuración.
-  - `fecha_modificacion` (Fecha/Hora): Fecha de última modificación.
-  - `usuario_modificacion` (Texto): Usuario que realizó la última modificación.
-
-#### Tabla DetalleConfiguracion
-
-Detalla la configuración específica de cada piso.
-
-- Campos:
-  - `id_detalle` (AutoNumber, Primary Key): Identificador único.
-  - `id_configuracion` (Número, Foreign Key a Configuraciones.id_configuracion): Vinculación con Configuraciones.
-  - `piso` (Número): Número del piso.
-  - `id_cable` (Número, Foreign Key a Cables.id_cable): Cable usado.
-  - `longitud_cable` (Número): Longitud del cable (metros).
-  - `id_derivador` (Número, Foreign Key a Derivadores.id_derivador, Permitir Nulos): Derivador usado (si aplica).
-  - `id_distribuidor` (Número, Foreign Key a Distribuidores.id_distribuidor, Permitir Nulos): Distribuidor usado (si aplica).
-  - `id_amplificador_ruido_base` (Número, Foreign Key a AmplificadoresRuidoBase.id_amplificador_ruido_base, Permitir Nulos): Amplificador de Ruido Base usado (si aplica).
-  - `nivel_senal` (Número): Nivel de señal calculado (dB).
-  - `fecha_calculo` (Fecha/Hora): Fecha de cálculo o modificación.
-
-#### Tabla MargenesCalidad
-
-Define los márgenes de calidad aceptables para la señal.
-
-- Campos:
-  - `id_margen` (AutoNumber, Primary Key): Identificador único.
-  - `tipo_senal` (Texto): Tipo de señal (e.g., "TV").
-  - `nivel_minimo` (Número): Nivel mínimo aceptable (dB).
-  - `nivel_maximo` (Número): Nivel máximo aceptable (dB).
-
-### Relaciones entre Tablas
-
-1. `TiposComponente (1)` → `(N) Componentes`
-2. `Componentes (1)` → `(0..1) Cables`
-3. `Componentes (1)` → `(0..1) Derivadores`
-4. `Componentes (1)` → `(0..1) Distribuidores`
-5. `Componentes (1)` → `(0..1) AmplificadoresRuidoBase`
-6. `Componentes (1)` → `(0..1) Tomas`
-7. `Cables (1)` → `(N) AtenuacionesCable`
-8. `Frecuencias (1)` → `(N) AtenuacionesCable`
-9. `Configuraciones (1)` → `(N) DetalleConfiguracion`
-10. `Cables (1)` → `(N) DetalleConfiguracion`
-11. `Derivadores (1)` → `(N) DetalleConfiguracion`
-12. `Distribuidores (1)` → `(N) DetalleConfiguracion`
-13. `AmplificadoresRuidoBase (1)` → `(N) DetalleConfiguracion`
+- **Tablas de Configuración:**
+  - **Configuraciones:** Registra las configuraciones generales, con campos como _nivel_cabecera_, _num_pisos_ y _costo_total_.
+  - **DetalleConfiguracion:** Detalla la configuración específica por piso, incluyendo _piso_, _id_cable_, _nivel_senal_, entre otros.
+  - **MargenesCalidad:** Define los márgenes de calidad aceptables, especificando _nivel_minimo_ y _nivel_maximo_.
 
 #### Integración
 
-- Uso de JDBC para la comunicación entre los servlets y la base de datos.
-- Operaciones CRUD para gestionar componentes y configuraciones.
+- **Conexión:** Se utiliza JDBC para conectar los servlets con la base de datos.
+- **Operaciones CRUD:** Se implementan consultas SQL optimizadas para recuperar y actualizar datos de componentes y configuraciones, tales como:
+  - Obtener atenuaciones por frecuencia para un cable.
+  - Calcular el nivel de señal en cada piso combinando datos de _DetalleConfiguracion_ y las tablas de componentes.
 
-### Frontend con Vanilla JS y HTML
+### Frontend con HTML y Vanilla JS
 
 #### Interfaz de Usuario
 
-- Página principal con campos para datos de entrada (nivel de señal en cabecera, número de pisos).
-- Secciones diferenciadas para cálculo/simulación y optimización.
-- Listado de funciones de la aplicación y sus autores.
+- **Formulario Inicial:** Permite ingresar el _nivel_cabecera_ y el _num_pisos_; estos valores se registran en la tabla _Configuraciones_.
+- **Secciones Diferenciadas:** Una sección para la simulación (donde se ajustan parámetros como la _longitud_cable_ y se seleccionan componentes) y otra para la optimización.
+- **Tabla Dinámica:** Muestra, por cada piso, el _nivel_senal_ y un indicador de estado (si el nivel está dentro o fuera de los márgenes).
 
 #### Interactividad
 
-- Validación de campos de entrada mediante JavaScript.
-- Llamadas AJAX para comunicarse con los servlets sin recargar la página.
-- Actualización dinámica de la interfaz según los resultados recibidos.
+- **Validación en Cliente:** Se valida que los campos numéricos (por ejemplo, que _longitud_cable_ no exceda el valor de _longitud_maxima_) sean correctos.
+- **Llamadas AJAX:** El frontend realiza solicitudes asíncronas al _CalculoServlet_ para actualizar el _nivel_senal_ en tiempo real.
+- **Botón de Optimización:** Permite al usuario solicitar la configuración más económica, recibiendo recomendaciones y actualizaciones en la visualización.
 
 #### Visualización
 
-- Uso de librerías como Chart.js o D3.js para representación gráfica.
-- Estilos CSS para diseño visual atractivo y funcional.
-- Indicadores de color para facilitar la interpretación de resultados.
+- **Gráficos:** Mostrar el nivel de señal por piso.
+- **Indicadores de Color:** Se aplican colores:
+  - **Verde:** Cuando el _nivel_senal_ se encuentra entre _nivel_minimo_ y _nivel_maximo_.
+  - **Rojo:** Cuando el _nivel_senal_ está fuera de los rangos aceptables.
+- **Diseño Responsive:** CSS se utiliza para lograr un diseño limpio y adaptativo.
 
 ## Flujo de Trabajo
 
-### 1. Configuración Inicial
+1. **Configuración Inicial:**
 
-- El usuario ingresa el nivel de señal en la cabecera y el número de pisos.
-- Se establecen los parámetros iniciales para la simulación.
-- Los datos se envían al servlet para su procesamiento.
+   - El usuario ingresa el _nivel_cabecera_ y _num_pisos_ mediante el formulario.
+   - Se crea un registro en _Configuraciones_ y se inicializan los pisos en _DetalleConfiguracion_.
+   - Los datos se envían al _CalculoServlet_ para realizar el cálculo inicial.
 
-### 2. Cálculo y Simulación
+2. **Cálculo y Simulación:**
 
-- El servlet calcula los niveles de señal en cada piso según la configuración actual.
-- Se devuelven los resultados y se muestran en forma tabular y gráfica.
-- El usuario puede modificar parámetros (como longitud de cables) y ver el impacto en tiempo real.
+   - El servlet consulta las tablas de componentes (_Cables_, _Derivadores_, etc.) y calcula el _nivel_senal_ para cada piso.
+   - Los resultados se almacenan en _DetalleConfiguracion_ y se devuelven al frontend.
+   - El usuario puede ajustar parámetros (por ejemplo, modificar la _longitud_cable_) y el servlet recalcula en tiempo real.
 
-### 3. Optimización
+3. **Optimización:**
 
-- El usuario solicita la optimización de la configuración.
-- El algoritmo evalúa diferentes combinaciones de componentes para encontrar la más económica.
-- Se presenta una lista de componentes recomendados por piso y el costo total.
+   - Al solicitar optimización, el servlet evalúa diversas combinaciones de componentes, minimizando el _costo_total_ y respetando los márgenes establecidos en _MargenesCalidad_.
+   - Se actualiza _DetalleConfiguracion_ con los componentes recomendados y se muestra el resultado en el frontend.
 
-### 4. Análisis de Resultados
-
-- El usuario analiza los niveles de señal visualizados en la interfaz.
-- Se identifican posibles problemas (niveles fuera de los márgenes aceptables).
-- Se pueden realizar ajustes adicionales para mejorar la configuración.
+4. **Análisis de Resultados:**
+   - El frontend muestra los niveles de señal por piso en forma de tablas y gráficos.
+   - Los indicadores visuales resaltan los pisos que no cumplen con los rangos de calidad.
+   - El usuario puede guardar la configuración o realizar ajustes adicionales para optimizar la distribución de señal.
