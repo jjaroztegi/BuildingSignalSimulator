@@ -53,4 +53,4 @@ Follow these steps to configure the project:
 
 ## License
 
-This project is under the MIT License. See `LICENSE` file for more details.
+This project is under the MIT License. See [LICENSE](LICENSE) file for more details.
