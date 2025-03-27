@@ -22,7 +22,8 @@ public class DatabaseInfoServlet extends HttpServlet {
 
         try {
             Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-            String connectionString = "jdbc:ucanaccess://database/signal_distribution.accdb";
+            String dbPath = getServletContext().getRealPath("/WEB-INF/database/signal_distribution.accdb");
+            String connectionString = "jdbc:ucanaccess://" + dbPath;
             Connection connection = DriverManager.getConnection(connectionString);
             DatabaseMetaData metadata = connection.getMetaData();
             ResultSet tables = metadata.getTables(null, null, "%", new String[] { "TABLE" });

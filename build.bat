@@ -57,6 +57,10 @@ REM Copy lib folder with all JARs
 mkdir "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\lib"
 xcopy /Y "lib\*.jar" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\lib\"
 
+REM Copy access database
+mkdir "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\database"
+xcopy /Y "database\*.accdb" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\database\"
+
 echo Deployment complete.
 echo Access your application at http://localhost:8080/%APP_NAME%/
 

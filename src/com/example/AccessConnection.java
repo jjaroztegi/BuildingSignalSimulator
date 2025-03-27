@@ -7,7 +7,8 @@ public class AccessConnection {
         try {
             Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
 
-            String connectionString = "jdbc:ucanaccess://database/signal_distribution.accdb";
+            String dbPath = "database/signal_distribution.accdb";
+            String connectionString = "jdbc:ucanaccess://" + dbPath;
 
             Connection connection = DriverManager.getConnection(connectionString);
 
