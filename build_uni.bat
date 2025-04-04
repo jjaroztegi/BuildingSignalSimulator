@@ -12,6 +12,7 @@ set "JAVA_HOME=C:\Programs\JavaStack\jdk1.8.0_131"
 
 set "TOMCAT_WEBAPPS=C:\Temp\Tomcat\webapps"
 set "APP_NAME=BuildingSignalSimulator"
+set "PACKAGE_NAME=com\example"
 
 REM --- Set classpath using local lib folder ---
 set "CLASSPATH=."
@@ -23,21 +24,15 @@ REM --- Compilation ---
 echo Compiling Java files...
 mkdir "build\classes" 2>nul
 
-REM Compile HelloWorldServlet
-echo Compiling HelloWorldServlet...
-"%JAVA_HOME%\bin\javac" -d build\classes -cp "%CLASSPATH%" src\com\example\HelloWorldServlet.java
-
-REM Compile AccessConnection
-echo Compiling AccessConnection...
-"%JAVA_HOME%\bin\javac" -d build\classes -cp "%CLASSPATH%" src\com\example\AccessConnection.java
+REM Compile Java files dynamically based on the package name
+for %%f in (src\%PACKAGE_NAME%\*.java) do (
+    echo Compiling %%~nxf...
+    "%JAVA_HOME%\bin\javac" -d build\classes -cp "%CLASSPATH%" "%%f"
+)
 
 REM --- Run AccessConnection test ---
 echo Testing database connection...
-java -cp "%CLASSPATH%;build\classes" com.example.AccessConnection
-
-REM Compile DatabaseInfoServlet
-echo Compiling DatabaseInfoServlet...
-"%JAVA_HOME%\bin\javac" -d build\classes -cp "%CLASSPATH%" src\com\example\DatabaseInfoServlet.java
+java -cp "%CLASSPATH%;build\classes" %PACKAGE_NAME:.=\%.AccessConnection
 
 REM --- Deployment ---
 echo Deploying to Tomcat...
@@ -54,10 +49,13 @@ REM Copy webapp folder content
 xcopy /E /I /Y "webapp\*" "%TOMCAT_WEBAPPS%\%APP_NAME%\"
 
 REM Create WEB-INF\classes directories
-mkdir "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\com\example"
+mkdir "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\%PACKAGE_NAME%"
 
 REM Copy the compiled class files
 xcopy /E /I /Y "build\classes\*" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\"
+
+REM copy the source .java files
+xcopy /E /I /Y "src\%PACKAGE_NAME%\*.java" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\%PACKAGE_NAME%"
 
 REM Copy lib folder with all JARs
 mkdir "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\lib"
