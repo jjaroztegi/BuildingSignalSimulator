@@ -25,11 +25,11 @@ mkdir "build\classes" 2>nul
 
 REM Compile HelloWorldServlet
 echo Compiling HelloWorldServlet...
-javac -d build\classes -cp "%CLASSPATH%" src\com\example\HelloWorldServlet.java
+"%JAVA_HOME%\bin\javac" -d build\classes -cp "%CLASSPATH%" src\com\example\HelloWorldServlet.java
 
 REM Compile AccessConnection
 echo Compiling AccessConnection...
-javac -d build\classes -cp "%CLASSPATH%" src\com\example\AccessConnection.java
+"%JAVA_HOME%\bin\javac" -d build\classes -cp "%CLASSPATH%" src\com\example\AccessConnection.java
 
 REM --- Run AccessConnection test ---
 echo Testing database connection...
@@ -37,7 +37,7 @@ java -cp "%CLASSPATH%;build\classes" com.example.AccessConnection
 
 REM Compile DatabaseInfoServlet
 echo Compiling DatabaseInfoServlet...
-javac -d build\classes -cp "%CLASSPATH%" src\com\example\DatabaseInfoServlet.java
+"%JAVA_HOME%\bin\javac" -d build\classes -cp "%CLASSPATH%" src\com\example\DatabaseInfoServlet.java
 
 REM --- Deployment ---
 echo Deploying to Tomcat...
