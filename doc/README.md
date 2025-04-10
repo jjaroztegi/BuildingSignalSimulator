@@ -1,56 +1,88 @@
-# Signal Distribution Simulator in Buildings
+# Building Signal Simulator
 
-## Description
+## Overview
 
-This project aims to simulate and optimize signal distribution across multiple floors of a building, ensuring that each floor receives a signal within acceptable quality margins. The main functionalities include:
+Building Signal Simulator is a web-based application that simulates and optimizes signal distribution across multiple floors in buildings. This Java-based system helps calculate signal levels, optimize network configurations, and ensure signal quality meets predefined standards while maintaining cost-effectiveness.
 
-*   **Signal Level Calculation:** Compute signal levels on each floor based on network configurations, including cables, splitters, and taps.
-*   **Network Configuration Optimization:** Identify the most cost-effective configuration that maintains signal quality across all floors.
-*   **Interactive Simulation:** Allow real-time adjustments to parameters like cable length and component attenuation, with instant signal level updates.
-*   **Graphical Visualization:** Display signal levels through tables and charts, with color-coded indicators for quality assessment.
+## Key Features
+
+- **Signal Level Calculation**: Computes signal levels floor-by-floor based on network components
+- **Real-time Simulation**: Interactive adjustment of parameters with instant signal level updates
+- **Cost Optimization**: Identifies most cost-effective component configuration while maintaining signal quality
+- **Quality Validation**: Ensures signal levels meet predefined margins at each floor
+- **Visual Feedback**: Clear visualization of signal levels with color-coded quality indicators
+
+## Technical Stack
+
+- **Backend**: Java 1.8 (JDK 1.8.0_131)
+- **Server**: Apache Tomcat 9.0.89
+- **Frontend**: HTML, Vanilla JavaScript, Tailwind CSS
+- **Database**: MS Access/Derby via JDBC
+- **Build**: Manual compilation via script
 
 ## Project Structure
 
-The project is organized as follows:
-
-*   `src/`: Contains the Java source code.
-    *   `com/signalapp/`: Main application package.
-        *   `servlets/`: Servlet files, such as `SignalServlet.java`.
-        *   `models/`: Model classes, such as `SignalModel.java`.
-        *   `dao/`: Data access classes, such as `SignalDAO.java`.
-*   `webapp/`: Contains the web resources.
-    *   `index.html`: Main page of the web interface.
-    *   `css/`: Styles, such as `style.css`.
-    *   `js/`: Scripts, such as `script.js`.
-    *   `WEB-INF/`: Server configuration, such as `web.xml`.
-*   `lib/`: External libraries, such as `servlet-api.jar` and `jdbc-driver.jar`.
+```
+├── src/                    # Java source files
+│   └── com/
+│       ├── example/        # Example implementations
+│       └── signalapp/      # Main application code
+│           ├── dao/        # Data Access Objects
+│           ├── models/     # Data models
+│           └── servlets/   # Servlet controllers
+├── webapp/                 # Web application files
+│   ├── js/                 # JavaScript files
+│   ├── WEB-INF/            # Web configuration
+│   └── index.html          # Main application page
+├── database/               # Database files and SQL scripts
+│   ├── signal_distribution.accdb    # MS Access database
+│   └── sentencias_sql/     # SQL scripts for setup
+├── doc/                    # Documentation
+├── lib/                    # Required JAR dependencies
+└── build.bat               # Build and deployment script
+```
 
 ## Prerequisites
 
-To run this project, you need the following:
+- Java JDK 1.8.0_131
+- Apache Tomcat 9.0.89
+- MS Access or Derby database
+- Web browser with JavaScript enabled
 
-*   Java JDK 8 or higher.
-*   Apache Tomcat 9 or higher as a web server.
-*   A database (e.g., Access) to store component and configuration data.
-*   JAR libraries located in the `lib/` folder.
+## Setup and Deployment
 
-## Configuration
+1. Clone the repository
+2. Ensure Java 1.8.0_131 is installed and JAVA_HOME is set
+3. Install Apache Tomcat 9.0.89
+4. Run the build script:
 
-Follow these steps to configure the project:
+   ```bash
+   build.bat
+   ```
 
-1.  Clone or download the project to your machine.
-2.  Compile the code:
-    *   Navigate to `src/` and use `javac` to compile the Java files, ensuring the libraries are included in the classpath.
-3.  Deploy the application:
-    *   Copy the `webapp/` folder to the `webapps/` folder of Tomcat.
-    *   Ensure the compiled classes are in `WEB-INF/classes/`.
+   This script handles:
 
-## Usage
+   - Java compilation
+   - Database connection testing
+   - Deployment to Tomcat
 
-1.  Start the Apache Tomcat server.
-2.  Open a browser and access `http://localhost:8080/BuildingSignalSimulator`.
-3.  Use the web interface to configure and run your signal distribution simulations.
+5. Access the application at: http://localhost:8080/BuildingSignalSimulator
+
+## Database Configuration
+
+The application supports both MS Access and Derby databases:
+
+- MS Access database file: `database/signal_distribution.accdb`
+- Derby database: `database/signal_distribution/`
+- SQL scripts used for setup: `database/sentencias_sql/`
+
+## Documentation
+
+Detailed documentation available in `doc/` directory:
+
+- [Database Schema](doc/Database.md)
+- [Structure Details](doc/Estructura.md)
 
 ## License
 
-This project is under the MIT License. See [LICENSE](LICENSE) file for more details.
+This project is under the MIT License. See [LICENSE](LICENSE) file for details.
