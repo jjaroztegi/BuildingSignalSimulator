@@ -1,15 +1,126 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Building Signal Simulator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Building Signal Distribution Simulator</title>
+    <!-- Include Tailwind CSS via Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
-    <h1>Welcome to the Building Signal Simulator</h1>
-    <ul>
-      <li><a href="hello">Go to Hello World Servlet</a></li>
-      <li><a href="dbtables_access">View Access Database Tables</a></li>
-      <li><a href="dbtables_derby">View Derby Database Tables</a></li>
-    </ul>
+  <body class="bg-gray-100 text-gray-900 font-sans p-4 md:p-8">
+    <div class="container mx-auto max-w-6xl bg-white p-6 rounded-lg shadow-lg">
+      <header class="mb-8 border-b pb-4">
+        <h1
+          class="text-3xl md:text-4xl font-bold mb-2 text-center text-blue-700"
+        >
+          Building Signal Distribution Simulator
+        </h1>
+        <p class="text-center text-gray-600">
+          Calculate, simulate, and optimize signal distribution in multi-floor
+          buildings.
+        </p>
+      </header>
+
+      <main class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Left Column: Configuration Input -->
+        <section class="md:col-span-1 space-y-6">
+          <h2 class="text-xl font-semibold text-gray-700 border-b pb-2">
+            Start New Configuration
+          </h2>
+          <form
+            id="initial-config-form"
+            class="space-y-4 p-4 bg-gray-50 rounded-md border"
+          >
+            <div>
+              <label
+                for="config-name"
+                class="block text-sm font-medium text-gray-700"
+                >Configuration Name</label
+              >
+              <input
+                type="text"
+                id="config-name"
+                name="nombre"
+                placeholder="e.g., Building A"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label
+                for="nivel-cabecera"
+                class="block text-sm font-medium text-gray-700"
+                >Headend Level (dBm)</label
+              >
+              <input
+                type="number"
+                step="0.1"
+                id="nivel-cabecera"
+                name="nivel_cabecera"
+                placeholder="e.g., 95.0"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+            <div>
+              <label
+                for="num-pisos"
+                class="block text-sm font-medium text-gray-700"
+                >Number of Floors</label
+              >
+              <input
+                type="number"
+                id="num-pisos"
+                name="num_pisos"
+                placeholder="e.g., 5"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out"
+            >
+              Create & Simulate
+            </button>
+          </form>
+          <div
+            id="error-message"
+            class="mt-4 text-center text-red-600 font-medium"
+          ></div>
+          <!-- Error messages will appear here -->
+        </section>
+
+        <!-- Right Column: Simulation Output -->
+        <section class="md:col-span-2 space-y-6">
+          <h2 class="text-xl font-semibold text-gray-700 border-b pb-2">
+            Simulation Results
+          </h2>
+          <!-- Area for general configuration info -->
+          <div
+            id="configuration-summary"
+            class="p-4 bg-blue-50 rounded-md border border-blue-200 hidden"
+          >
+            <!-- Summary like Name, Headend Level, Floors will appear here -->
+          </div>
+
+          <div id="simulation-details" class="space-y-4">
+            <p class="text-center text-gray-500 italic">
+              Simulation details will appear here after creating a
+              configuration.
+            </p>
+            <!-- Simulation details (floor by floor) will be dynamically loaded here -->
+          </div>
+        </section>
+      </main>
+
+      <!-- Footer -->
+      <footer class="mt-8 pt-4 border-t text-center text-sm text-gray-500">
+        Building Signal Simulator &copy; 2025
+      </footer>
+    </div>
+
+    <!-- Js file -->
+    <script src="js/script.js"></script>
   </body>
 </html>

@@ -3,25 +3,44 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
     version="4.0">
+
     <servlet>
-        <servlet-name>HelloWorldServlet</servlet-name>
-        <servlet-class>com.example.HelloWorldServlet</servlet-class>
+        <servlet-name>ConfigurationServlet</servlet-name>
+        <servlet-class>com.signalapp.servlets.ConfigurationServlet</servlet-class>
     </servlet>
+
     <servlet-mapping>
-        <servlet-name>HelloWorldServlet</servlet-name>
-        <url-pattern>/hello</url-pattern>
+        <servlet-name>ConfigurationServlet</servlet-name>
+        <url-pattern>/configurations</url-pattern>
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>DatabaseInfoServlet</servlet-name>
-        <servlet-class>com.example.DatabaseInfoServlet</servlet-class>
+        <servlet-name>SignalCalculationServlet</servlet-name>
+        <servlet-class>com.signalapp.servlets.SignalCalculationServlet</servlet-class>
     </servlet>
+
     <servlet-mapping>
-        <servlet-name>DatabaseInfoServlet</servlet-name>
-        <url-pattern>/dbtables_access</url-pattern>
+        <servlet-name>SignalCalculationServlet</servlet-name>
+        <url-pattern>/calculate-signal</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>SimulationServlet</servlet-name>
+        <servlet-class>com.signalapp.servlets.SimulationServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
-        <servlet-name>DatabaseInfoServlet</servlet-name>
-        <url-pattern>/dbtables_derby</url-pattern>
+        <servlet-name>SimulationServlet</servlet-name>
+        <url-pattern>/simulate</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>SimulationDetailsServlet</servlet-name>
+        <servlet-class>com.signalapp.servlets.SimulationDetailsServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SimulationDetailsServlet</servlet-name>
+        <url-pattern>/simulation-details</url-pattern>
     </servlet-mapping>
 </web-app>

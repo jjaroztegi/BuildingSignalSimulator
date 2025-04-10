@@ -12,10 +12,10 @@ set "JAVA_HOME=C:\Programs\JavaStack\jdk1.8.0_131"
 
 set "TOMCAT_WEBAPPS=C:\Temp\Tomcat\webapps"
 set "APP_NAME=BuildingSignalSimulator"
-set "PACKAGE_NAME=com\example"
+set "PACKAGE_NAME=com\signalapp"
 
 REM --- Set classpath using local lib folder ---
-set "CLASSPATH=."
+set "CLASSPATH=src"
 for %%i in (lib\*.jar) do (
     set "CLASSPATH=!CLASSPATH!;%%i"
 )
@@ -25,18 +25,18 @@ echo Compiling Java files...
 mkdir "build\classes" 2>nul
 
 REM Compile Java files dynamically based on the package name
-for %%f in (src\%PACKAGE_NAME%\*.java) do (
+for /R "src\%PACKAGE_NAME%" %%f in (*.java) do (
     echo Compiling %%~nxf...
     "%JAVA_HOME%\bin\javac" -d build\classes -cp "%CLASSPATH%" "%%f"
 )
 
 REM --- Run AccessConnection test ---
 echo Testing database connection...
-java -cp "%CLASSPATH%;build\classes" %PACKAGE_NAME:\=.%.AccessConnection
+java -cp "%CLASSPATH%;build\classes" %PACKAGE_NAME:\=.%.tests.AccessConnection
 
 REM --- Run DerbyConnection test ---
 echo Testing database connection...
-java -cp "%CLASSPATH%;build\classes" %PACKAGE_NAME:\=.%.DerbyConnection
+java -cp "%CLASSPATH%;build\classes" %PACKAGE_NAME:\=.%.tests.DerbyConnection
 
 REM --- Deployment ---
 echo Deploying to Tomcat...
@@ -58,7 +58,7 @@ mkdir "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\%PACKAGE_NAME%"
 REM Copy the compiled class files
 xcopy /E /I /Y "build\classes\*" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\"
 
-REM copy the source .java files
+REM Copy the source .java files
 xcopy /E /I /Y "src\%PACKAGE_NAME%\*.java" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\%PACKAGE_NAME%"
 
 REM Copy lib folder with all JARs
@@ -70,7 +70,6 @@ mkdir "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\database"
 xcopy /Y "database\*.accdb" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\database\"
 
 echo Deployment complete.
-echo Access your application at http://localhost:8082/%APP_NAME%/
 
 REM --- Restart Tomcat ---
 echo Restarting Tomcat...
@@ -79,4 +78,5 @@ timeout /t 1 /nobreak > NUL
 call "%CATALINA_HOME%\bin\catalina.bat" start
 echo Tomcat restarted.
 
+echo Access your application at http://localhost:8082/%APP_NAME%/
 exit
