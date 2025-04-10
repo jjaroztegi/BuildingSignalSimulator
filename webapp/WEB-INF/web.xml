@@ -18,6 +18,10 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>DatabaseInfoServlet</servlet-name>
-        <url-pattern>/dbtables</url-pattern>
+        <url-pattern>/dbtables_access</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DatabaseInfoServlet</servlet-name>
+        <url-pattern>/dbtables_derby</url-pattern>
     </servlet-mapping>
 </web-app>
