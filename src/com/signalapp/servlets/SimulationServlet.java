@@ -27,12 +27,11 @@ public class SimulationServlet extends HttpServlet {
 
         if (idDetalle == null || longitudCable == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.write("{\"error\":\"Missing required parameters\"}");
+            out.write("{\"error\":\"Missing parameters\"}");
             return;
         }
 
         try (Connection connection = DatabaseConnection.getAccessConnection()) {
-            // Update the cable length in DetalleConfiguracion
             String updateQuery = "UPDATE DetalleConfiguracion SET longitud_cable = ? WHERE id_detalle = ?";
             try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
                 updateStatement.setDouble(1, Double.parseDouble(longitudCable));
@@ -40,41 +39,49 @@ public class SimulationServlet extends HttpServlet {
                 updateStatement.executeUpdate();
             }
 
-            // Recalculate signal levels for the affected floor and subsequent floors
-            String recalculateQuery = "SELECT d.piso, c.longitud_cable, a.atenuacion_100m, d.nivel_senal " +
-                    "FROM DetalleConfiguracion d " +
-                    "JOIN Cables c ON d.id_cable = c.id_cable " +
-                    "JOIN AtenuacionesCable a ON c.id_cable = a.id_cable " +
-                    "WHERE d.id_detalle = ?";
-
+            String recalculateQuery = "SELECT piso, nivel_senal - (? / 100) * atenuacion_100m AS nivel_final FROM DetalleConfiguracion d JOIN Cables c ON d.id_cable = c.id_cable JOIN AtenuacionesCable a ON c.id_cable = a.id_cable WHERE id_detalle = ?";
             try (PreparedStatement recalculateStatement = connection.prepareStatement(recalculateQuery)) {
-                recalculateStatement.setInt(1, Integer.parseInt(idDetalle));
+                recalculateStatement.setDouble(1, Double.parseDouble(longitudCable));
+                recalculateStatement.setInt(2, Integer.parseInt(idDetalle));
                 ResultSet resultSet = recalculateStatement.executeQuery();
 
-                StringBuilder jsonResult = new StringBuilder("[");
-                boolean first = true;
-
-                while (resultSet.next()) {
-                    if (!first) {
-                        jsonResult.append(",");
-                    }
-                    first = false;
-
-                    int piso = resultSet.getInt("piso");
-                    double updatedLongitudCable = resultSet.getDouble("longitud_cable");
-                    double atenuacion100m = resultSet.getDouble("atenuacion_100m");
-                    double nivelSenal = resultSet.getDouble("nivel_senal");
-
-                    double atenuacionTotal = (updatedLongitudCable / 100) * atenuacion100m;
-                    double nivelFinal = nivelSenal - atenuacionTotal;
-
-                    jsonResult.append(String.format("{\"piso\":%d,\"nivel_final\":%.2f}", piso, nivelFinal));
+                if (resultSet.next()) {
+                    out.write(String.format("{\"piso\":%d,\"nivel_final\":%.2f}", resultSet.getInt("piso"),
+                            resultSet.getDouble("nivel_final")));
                 }
-
-                jsonResult.append("]");
-                out.write(jsonResult.toString());
             }
         } catch (SQLException | ClassNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            out.write("{\"error\":\"" + e.getMessage() + "\"}");
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+
+        try (Connection connection = DatabaseConnection.getAccessConnection()) {
+            String query = "SELECT piso, nivel_senal FROM DetalleConfiguracion ORDER BY piso";
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                ResultSet rs = stmt.executeQuery();
+                StringBuilder jsonBuilder = new StringBuilder("[");
+                boolean first = true;
+
+                while (rs.next()) {
+                    if (!first) {
+                        jsonBuilder.append(",");
+                    }
+                    first = false;
+                    jsonBuilder.append(String.format("{\"piso\":%d,\"nivel_senal\":%.2f}", rs.getInt("piso"),
+                            rs.getDouble("nivel_senal")));
+                }
+
+                jsonBuilder.append("]");
+                out.write(jsonBuilder.toString());
+            }
+        } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\":\"" + e.getMessage() + "\"}");
         }

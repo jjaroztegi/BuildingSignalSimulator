@@ -26,43 +26,30 @@ public class SignalCalculationServlet extends HttpServlet {
 
         if (idConfiguracion == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.write("{\"error\":\"Missing required parameter: id_configuracion\"}");
+            out.write("{\"error\":\"Missing id_configuracion\"}");
             return;
         }
 
         try (Connection connection = DatabaseConnection.getAccessConnection()) {
-            String query = "SELECT d.piso, c.longitud_cable, a.atenuacion_100m, d.nivel_senal " +
-                    "FROM DetalleConfiguracion d " +
-                    "JOIN Cables c ON d.id_cable = c.id_cable " +
-                    "JOIN AtenuacionesCable a ON c.id_cable = a.id_cable " +
-                    "WHERE d.id_configuracion = ?";
+            String query = "SELECT piso, nivel_senal FROM DetalleConfiguracion WHERE id_configuracion = ? ORDER BY piso";
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, Integer.parseInt(idConfiguracion));
+                ResultSet rs = stmt.executeQuery();
 
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setInt(1, Integer.parseInt(idConfiguracion));
-                ResultSet resultSet = preparedStatement.executeQuery();
-
-                StringBuilder jsonResult = new StringBuilder("[");
+                StringBuilder jsonBuilder = new StringBuilder("[");
                 boolean first = true;
 
-                while (resultSet.next()) {
+                while (rs.next()) {
                     if (!first) {
-                        jsonResult.append(",");
+                        jsonBuilder.append(",");
                     }
                     first = false;
-
-                    int piso = resultSet.getInt("piso");
-                    double longitudCable = resultSet.getDouble("longitud_cable");
-                    double atenuacion100m = resultSet.getDouble("atenuacion_100m");
-                    double nivelSenal = resultSet.getDouble("nivel_senal");
-
-                    double atenuacionTotal = (longitudCable / 100) * atenuacion100m;
-                    double nivelFinal = nivelSenal - atenuacionTotal;
-
-                    jsonResult.append(String.format("{\"piso\":%d,\"nivel_final\":%.2f}", piso, nivelFinal));
+                    jsonBuilder.append(String.format("{\"piso\":%d,\"nivel_senal\":%.2f}", rs.getInt("piso"),
+                            rs.getDouble("nivel_senal")));
                 }
 
-                jsonResult.append("]");
-                out.write(jsonResult.toString());
+                jsonBuilder.append("]");
+                out.write(jsonBuilder.toString());
             }
         } catch (SQLException | ClassNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

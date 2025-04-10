@@ -72,6 +72,7 @@
                 type="number"
                 id="num-pisos"
                 name="num_pisos"
+                min="1"
                 placeholder="e.g., 5"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 required
@@ -84,11 +85,15 @@
               Create & Simulate
             </button>
           </form>
+          <!-- Message Area -->
+          <div
+            id="success-message"
+            class="mt-4 text-center text-green-600 font-medium hidden p-2 bg-green-50 border border-green-200 rounded-md"
+          ></div>
           <div
             id="error-message"
-            class="mt-4 text-center text-red-600 font-medium"
+            class="mt-4 text-center text-red-600 font-medium hidden p-2 bg-red-50 border border-red-200 rounded-md"
           ></div>
-          <!-- Error messages will appear here -->
         </section>
 
         <!-- Right Column: Simulation Output -->
@@ -99,24 +104,24 @@
           <!-- Area for general configuration info -->
           <div
             id="configuration-summary"
-            class="p-4 bg-blue-50 rounded-md border border-blue-200 hidden"
+            class="p-3 bg-blue-50 rounded-md border border-blue-200 hidden"
           >
             <!-- Summary like Name, Headend Level, Floors will appear here -->
           </div>
 
           <div id="simulation-details" class="space-y-4">
-            <p class="text-center text-gray-500 italic">
-              Simulation details will appear here after creating a
-              configuration.
+            <!-- Simulation details (floor by floor table) will be dynamically loaded here -->
+            <!-- Initial state message or loading indicator -->
+            <p class="text-center text-gray-500 italic p-4">
+              Loading simulation data...
             </p>
-            <!-- Simulation details (floor by floor) will be dynamically loaded here -->
           </div>
         </section>
       </main>
 
       <!-- Footer -->
       <footer class="mt-8 pt-4 border-t text-center text-sm text-gray-500">
-        Building Signal Simulator &copy; 2025
+        Building Signal Simulator © 2025
       </footer>
     </div>
 
