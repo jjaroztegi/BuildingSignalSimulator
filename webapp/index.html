@@ -1,137 +1,302 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Building Signal Distribution Simulator</title>
-    <!-- Include Tailwind CSS via Play CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      // Add dark mode configuration
-      tailwind.config = {
-        darkMode: 'class'
-      }
-    </script>
-  </head>
-  <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans p-4 md:p-8">
-    <div class="container mx-auto max-w-6xl bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-      <header class="mb-8 border-b dark:border-gray-700 pb-4">
-        <h1
-          class="text-3xl md:text-4xl font-bold mb-2 text-center text-blue-700 dark:text-blue-400"
-        >
-          Building Signal Distribution Simulator
-        </h1>
-        <p class="text-center text-gray-600 dark:text-gray-400">
-          Calculate, simulate, and optimize signal distribution in multi-floor
-          buildings.
-        </p>
-      </header>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Building Signal Distribution Simulator</title>
+        <!-- Include Tailwind CSS via Play CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            // Add dark mode configuration
+            tailwind.config = {
+                darkMode: "class",
+            };
+        </script>
+        <!-- Js file -->
+        <script src="js/script.js"></script>
+    </head>
+    <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans p-4 md:p-8">
+        <div class="container mx-auto max-w-7xl bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+            <header class="mb-8 border-b dark:border-gray-700 pb-4">
+                <h1 class="text-3xl md:text-4xl font-bold mb-2 text-center text-blue-700 dark:text-blue-400">
+                    Building Signal Distribution Simulator
+                </h1>
+                <p class="text-center text-gray-600 dark:text-gray-400">
+                    Calculate, simulate, and optimize signal distribution in multi-floor buildings.
+                </p>
+            </header>
 
-      <main class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <!-- Left Column: Configuration Input -->
-        <section class="md:col-span-1 space-y-6">
-          <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
-            Start New Configuration
-          </h2>
-          <form
-            id="initial-config-form"
-            class="space-y-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-md border dark:border-gray-600"
-          >
-            <div>
-              <label
-                for="config-name"
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >Configuration Name</label
-              >
-              <input
-                type="text"
-                id="config-name"
-                name="nombre"
-                placeholder="e.g., Building A"
-                class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
-                required
-              />
-            </div>
-            <div>
-              <label
-                for="nivel-cabecera"
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >Headend Level (dBm)</label
-              >
-              <input
-                type="number"
-                step="0.1"
-                id="nivel-cabecera"
-                name="nivel_cabecera"
-                placeholder="e.g., 95.0"
-                class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
-                required
-              />
-            </div>
-            <div>
-              <label
-                for="num-pisos"
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >Number of Floors</label
-              >
-              <input
-                type="number"
-                id="num-pisos"
-                name="num_pisos"
-                min="1"
-                placeholder="e.g., 5"
-                class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              class="w-full px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition duration-150 ease-in-out"
+            <main class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Left Column: Configuration and Components -->
+                <section class="md:col-span-1 space-y-6">
+                    <h2
+                        class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2"
+                    >
+                        Start New Configuration
+                    </h2>
+                    <form
+                        id="initial-config-form"
+                        class="space-y-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-md border dark:border-gray-600"
+                    >
+                        <div>
+                            <label for="config-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                >Configuration Name</label
+                            >
+                            <input
+                                type="text"
+                                id="config-name"
+                                name="nombre"
+                                placeholder="e.g., Building A"
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label
+                                for="nivel-cabecera"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                >Headend Level (dBm)</label
+                            >
+                            <input
+                                type="number"
+                                step="0.1"
+                                id="nivel-cabecera"
+                                name="nivel_cabecera"
+                                placeholder="e.g., 95.0"
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label for="num-pisos" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                >Number of Floors</label
+                            >
+                            <input
+                                type="number"
+                                id="num-pisos"
+                                name="num_pisos"
+                                min="1"
+                                placeholder="e.g., 5"
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+                                required
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            class="w-full px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition duration-150 ease-in-out"
+                        >
+                            Create & Simulate
+                        </button>
+                    </form>
+
+                    <h2
+                        class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2 mt-8"
+                    >
+                        Add New Component
+                    </h2>
+                    <form
+                        id="component-form"
+                        class="space-y-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-md border dark:border-gray-600"
+                    >
+                        <div>
+                            <label
+                                for="component-type"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                >Component Type</label
+                            >
+                            <select
+                                id="component-type"
+                                name="type"
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+                                required
+                            >
+                                <option value="">Select type</option>
+                                <option value="cables">Cable</option>
+                                <option value="derivadores">Splitter</option>
+                                <option value="distribuidores">Distributor</option>
+                                <option value="amplificadores">Amplifier</option>
+                                <option value="tomas">Outlet</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                for="component-model"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                >Model</label
+                            >
+                            <input
+                                type="text"
+                                id="component-model"
+                                name="modelo"
+                                placeholder="e.g., RG-6"
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label
+                                for="component-cost"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                >Cost</label
+                            >
+                            <input
+                                type="number"
+                                step="0.01"
+                                id="component-cost"
+                                name="costo"
+                                placeholder="e.g., 10.50"
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+                                required
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            class="w-full px-4 py-2 bg-green-600 dark:bg-green-500 text-white rounded-md hover:bg-green-700 dark:hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-green-400 transition duration-150 ease-in-out"
+                        >
+                            Add Component
+                        </button>
+                    </form>
+
+                    <h2
+                        class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2 mt-8"
+                    >
+                        Quality Margins
+                    </h2>
+                    <form
+                        id="quality-form"
+                        class="space-y-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-md border dark:border-gray-600"
+                    >
+                        <div>
+                            <label for="signal-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                >Signal Type</label
+                            >
+                            <input
+                                type="text"
+                                id="signal-type"
+                                name="tipo_senal"
+                                placeholder="e.g., Digital"
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label for="min-level" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                >Minimum Level (dBm)</label
+                            >
+                            <input
+                                type="number"
+                                step="0.1"
+                                id="min-level"
+                                name="nivel_minimo"
+                                placeholder="e.g., 45.0"
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label for="max-level" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                >Maximum Level (dBm)</label
+                            >
+                            <input
+                                type="number"
+                                step="0.1"
+                                id="max-level"
+                                name="nivel_maximo"
+                                placeholder="e.g., 70.0"
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+                                required
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            class="w-full px-4 py-2 bg-purple-600 dark:bg-purple-500 text-white rounded-md hover:bg-purple-700 dark:hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 dark:focus:ring-purple-400 transition duration-150 ease-in-out"
+                        >
+                            Set Quality Margins
+                        </button>
+                    </form>
+
+                    <!-- Message Area -->
+                    <div
+                        id="success-message"
+                        class="mt-4 text-center text-green-600 dark:text-green-400 font-medium hidden p-2 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-md"
+                    ></div>
+                    <div
+                        id="error-message"
+                        class="mt-4 text-center text-red-600 dark:text-red-400 font-medium hidden p-2 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md"
+                    ></div>
+                </section>
+
+                <!-- Right Column: Simulation and Optimization -->
+                <section class="md:col-span-3 space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h2
+                            class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2"
+                        >
+                            Simulation Results
+                        </h2>
+                        <div class="flex space-x-4">
+                            <select
+                                id="id_configuracion"
+                                class="border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+                            >
+                                <option value="">Select Configuration</option>
+                            </select>
+                            <button
+                                id="optimize-button"
+                                class="px-4 py-2 bg-yellow-600 dark:bg-yellow-500 text-white rounded-md hover:bg-yellow-700 dark:hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:focus:ring-yellow-400 transition duration-150 ease-in-out"
+                            >
+                                Optimize Configuration
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Area for general configuration info -->
+                    <div
+                        id="configuration-summary"
+                        class="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-md border border-blue-200 dark:border-blue-800 hidden"
+                    >
+                        <!-- Summary like Name, Headend Level, Floors will appear here -->
+                    </div>
+
+                    <div id="simulation-details" class="space-y-4">
+                        <!-- Simulation details (floor by floor table) will be dynamically loaded here -->
+                        <p class="text-center text-gray-500 dark:text-gray-400 italic p-4">
+                            Loading simulation data...
+                        </p>
+                    </div>
+
+                    <!-- Component Lists -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
+                        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
+                            <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Cables</h3>
+                            <div id="cables-list" class="space-y-2"></div>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
+                            <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Separadores</h3>
+                            <div id="derivadores-list" class="space-y-2"></div>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
+                            <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Distribuidores</h3>
+                            <div id="distribuidores-list" class="space-y-2"></div>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
+                            <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Amplificadores</h3>
+                            <div id="amplificadores-list" class="space-y-2"></div>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
+                            <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Salidas</h3>
+                            <div id="tomas-list" class="space-y-2"></div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Footer -->
+            <footer
+                class="mt-8 pt-4 border-t dark:border-gray-700 text-center text-sm text-gray-500 dark:text-gray-400"
             >
-              Create & Simulate
-            </button>
-          </form>
-          <!-- Message Area -->
-          <div
-            id="success-message"
-            class="mt-4 text-center text-green-600 dark:text-green-400 font-medium hidden p-2 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-md"
-          ></div>
-          <div
-            id="error-message"
-            class="mt-4 text-center text-red-600 dark:text-red-400 font-medium hidden p-2 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md"
-          ></div>
-        </section>
-
-        <!-- Right Column: Simulation Output -->
-        <section class="md:col-span-2 space-y-6">
-          <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
-            Simulation Results
-          </h2>
-          <!-- Area for general configuration info -->
-          <div
-            id="configuration-summary"
-            class="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-md border border-blue-200 dark:border-blue-800 hidden"
-          >
-            <!-- Summary like Name, Headend Level, Floors will appear here -->
-          </div>
-
-          <div id="simulation-details" class="space-y-4">
-            <!-- Simulation details (floor by floor table) will be dynamically loaded here -->
-            <!-- Initial state message or loading indicator -->
-            <p class="text-center text-gray-500 dark:text-gray-400 italic p-4">
-              Loading simulation data...
-            </p>
-          </div>
-        </section>
-      </main>
-
-      <!-- Footer -->
-      <footer class="mt-8 pt-4 border-t dark:border-gray-700 text-center text-sm text-gray-500 dark:text-gray-400">
-        Building Signal Simulator © 2025
-      </footer>
-    </div>
-
-    <!-- Js file -->
-    <script src="js/script.js"></script>
-  </body>
+                Building Signal Simulator © 2025
+            </footer>
+        </div>
+    </body>
 </html>

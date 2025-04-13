@@ -5,42 +5,38 @@
     version="4.0">
 
     <servlet>
+        <servlet-name>ComponentServlet</servlet-name>
+        <servlet-class>com.signalapp.servlets.ComponentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ComponentServlet</servlet-name>
+        <url-pattern>/components</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>ConfigurationServlet</servlet-name>
         <servlet-class>com.signalapp.servlets.ConfigurationServlet</servlet-class>
     </servlet>
-
     <servlet-mapping>
         <servlet-name>ConfigurationServlet</servlet-name>
         <url-pattern>/configurations</url-pattern>
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>SignalCalculationServlet</servlet-name>
+        <servlet-name>OptimizationServlet</servlet-name>
         <servlet-class>com.signalapp.servlets.SignalCalculationServlet</servlet-class>
     </servlet>
-
     <servlet-mapping>
-        <servlet-name>SignalCalculationServlet</servlet-name>
-        <url-pattern>/calculate-signal</url-pattern>
+        <servlet-name>OptimizationServlet</servlet-name>
+        <url-pattern>/optimize</url-pattern>
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>SimulationServlet</servlet-name>
-        <servlet-class>com.signalapp.servlets.SimulationServlet</servlet-class>
+        <servlet-name>QualityValidationServlet</servlet-name>
+        <servlet-class>com.signalapp.servlets.QualityValidationServlet</servlet-class>
     </servlet>
-
     <servlet-mapping>
-        <servlet-name>SimulationServlet</servlet-name>
-        <url-pattern>/simulate</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>SimulationDetailsServlet</servlet-name>
-        <servlet-class>com.signalapp.servlets.SimulationDetailsServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>SimulationDetailsServlet</servlet-name>
-        <url-pattern>/simulation-details</url-pattern>
+        <servlet-name>QualityValidationServlet</servlet-name>
+        <url-pattern>/validate-quality</url-pattern>
     </servlet-mapping>
 </web-app>
