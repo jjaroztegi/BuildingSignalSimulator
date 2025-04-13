@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.signalapp.dao.DatabaseConnection;
+import com.signalapp.dao.AccessConnection;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +15,42 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ConfigurationServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+
+        try (Connection connection = new AccessConnection().getConnection()) {
+            String query = "SELECT id_configuracion, nombre, nivel_cabecera, num_pisos, costo_total FROM Configuraciones";
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                try (ResultSet rs = stmt.executeQuery()) {
+                    StringBuilder jsonBuilder = new StringBuilder("[");
+                    boolean first = true;
+                    while (rs.next()) {
+                        if (!first) {
+                            jsonBuilder.append(",");
+                        }
+                        first = false;
+                        jsonBuilder.append(String.format(
+                                "{\"id\":%d,\"nombre\":\"%s\",\"nivel_cabecera\":%.2f,\"num_pisos\":%d,\"costo_total\":%.2f}",
+                                rs.getInt("id_configuracion"),
+                                escapeJson(rs.getString("nombre")),
+                                rs.getDouble("nivel_cabecera"),
+                                rs.getInt("num_pisos"),
+                                rs.getDouble("costo_total")));
+                    }
+                    jsonBuilder.append("]");
+                    out.write(jsonBuilder.toString());
+                }
+            }
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            out.write("{\"error\":\"" + e.getMessage() + "\"}");
+        }
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -23,114 +59,134 @@ public class ConfigurationServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         String nombre = request.getParameter("nombre");
-        String nivelCabeceraStr = request.getParameter("nivel_cabecera");
-        String numPisosStr = request.getParameter("num_pisos");
-        String usuario = "system";
+        String nivelCabecera = request.getParameter("nivel_cabecera");
+        String numPisos = request.getParameter("num_pisos");
 
-        // Basic Validation
-        if (nombre == null || nombre.trim().isEmpty() || nivelCabeceraStr == null || numPisosStr == null) {
+        if (nombre == null || nivelCabecera == null || numPisos == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.write("{\"error\":\"Missing required parameters.\"}");
-            return;
-        }
-        double nivelCabecera;
-        int numPisos;
-        try {
-            nivelCabecera = Double.parseDouble(nivelCabeceraStr);
-            numPisos = Integer.parseInt(numPisosStr);
-            if (numPisos <= 0)
-                throw new NumberFormatException("Floors must be positive.");
-        } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.write("{\"error\":\"Invalid number format: " + e.getMessage() + "\"}");
+            out.write("{\"error\":\"Missing required parameters\"}");
             return;
         }
 
-        Connection connection = null;
-        PreparedStatement insertConfigStmt = null;
-        PreparedStatement insertDetailStmt = null;
+        try (Connection connection = new AccessConnection().getConnection()) {
+            connection.setAutoCommit(false);
 
-        try {
-            connection = DatabaseConnection.getAccessConnection();
-            connection.setAutoCommit(false); // Transaction
+            String query = "INSERT INTO Configuraciones (nombre, nivel_cabecera, num_pisos, costo_total) VALUES (?, ?, ?, 0)";
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setString(1, nombre);
+                stmt.setDouble(2, Double.parseDouble(nivelCabecera));
+                stmt.setInt(3, Integer.parseInt(numPisos));
+                stmt.executeUpdate();
 
-            // 1. Insert Config
-            String insertConfigQuery = "INSERT INTO Configuraciones (nombre, nivel_cabecera, num_pisos, fecha_creacion, usuario_creacion, fecha_modificacion, usuario_modificacion) VALUES (?, ?, ?, Now(), ?, Now(), ?)";
-            insertConfigStmt = connection.prepareStatement(insertConfigQuery);
-            insertConfigStmt.setString(1, nombre);
-            insertConfigStmt.setDouble(2, nivelCabecera);
-            insertConfigStmt.setInt(3, numPisos);
-            insertConfigStmt.setString(4, usuario);
-            insertConfigStmt.setString(5, usuario);
-            int affectedRows = insertConfigStmt.executeUpdate();
-            if (affectedRows == 0)
-                throw new SQLException("Creating configuration failed, no rows affected.");
-            insertConfigStmt.close(); // Close before getting MAX ID
-
-            // Get ID using MAX() - More reliable for Access
-            int configId;
-            String getMaxIdQuery = "SELECT MAX(id_configuracion) FROM Configuraciones WHERE nombre = ?";
-            try (PreparedStatement maxIdStmt = connection.prepareStatement(getMaxIdQuery)) {
-                maxIdStmt.setString(1, nombre);
-                ResultSet rs = maxIdStmt.executeQuery();
-                if (rs.next() && !rs.wasNull()) {
-                    configId = rs.getInt(1);
-                } else {
-                    throw new SQLException("Could not retrieve generated key using MAX().");
+                // Get the generated ID
+                try (PreparedStatement idStmt = connection
+                        .prepareStatement("SELECT MAX(id_configuracion) FROM Configuraciones")) {
+                    try (ResultSet rs = idStmt.executeQuery()) {
+                        if (rs.next()) {
+                            int idConfiguracion = rs.getInt(1);
+                            connection.commit();
+                            out.write("{\"success\":\"Configuration created successfully\",\"id\":" + idConfiguracion
+                                    + "}");
+                        } else {
+                            throw new SQLException("Could not retrieve configuration ID");
+                        }
+                    }
                 }
             }
-
-            // 2. Initialize Details
-            String insertDetailQuery = "INSERT INTO DetalleConfiguracion (id_configuracion, piso, nivel_senal, fecha_calculo) VALUES (?, ?, ?, Now())";
-            insertDetailStmt = connection.prepareStatement(insertDetailQuery);
-            for (int piso = 1; piso <= numPisos; piso++) {
-                insertDetailStmt.setInt(1, configId);
-                insertDetailStmt.setInt(2, piso);
-                insertDetailStmt.setDouble(3, nivelCabecera); // Baseline: initial signal = headend
-                insertDetailStmt.addBatch();
-            }
-            insertDetailStmt.executeBatch();
-
-            connection.commit();
-            out.write("{\"success\":\"Configuration '" + nombre + "' created (ID: " + configId + ")\"}");
-
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace(); // Log server-side
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException ex) {
-                    /* ignore rollback fail */ }
-            }
+        } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            String errorPrefix = (e instanceof ClassNotFoundException) ? "Driver/Dependency Error: "
-                    : "Database Error: ";
-            out.write("{\"error\":\"" + errorPrefix + e.getMessage().replace("\"", "'") + "\"}");
-        } finally {
-            try {
-                if (insertConfigStmt != null && !insertConfigStmt.isClosed())
-                    insertConfigStmt.close();
-            } catch (SQLException e) {
-                /* ignored */ }
-            try {
-                if (insertDetailStmt != null)
-                    insertDetailStmt.close();
-            } catch (SQLException e) {
-                /* ignored */ }
-            try {
-                if (connection != null) {
-                    connection.setAutoCommit(true);
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                /* ignored */ }
+            out.write("{\"error\":\"" + e.getMessage() + "\"}");
         }
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // Simple GET response remains useful for testing mapping
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         response.setContentType("application/json");
-        response.getWriter().write("[{\"message\":\"ConfigurationServlet GET OK. Use POST to create.\"}]");
+        PrintWriter out = response.getWriter();
+
+        String idConfiguracion = request.getParameter("id_configuracion");
+        String nombre = request.getParameter("nombre");
+        String nivelCabecera = request.getParameter("nivel_cabecera");
+        String numPisos = request.getParameter("num_pisos");
+
+        if (idConfiguracion == null || nombre == null || nivelCabecera == null || numPisos == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.write("{\"error\":\"Missing required parameters\"}");
+            return;
+        }
+
+        try (Connection connection = new AccessConnection().getConnection()) {
+            connection.setAutoCommit(false);
+
+            String query = "UPDATE Configuraciones SET nombre = ?, nivel_cabecera = ?, num_pisos = ? WHERE id_configuracion = ?";
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setString(1, nombre);
+                stmt.setDouble(2, Double.parseDouble(nivelCabecera));
+                stmt.setInt(3, Integer.parseInt(numPisos));
+                stmt.setInt(4, Integer.parseInt(idConfiguracion));
+                int rows = stmt.executeUpdate();
+
+                if (rows == 0) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    out.write("{\"error\":\"Configuration not found\"}");
+                    return;
+                }
+
+                connection.commit();
+                out.write("{\"success\":\"Configuration updated successfully\"}");
+            }
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            out.write("{\"error\":\"" + e.getMessage() + "\"}");
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+
+        String idConfiguracion = request.getParameter("id_configuracion");
+        if (idConfiguracion == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.write("{\"error\":\"Missing configuration ID\"}");
+            return;
+        }
+
+        try (Connection connection = new AccessConnection().getConnection()) {
+            connection.setAutoCommit(false);
+
+            String query = "DELETE FROM Configuraciones WHERE id_configuracion = ?";
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setInt(1, Integer.parseInt(idConfiguracion));
+                int rows = stmt.executeUpdate();
+
+                if (rows == 0) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    out.write("{\"error\":\"Configuration not found\"}");
+                    return;
+                }
+
+                connection.commit();
+                out.write("{\"success\":\"Configuration deleted successfully\"}");
+            }
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            out.write("{\"error\":\"" + e.getMessage() + "\"}");
+        }
+    }
+
+    private String escapeJson(String input) {
+        if (input == null)
+            return "";
+        return input.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\b", "\\b")
+                .replace("\f", "\\f")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
 }
