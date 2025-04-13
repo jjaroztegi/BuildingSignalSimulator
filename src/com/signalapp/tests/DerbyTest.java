@@ -2,15 +2,15 @@ package com.signalapp.tests;
 
 import java.sql.*;
 
-import com.signalapp.dao.DatabaseConnection;
+import com.signalapp.dao.DerbyConnection;
 
-public class DerbyConnection {
+public class DerbyTest {
     public static void main(String[] args) {
         System.out.println("Listing tables from Derby database...\n");
 
-        try (Connection connection = DatabaseConnection.getDerbyConnection()) {
+        try (Connection connection = new DerbyConnection().getConnection()) {
             DatabaseMetaData metadata = connection.getMetaData();
-            // In Derby, we use "APP" schema which is the default schema
+            // In Derby, "APP" is the default schema
             ResultSet tables = metadata.getTables(null, "APP", "%", new String[] { "TABLE" });
 
             System.out.println("Tables found in Derby database:");
@@ -23,7 +23,7 @@ public class DerbyConnection {
             tables.close();
             connection.close();
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             System.err.println("Error accessing Derby database: " + e.getMessage());
             e.printStackTrace();
         }
