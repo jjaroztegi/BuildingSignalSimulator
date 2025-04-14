@@ -1,7 +1,7 @@
 // Main script file
 import { initTheme } from './modules/theme.js';
 import { initTabs } from './modules/tabs.js';
-import { handleFormSubmit, handleOptimization, handleComponentSubmit, handleQualitySubmit, fetchComponents, fetchInitialData, fetchQualityMargins } from './modules/servlets.js';
+import { handleFormSubmit, handleOptimization, handleComponentSubmit, fetchComponents, fetchInitialData, fetchQualityMargins, loadSignalTypes } from './modules/servlets.js';
 import { renderSimulationDetails } from './modules/ui.js';
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -21,6 +21,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const componentForm = document.getElementById("component-form");
     const qualityForm = document.getElementById("quality-form");
     const configSelect = document.getElementById("id_configuraciones");
+    const componentListType = document.getElementById("component-list-type");
+
+    // --- Component List Type Selector Logic ---
+    if (componentListType) {
+        const componentLists = document.querySelectorAll('.component-list');
+        
+        // Function to show selected component list and hide others
+        const showSelectedComponentList = (selectedValue) => {
+            componentLists.forEach(list => {
+                if (list.id === `${selectedValue}-list`) {
+                    list.classList.remove('hidden');
+                } else {
+                    list.classList.add('hidden');
+                }
+            });
+        };
+
+        // Initialize with the first option
+        showSelectedComponentList(componentListType.value);
+
+        // Add change event listener
+        componentListType.addEventListener('change', (event) => {
+            showSelectedComponentList(event.target.value);
+        });
+    }
 
     // --- Form Submission Logic ---
     if (initialConfigForm) {
@@ -42,9 +67,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (qualityForm) {
-        qualityForm.addEventListener("submit", (event) => 
-            handleQualitySubmit(event, qualityForm, errorMessageElement, successMessageElement)
-        );
+        // Load signal types when the page loads
+        loadSignalTypes(qualityForm);
     }
 
     if (configSelect) {
@@ -64,6 +88,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // --- Initial Data Load ---
-    fetchInitialData(configSelect);
+    fetchInitialData(configSelect).then(() => {
+        // After loading initial data, trigger change event to render simulation details
+        if (configSelect && configSelect.value) {
+            configSelect.dispatchEvent(new Event('change'));
+        }
+    });
     fetchComponents();
 });

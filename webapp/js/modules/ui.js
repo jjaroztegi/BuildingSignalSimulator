@@ -232,4 +232,52 @@ export function updateComponentList(type, componentModelos) {
         `;
         listElement.appendChild(card);
     });
+}
+
+export function updateQualityDisplay(data) {
+    const qualityTable = document.createElement('table');
+    qualityTable.className = 'min-w-full divide-y divide-gray-200 dark:divide-gray-700';
+    
+    // Create table header
+    const thead = document.createElement('thead');
+    thead.className = 'bg-gray-50 dark:bg-gray-800';
+    thead.innerHTML = `
+        <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Floor</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Signal Level (dB)</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+        </tr>
+    `;
+    qualityTable.appendChild(thead);
+
+    // Create table body
+    const tbody = document.createElement('tbody');
+    tbody.className = 'bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700';
+
+    data.forEach((floor, index) => {
+        const tr = document.createElement('tr');
+        tr.className = index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800';
+        
+        const statusClass = floor.is_valid 
+            ? 'text-green-800 dark:text-green-400' 
+            : 'text-red-800 dark:text-red-400';
+        
+        tr.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Floor ${floor.piso}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${floor.nivel_senal.toFixed(2)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm ${statusClass} font-medium">
+                ${floor.is_valid ? 'Valid' : 'Invalid'}
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    qualityTable.appendChild(tbody);
+
+    // Update the simulation details section
+    const simulationDetails = document.getElementById('simulation-details');
+    if (simulationDetails) {
+        simulationDetails.innerHTML = '';
+        simulationDetails.appendChild(qualityTable);
+    }
 } 

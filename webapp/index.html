@@ -213,26 +213,30 @@
                             <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
                                 Available Components
                             </h2>
-                            <div class="grid grid-cols-1 gap-4">
-                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
-                                    <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Cables</h3>
-                                    <div id="cable-list" class="space-y-2"></div>
+                            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
+                                <div class="mb-4">
+                                    <label for="component-list-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Component Type
+                                    </label>
+                                    <select
+                                        id="component-list-type"
+                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+                                    >
+                                        <option value="cable">Cables</option>
+                                        <option value="derivador">Derivadores</option>
+                                        <option value="distribuidor">Distribuidores</option>
+                                        <option value="amplificador">Amplificadores</option>
+                                        <option value="toma">Tomas</option>
+                                    </select>
                                 </div>
-                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
-                                    <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Derivadores</h3>
-                                    <div id="derivador-list" class="space-y-2"></div>
-                                </div>
-                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
-                                    <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Distribuidores</h3>
-                                    <div id="distribuidor-list" class="space-y-2"></div>
-                                </div>
-                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
-                                    <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Amplificadores</h3>
-                                    <div id="amplificador-list" class="space-y-2"></div>
-                                </div>
-                                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
-                                    <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Tomas</h3>
-                                    <div id="toma-list" class="space-y-2"></div>
+                                
+                                <!-- Component Lists Container -->
+                                <div class="space-y-2">
+                                    <div id="cable-list" class="component-list"></div>
+                                    <div id="derivador-list" class="component-list hidden"></div>
+                                    <div id="distribuidor-list" class="component-list hidden"></div>
+                                    <div id="amplificador-list" class="component-list hidden"></div>
+                                    <div id="toma-list" class="component-list hidden"></div>
                                 </div>
                             </div>
                         </div>
@@ -247,7 +251,7 @@
                             <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
                                 Quality Margins
                             </h2>
-                            <form
+                            <div
                                 id="quality-form"
                                 class="space-y-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-md border dark:border-gray-600"
                             >
@@ -262,46 +266,37 @@
                                         required
                                     >
                                         <option value="">Select signal type</option>
-                                        <option value="TV Digital">TV Digital</option>
-                                        <option value="TV Analógica">TV Analógica</option>
-                                        <option value="Radio FM">Radio FM</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label for="min-level" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >Minimum Level (dBm)</label
+                                        >Minimum Level (dB)</label
                                     >
                                     <input
                                         type="number"
-                                        step="0.1"
+                                        step="0.01"
                                         id="min-level"
                                         name="nivel_minimo"
-                                        placeholder="e.g., 45.0"
-                                        class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+                                        class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 bg-gray-100 dark:bg-gray-700"
                                         required
+                                        readonly
                                     />
                                 </div>
                                 <div>
                                     <label for="max-level" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >Maximum Level (dBm)</label
+                                        >Maximum Level (dB)</label
                                     >
                                     <input
                                         type="number"
-                                        step="0.1"
+                                        step="0.01"
                                         id="max-level"
                                         name="nivel_maximo"
-                                        placeholder="e.g., 70.0"
-                                        class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
+                                        class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 bg-gray-100 dark:bg-gray-700"
                                         required
+                                        readonly
                                     />
                                 </div>
-                                <button
-                                    type="submit"
-                                    class="w-full px-4 py-2 bg-purple-600 dark:bg-purple-500 text-white rounded-md hover:bg-purple-700 dark:hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 dark:focus:ring-purple-400 transition duration-150 ease-in-out"
-                                >
-                                    Set Quality Margins
-                                </button>
-                            </form>
+                            </div>
                         </div>
 
                         <!-- Right Column: Simulation Results -->
