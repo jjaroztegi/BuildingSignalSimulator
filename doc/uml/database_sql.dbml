@@ -1,0 +1,222 @@
+// Building Signal Simulator Database Schema - SQL Version
+
+Project BuildingSignalSimulator {
+  database_type: 'PostgreSQL'
+  Note: '''
+  # Building Signal Simulator Database
+  
+  This database stores information about signal distribution components and configurations
+  for building signal simulation. It tracks components, their technical specifications,
+  and how they are used in different building configurations.
+  '''
+}
+
+// Main tables
+Table TiposComponente {
+  id_tiposcomponente serial [pk]
+  nombre varchar(100) [not null]
+  descripcion varchar(255)
+  
+  Note: "Defines the five types of components: cable, derivador, distribuidor, amplificador, and toma"
+}
+
+Table Componentes {
+  id_componentes serial [pk]
+  id_tiposcomponente integer [ref: > TiposComponente.id_tiposcomponente]
+  modelo varchar(100) [not null]
+  costo numeric(18,2) [not null]
+  fecha_creacion timestamp [not null]
+  usuario_creacion varchar(100) [not null]
+  fecha_modificacion timestamp
+  usuario_modificacion varchar(100)
+  
+  Note: "Central table that links to specific component tables based on type"
+}
+
+Table Frecuencias {
+  id_frecuencias serial [pk]
+  valor numeric(18,2) [not null]
+  descripcion varchar(255)
+  
+  Note: "Standard frequencies used for measuring attenuations"
+}
+
+// Component-specific tables
+Table Cables {
+  id_cables serial [pk]
+  id_componentes integer [ref: > Componentes.id_componentes, unique]
+  longitud_maxima numeric(18,2) [not null]
+  
+  Note: "Technical properties specific to cables"
+}
+
+Table AtenuacionesCable {
+  id_atenuacionescable serial [pk]
+  id_cables integer [ref: > Cables.id_cables]
+  id_frecuencias integer [ref: > Frecuencias.id_frecuencias]
+  atenuacion_100m numeric(18,2) [not null]
+
+  indexes {
+    (id_cables, id_frecuencias) [unique]
+  }
+  
+  Note: "Stores frequency-dependent attenuations for each cable type"
+}
+
+Table Derivadores {
+  id_derivadores serial [pk]
+  id_componentes integer [ref: > Componentes.id_componentes, unique]
+  atenuacion_insercion numeric(18,2) [not null]
+  atenuacion_derivacion numeric(18,2) [not null]
+  num_salidas integer [not null]
+  directividad numeric(18,2) [not null]
+  desacoplo numeric(18,2) [not null]
+  
+  Note: "Characteristics of signal splitters"
+}
+
+Table Distribuidores {
+  id_distribuidores serial [pk]
+  id_componentes integer [ref: > Componentes.id_componentes, unique]
+  num_salidas integer [not null]
+  atenuacion_distribucion numeric(18,2) [not null]
+  desacoplo numeric(18,2) [not null]
+  
+  Note: "Data for signal distributors (splitters)"
+}
+
+Table AmplificadoresRuidoBase {
+  id_amplificadoresruidobase serial [pk]
+  id_componentes integer [ref: > Componentes.id_componentes, unique]
+  atenuacion numeric(18,2) [not null]
+  ganancia numeric(18,2) [not null]
+  figura_ruido numeric(18,2) [not null]
+  
+  Note: "Information about amplifiers and their characteristics"
+}
+
+Table Tomas {
+  id_tomas serial [pk]
+  id_componentes integer [ref: > Componentes.id_componentes, unique]
+  atenuacion integer [not null]
+  directividad integer [not null]
+  
+  Note: "Technical characteristics of signal outlets"
+}
+
+// Configuration tables
+Table Configuraciones {
+  id_configuraciones serial [pk]
+  nombre varchar(255) [not null]
+  nivel_cabecera numeric(18,2) [not null]
+  num_pisos integer [not null]
+  costo_total numeric(18,2) [not null]
+  fecha_creacion timestamp [not null]
+  usuario_creacion varchar(100) [not null]
+  fecha_modificacion timestamp
+  usuario_modificacion varchar(100)
+  
+  Note: "General configurations created by users"
+}
+
+Table DetalleConfiguracion {
+  id_detalles serial [pk]
+  id_configuraciones integer [ref: > Configuraciones.id_configuraciones]
+  piso integer [not null]
+  id_cables integer [ref: > Cables.id_cables]
+  longitud_cable numeric(18,2) [not null]
+  id_derivadores integer [ref: - Derivadores.id_derivadores]
+  id_distribuidores integer [ref: - Distribuidores.id_distribuidores]
+  id_amplificadoresruidobase integer [ref: - AmplificadoresRuidoBase.id_amplificadoresruidobase]
+  nivel_senal numeric(18,2) [not null]
+  fecha_calculo timestamp [not null]
+
+  indexes {
+    (id_configuraciones, piso) [unique]
+  }
+  
+  Note: "Specific configuration for each floor"
+}
+
+Table MargenesCalidad {
+  id_margenescalidad serial [pk]
+  tipo_senal varchar(100) [not null, unique]
+  nivel_minimo numeric(18,2) [not null]
+  nivel_maximo numeric(18,2) [not null]
+  
+  Note: "Defines acceptable quality margins for signals (TV Digital, TV Analógica, Radio FM)"
+}
+
+// Table groups for better organization
+TableGroup Componentes {
+  TiposComponente
+  Componentes
+  Cables
+  Derivadores
+  Distribuidores
+  AmplificadoresRuidoBase
+  Tomas
+  Frecuencias
+  AtenuacionesCable
+}
+
+TableGroup Configuraciones {
+  Configuraciones
+  DetalleConfiguracion
+  MargenesCalidad
+}
+
+// Sticky notes for important concepts
+Note signal_quality {
+'''
+Signal quality is measured in dB and must fall within the acceptable ranges
+defined in the MargenesCalidad table for each signal type.
+'''
+}
+
+Note component_relationships {
+'''
+Each component type has its own table with specific technical characteristics.
+The Componentes table serves as a central reference point for all component types.
+'''
+}
+
+// Example data
+Table TiposComponente {
+  id_tiposcomponente serial [pk]
+  nombre varchar(100) [not null]
+  descripcion varchar(255)
+  
+  Note: "Defines the five types of components: cable, derivador, distribuidor, amplificador, and toma"
+  
+  indexes {
+    nombre [unique]
+  }
+}
+
+// Example data for TiposComponente
+Table TiposComponente {
+  id_tiposcomponente serial [pk]
+  nombre varchar(100) [not null]
+  descripcion varchar(255)
+  
+  Note: "Defines the five types of components: cable, derivador, distribuidor, amplificador, and toma"
+  
+  indexes {
+    nombre [unique]
+  }
+}
+
+// Example data for MargenesCalidad
+Table MargenesCalidad {
+  id_margenescalidad serial [pk]
+  tipo_senal varchar(100) [not null, unique]
+  nivel_minimo numeric(18,2) [not null]
+  nivel_maximo numeric(18,2) [not null]
+  
+  Note: "Defines acceptable quality margins for signals (TV Digital, TV Analógica, Radio FM)"
+  
+  indexes {
+    tipo_senal [unique]
+  }
+} 

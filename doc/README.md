@@ -11,6 +11,7 @@ Building Signal Simulator is a web-based application that simulates and optimize
 -   **Cost Optimization**: Identifies most cost-effective component configuration while maintaining signal quality
 -   **Quality Validation**: Ensures signal levels meet predefined margins at each floor
 -   **Visual Feedback**: Clear visualization of signal levels with color-coded quality indicators
+-   **Dark Mode Support**: Built-in dark mode for better visibility in low-light conditions
 
 ## Technical Stack
 
@@ -25,28 +26,28 @@ Building Signal Simulator is a web-based application that simulates and optimize
 ```
 ├── src/                    # Java source files
 │   └── com/
-│       ├── example/        # Example implementations
 │       └── signalapp/      # Main application code
 │           ├── dao/        # Data Access Objects
 │           ├── models/     # Data models
-│           └── servlets/   # Servlet controllers
+│           ├── servlets/   # Servlet controllers
+│           └── tests/      # Unit tests
 ├── webapp/                 # Web application files
 │   ├── js/                 # JavaScript files
-│   ├── WEB-INF/            # Web configuration
-│   └── index.html          # Main application page
-├── database/               # Database files and SQL scripts
-│   ├── signal_distribution.accdb    # MS Access database
-│   └── sentencias_sql/     # SQL scripts for setup
-├── doc/                    # Documentation
-├── lib/                    # Required JAR dependencies
-└── build.bat               # Build and deployment script
+│   │   └── script.js       # Main application logic
+│   ├── WEB-INF/           # Web configuration
+│   └── index.html         # Main application page
+├── database/              # Database files and SQL scripts
+│   └── signal_distribution.accdb    # MS Access database
+├── doc/                   # Documentation
+├── lib/                   # Required JAR dependencies
+└── build.bat             # Build and deployment script
 ```
 
 ## Prerequisites
 
 -   Java JDK 1.8.0_131
 -   Apache Tomcat 9.0.89
--   MS Access or Derby database
+-   MS Access database
 -   Web browser with JavaScript enabled
 
 ## Setup and Deployment
@@ -75,6 +76,37 @@ The application supports both MS Access and Derby databases:
 -   MS Access database file: `database/signal_distribution.accdb`
 -   Derby database: `database/signal_distribution/`
 -   SQL scripts used for setup: `database/sentencias_sql/`
+
+## Features in Detail
+
+### Configuration Management
+
+-   Create and manage building configurations
+-   Set headend level and number of floors
+-   View and modify existing configurations
+
+### Component Management
+
+-   Add and manage network components:
+    -   Cables
+    -   Splitters (Derivadores)
+    -   Distributors
+    -   Amplifiers
+    -   Outlets (Tomas)
+-   Set component properties and costs
+
+### Signal Simulation
+
+-   Real-time signal level calculation
+-   Quality margin validation
+-   Visual feedback with color-coded indicators
+-   Interactive parameter adjustment
+
+### Optimization
+
+-   Cost-effective component selection
+-   Quality margin compliance
+-   Automatic configuration suggestions
 
 ## Documentation
 

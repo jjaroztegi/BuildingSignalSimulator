@@ -10,7 +10,7 @@ Almacena los tipos de componentes disponibles en el sistema.
 
 -   Campos:
     -   `id_tiposcomponente` (COUNTER, Primary Key): Identificador único.
-    -   `nombre` (VARCHAR(100)): Nombre del tipo ("cable", "derivador", "distribuidor", "amplificador").
+    -   `nombre` (VARCHAR(100)): Nombre del tipo ("cable", "derivador", "distribuidor", "amplificador", "toma").
     -   `descripcion` (VARCHAR(255)): Descripción detallada del tipo de componente.
 
 #### Tabla Componentes
@@ -100,6 +100,7 @@ Registra las características técnicas de las tomas.
     -   `id_tomas` (COUNTER, Primary Key): Identificador único.
     -   `id_componentes` (INTEGER, Foreign Key a Componentes.id_componentes): Vinculación con Componentes.
     -   `atenuacion` (INTEGER): Atenuación en dB.
+    -   `directividad` (INTEGER): Directividad en dB.
 
 ### Tablas de Configuración
 
@@ -140,7 +141,7 @@ Define los márgenes de calidad aceptables para la señal.
 
 -   Campos:
     -   `id_margenescalidad` (COUNTER, Primary Key): Identificador único.
-    -   `tipo_senal` (VARCHAR(100)): Tipo de señal (e.g., "DEFAULT").
+    -   `tipo_senal` (VARCHAR(100)): Tipo de señal.
     -   `nivel_minimo` (DECIMAL(18)): Nivel mínimo aceptable (dB).
     -   `nivel_maximo` (DECIMAL(18)): Nivel máximo aceptable (dB).
 
@@ -149,56 +150,74 @@ Define los márgenes de calidad aceptables para la señal.
 1. `TiposComponente (1)` → `(N) Componentes`
 
     - `Componentes.id_tiposcomponente` → `TiposComponente.id_tiposcomponente`
+    - Cada tipo de componente puede tener múltiples componentes específicos
+    - Ejemplo: El tipo "cable" tiene múltiples modelos como RG6, RG11, etc.
 
 2. `Componentes (1)` → `(0..1) Cables`
 
     - `Cables.id_componentes` → `Componentes.id_componentes`
+    - Un componente de tipo cable tiene una entrada en la tabla Cables
 
 3. `Componentes (1)` → `(0..1) Derivadores`
 
     - `Derivadores.id_componentes` → `Componentes.id_componentes`
+    - Un componente de tipo derivador tiene una entrada en la tabla Derivadores
 
 4. `Componentes (1)` → `(0..1) Distribuidores`
 
     - `Distribuidores.id_componentes` → `Componentes.id_componentes`
+    - Un componente de tipo distribuidor tiene una entrada en la tabla Distribuidores
 
 5. `Componentes (1)` → `(0..1) AmplificadoresRuidoBase`
 
     - `AmplificadoresRuidoBase.id_componentes` → `Componentes.id_componentes`
+    - Un componente de tipo amplificador tiene una entrada en la tabla AmplificadoresRuidoBase
 
 6. `Componentes (1)` → `(0..1) Tomas`
 
     - `Tomas.id_componentes` → `Componentes.id_componentes`
+    - Un componente de tipo toma tiene una entrada en la tabla Tomas
 
 7. `Cables (1)` → `(N) AtenuacionesCable`
 
     - `AtenuacionesCable.id_cables` → `Cables.id_cables`
+    - Cada cable tiene múltiples atenuaciones para diferentes frecuencias
+    - Ejemplo: Un cable RG6 tiene atenuaciones específicas para VHF Baja, VHF Alta, etc.
 
 8. `Frecuencias (1)` → `(N) AtenuacionesCable`
 
     - `AtenuacionesCable.id_frecuencias` → `Frecuencias.id_frecuencias`
+    - Cada frecuencia puede estar asociada a múltiples atenuaciones de cables
 
 9. `Configuraciones (1)` → `(N) DetalleConfiguracion`
 
     - `DetalleConfiguracion.id_configuraciones` → `Configuraciones.id_configuraciones`
+    - Una configuración tiene múltiples detalles, uno por cada piso
+    - Ejemplo: "Edificio A" tiene detalles para cada uno de sus 5 pisos
 
 10. `Cables (1)` → `(0..N) DetalleConfiguracion`
 
     - `DetalleConfiguracion.id_cables` → `Cables.id_cables` (nullable)
+    - Un cable puede ser usado en múltiples configuraciones de pisos
 
 11. `Derivadores (1)` → `(0..N) DetalleConfiguracion`
 
     - `DetalleConfiguracion.id_derivadores` → `Derivadores.id_derivadores` (nullable)
+    - Un derivador puede ser usado en múltiples configuraciones de pisos
 
 12. `Distribuidores (1)` → `(0..N) DetalleConfiguracion`
 
     - `DetalleConfiguracion.id_distribuidores` → `Distribuidores.id_distribuidores` (nullable)
+    - Un distribuidor puede ser usado en múltiples configuraciones de pisos
 
 13. `AmplificadoresRuidoBase (1)` → `(0..N) DetalleConfiguracion`
     - `DetalleConfiguracion.id_amplificadoresruidobase` → `AmplificadoresRuidoBase.id_amplificadoresruidobase` (nullable)
+    - Un amplificador puede ser usado en múltiples configuraciones de pisos
 
 Notas:
 
 -   Las relaciones (0..1) indican que un componente puede tener cero o un registro en la tabla específica correspondiente.
 -   Las relaciones (0..N) en DetalleConfiguracion indican que los campos son opcionales (nullable).
 -   Las relaciones (1:N) indican que un registro puede tener múltiples registros relacionados.
+-   Cada tipo de componente tiene su propia tabla específica que almacena sus características técnicas únicas.
+-   Las configuraciones pueden usar diferentes combinaciones de componentes en cada piso, lo que permite una gran flexibilidad en el diseño de la red.
