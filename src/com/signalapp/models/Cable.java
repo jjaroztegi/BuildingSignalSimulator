@@ -1,25 +1,25 @@
 package com.signalapp.models;
 
 public class Cable {
-    private int idCable;
-    private int idComponente;
-    private double longitudMaxima;
+    private int id_cables;
+    private int id_componentes;
+    private double longitud_maxima;
 
     public Cable() {}
 
-    public Cable(int idCable, int idComponente, double longitudMaxima) {
-        this.idCable = idCable;
-        this.idComponente = idComponente;
-        this.longitudMaxima = longitudMaxima;
+    public Cable(int id_cables, int id_componentes, double longitud_maxima) {
+        this.id_cables = id_cables;
+        this.id_componentes = id_componentes;
+        this.longitud_maxima = longitud_maxima;
     }
 
     // Getters and Setters
-    public int getIdCable() { return idCable; }
-    public void setIdCable(int idCable) { this.idCable = idCable; }
+    public int getId_cables() { return id_cables; }
+    public void setId_cables(int id_cables) { this.id_cables = id_cables; }
     
-    public int getIdComponente() { return idComponente; }
-    public void setIdComponente(int idComponente) { this.idComponente = idComponente; }
+    public int getId_componentes() { return id_componentes; }
+    public void setId_componentes(int id_componentes) { this.id_componentes = id_componentes; }
     
-    public double getLongitudMaxima() { return longitudMaxima; }
-    public void setLongitudMaxima(double longitudMaxima) { this.longitudMaxima = longitudMaxima; }
+    public double getLongitud_maxima() { return longitud_maxima; }
+    public void setLongitud_maxima(double longitud_maxima) { this.longitud_maxima = longitud_maxima; }
 } 

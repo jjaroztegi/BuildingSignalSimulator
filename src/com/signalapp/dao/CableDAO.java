@@ -15,7 +15,7 @@ public class CableDAO extends BaseDAO<Cable> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_componentes", "longitud_maxima"
+            "id_cables", "id_componentes", "longitud_maxima"
         };
     }
 
@@ -30,7 +30,7 @@ public class CableDAO extends BaseDAO<Cable> {
 
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, Cable entity) throws SQLException {
-        ps.setInt(1, entity.getIdComponente());
-        ps.setDouble(2, entity.getLongitudMaxima());
+        ps.setInt(1, entity.getId_componentes());
+        ps.setDouble(2, entity.getLongitud_maxima());
     }
 } 

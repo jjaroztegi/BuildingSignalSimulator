@@ -37,7 +37,7 @@ public class ComponentServlet extends HttpServlet {
                 case "cable":
                     CableDAO cableDAO = new CableDAO();
                     for (Cable cable : cableDAO.findAll()) {
-                        Componente componente = componenteDAO.findById(cable.getIdComponente());
+                        Componente componente = componenteDAO.findById(cable.getId_componentes());
                         if (componente != null) {
                             components.add(componente.getModelo());
                         }
@@ -46,7 +46,7 @@ public class ComponentServlet extends HttpServlet {
                 case "derivador":
                     DerivadorDAO derivadorDAO = new DerivadorDAO();
                     for (Derivador derivador : derivadorDAO.findAll()) {
-                        Componente componente = componenteDAO.findById(derivador.getIdComponente());
+                        Componente componente = componenteDAO.findById(derivador.getId_componentes());
                         if (componente != null) {
                             components.add(componente.getModelo());
                         }
@@ -55,7 +55,7 @@ public class ComponentServlet extends HttpServlet {
                 case "distribuidor":
                     DistribuidorDAO distribuidorDAO = new DistribuidorDAO();
                     for (Distribuidor distribuidor : distribuidorDAO.findAll()) {
-                        Componente componente = componenteDAO.findById(distribuidor.getIdComponente());
+                        Componente componente = componenteDAO.findById(distribuidor.getId_componentes());
                         if (componente != null) {
                             components.add(componente.getModelo());
                         }
@@ -64,7 +64,7 @@ public class ComponentServlet extends HttpServlet {
                 case "amplificador":
                     AmplificadorRuidoBaseDAO amplificadorDAO = new AmplificadorRuidoBaseDAO();
                     for (AmplificadorRuidoBase amplificador : amplificadorDAO.findAll()) {
-                        Componente componente = componenteDAO.findById(amplificador.getIdComponente());
+                        Componente componente = componenteDAO.findById(amplificador.getId_componentes());
                         if (componente != null) {
                             components.add(componente.getModelo());
                         }
@@ -130,14 +130,14 @@ public class ComponentServlet extends HttpServlet {
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String currentDate = sdf.format(new java.util.Date());
             
-            componente.setFechaCreacion(currentDate);
-            componente.setUsuarioCreacion(usuario);
-            componente.setFechaModificacion(currentDate);
-            componente.setUsuarioModificacion(usuario);
+            componente.setFecha_creacion(currentDate);
+            componente.setUsuario_creacion(usuario);
+            componente.setFecha_modificacion(currentDate);
+            componente.setUsuario_modificacion(usuario);
 
             // Get id_tiposcomponente from TiposComponente
             int idTipo = getTipoComponenteId(type.toLowerCase());
-            componente.setIdTipo(idTipo);
+            componente.setId_tiposcomponente(idTipo);
 
             // Insert Componente
             ComponenteDAO componenteDAO = new ComponenteDAO();
@@ -150,31 +150,31 @@ public class ComponentServlet extends HttpServlet {
             switch (type.toLowerCase()) {
                 case "cable":
                     Cable cable = new Cable();
-                    cable.setIdComponente(idComponente);
-                    cable.setLongitudMaxima(100);
+                    cable.setId_componentes(idComponente);
+                    cable.setLongitud_maxima(100);
                     new CableDAO().insert(cable);
                     break;
                 case "derivador":
                     Derivador derivador = new Derivador();
-                    derivador.setIdComponente(idComponente);
-                    derivador.setAtenuacionInsercion(3.5);
-                    derivador.setAtenuacionDerivacion(10.0);
-                    derivador.setNumSalidas(2);
+                    derivador.setId_componentes(idComponente);
+                    derivador.setAtenuacion_insercion(3.5);
+                    derivador.setAtenuacion_derivacion(10.0);
+                    derivador.setNum_salidas(2);
                     new DerivadorDAO().insert(derivador);
                     break;
                 case "distribuidor":
                     Distribuidor distribuidor = new Distribuidor();
-                    distribuidor.setIdComponente(idComponente);
-                    distribuidor.setNumSalidas(4);
-                    distribuidor.setAtenuacionDistribucion(3.5);
+                    distribuidor.setId_componentes(idComponente);
+                    distribuidor.setNum_salidas(4);
+                    distribuidor.setAtenuacion_distribucion(3.5);
                     new DistribuidorDAO().insert(distribuidor);
                     break;
                 case "amplificador":
                     AmplificadorRuidoBase amplificador = new AmplificadorRuidoBase();
-                    amplificador.setIdComponente(idComponente);
+                    amplificador.setId_componentes(idComponente);
                     amplificador.setAtenuacion(0.0);
                     amplificador.setGanancia(20.0);
-                    amplificador.setFiguraRuido(3.0);
+                    amplificador.setFigura_ruido(3.0);
                     new AmplificadorRuidoBaseDAO().insert(amplificador);
                     break;
                 case "toma":

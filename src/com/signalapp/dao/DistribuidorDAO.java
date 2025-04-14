@@ -15,7 +15,7 @@ public class DistribuidorDAO extends BaseDAO<Distribuidor> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_componentes", "num_salidas", "atenuacion_distribucion", "desacoplo"
+            "id_distribuidores", "id_componentes", "num_salidas", "atenuacion_distribucion", "desacoplo"
         };
     }
 
@@ -32,9 +32,9 @@ public class DistribuidorDAO extends BaseDAO<Distribuidor> {
 
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, Distribuidor entity) throws SQLException {
-        ps.setInt(1, entity.getIdComponente());
-        ps.setInt(2, entity.getNumSalidas());
-        ps.setDouble(3, entity.getAtenuacionDistribucion());
+        ps.setInt(1, entity.getId_componentes());
+        ps.setInt(2, entity.getNum_salidas());
+        ps.setDouble(3, entity.getAtenuacion_distribucion());
         ps.setDouble(4, entity.getDesacoplo());
     }
 } 

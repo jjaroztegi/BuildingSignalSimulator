@@ -15,7 +15,7 @@ public class DerivadorDAO extends BaseDAO<Derivador> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_componentes", "atenuacion_insercion", "atenuacion_derivacion",
+            "id_derivadores", "id_componentes", "atenuacion_insercion", "atenuacion_derivacion",
             "num_salidas", "directividad", "desacoplo"
         };
     }
@@ -35,10 +35,10 @@ public class DerivadorDAO extends BaseDAO<Derivador> {
 
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, Derivador entity) throws SQLException {
-        ps.setInt(1, entity.getIdComponente());
-        ps.setDouble(2, entity.getAtenuacionInsercion());
-        ps.setDouble(3, entity.getAtenuacionDerivacion());
-        ps.setInt(4, entity.getNumSalidas());
+        ps.setInt(1, entity.getId_componentes());
+        ps.setDouble(2, entity.getAtenuacion_insercion());
+        ps.setDouble(3, entity.getAtenuacion_derivacion());
+        ps.setInt(4, entity.getNum_salidas());
         ps.setDouble(5, entity.getDirectividad());
         ps.setDouble(6, entity.getDesacoplo());
     }

@@ -15,7 +15,7 @@ public class MargenCalidadDAO extends BaseDAO<MargenCalidad> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "tipo_senal", "nivel_minimo", "nivel_maximo"
+            "id_margenescalidad", "tipo_senal", "nivel_minimo", "nivel_maximo"
         };
     }
 
@@ -31,8 +31,8 @@ public class MargenCalidadDAO extends BaseDAO<MargenCalidad> {
 
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, MargenCalidad entity) throws SQLException {
-        ps.setString(1, entity.getTipoSenal());
-        ps.setDouble(2, entity.getNivelMinimo());
-        ps.setDouble(3, entity.getNivelMaximo());
+        ps.setString(1, entity.getTipo_senal());
+        ps.setDouble(2, entity.getNivel_minimo());
+        ps.setDouble(3, entity.getNivel_maximo());
     }
 } 

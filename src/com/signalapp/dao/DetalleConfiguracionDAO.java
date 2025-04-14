@@ -17,7 +17,7 @@ public class DetalleConfiguracionDAO extends BaseDAO<DetalleConfiguracion> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_configuraciones", "piso", "id_cables", "longitud_cable",
+            "id_detallesconfiguracion", "id_configuraciones", "piso", "id_cables", "longitud_cable",
             "id_derivadores", "id_distribuidores", "id_amplificadoresruidobase",
             "nivel_senal", "fecha_calculo"
         };
@@ -26,7 +26,7 @@ public class DetalleConfiguracionDAO extends BaseDAO<DetalleConfiguracion> {
     @Override
     protected DetalleConfiguracion mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new DetalleConfiguracion(
-            rs.getInt("id_detalles"),
+            rs.getInt("id_detallesconfiguracion"),
             rs.getInt("id_configuraciones"),
             rs.getInt("piso"),
             rs.getInt("id_cables"),
@@ -41,15 +41,16 @@ public class DetalleConfiguracionDAO extends BaseDAO<DetalleConfiguracion> {
 
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, DetalleConfiguracion entity) throws SQLException {
-        ps.setInt(1, entity.getIdConfiguracion());
+        // id_detallesconfiguracion is auto-generated
+        ps.setInt(1, entity.getId_configuraciones());
         ps.setInt(2, entity.getPiso());
-        ps.setInt(3, entity.getIdCable());
-        ps.setDouble(4, entity.getLongitudCable());
-        ps.setObject(5, entity.getIdDerivador());
-        ps.setObject(6, entity.getIdDistribuidor());
-        ps.setObject(7, entity.getIdAmplificadorRuidoBase());
-        ps.setDouble(8, entity.getNivelSenal());
-        ps.setString(9, entity.getFechaCalculo());
+        ps.setInt(3, entity.getId_cables());
+        ps.setDouble(4, entity.getLongitud_cable());
+        ps.setObject(5, entity.getId_derivadores());
+        ps.setObject(6, entity.getId_distribuidores());
+        ps.setObject(7, entity.getId_amplificadoresruidobase());
+        ps.setDouble(8, entity.getNivel_senal());
+        ps.setString(9, entity.getFecha_calculo());
     }
     
     public List<DetalleConfiguracion> findByConfiguracionId(int idConfiguracion) throws SQLException {

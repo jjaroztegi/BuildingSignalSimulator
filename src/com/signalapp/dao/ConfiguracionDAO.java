@@ -15,7 +15,7 @@ public class ConfiguracionDAO extends BaseDAO<Configuracion> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "nombre", "nivel_cabecera", "num_pisos", "costo_total",
+            "id_configuraciones", "nombre", "nivel_cabecera", "num_pisos", "costo_total",
             "fecha_creacion", "usuario_creacion", "fecha_modificacion", "usuario_modificacion"
         };
     }
@@ -38,13 +38,13 @@ public class ConfiguracionDAO extends BaseDAO<Configuracion> {
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, Configuracion entity) throws SQLException {
         ps.setString(1, entity.getNombre());
-        ps.setDouble(2, entity.getNivelCabecera());
-        ps.setInt(3, entity.getNumPisos());
-        ps.setDouble(4, entity.getCostoTotal());
-        ps.setString(5, entity.getFechaCreacion());
-        ps.setString(6, entity.getUsuarioCreacion());
-        ps.setString(7, entity.getFechaModificacion());
-        ps.setString(8, entity.getUsuarioModificacion());
+        ps.setDouble(2, entity.getNivel_cabecera());
+        ps.setInt(3, entity.getNum_pisos());
+        ps.setDouble(4, entity.getCosto_total());
+        ps.setString(5, entity.getFecha_creacion());
+        ps.setString(6, entity.getUsuario_creacion());
+        ps.setString(7, entity.getFecha_modificacion());
+        ps.setString(8, entity.getUsuario_modificacion());
     }
 
     public int getIdByNombre(String nombre) throws SQLException {

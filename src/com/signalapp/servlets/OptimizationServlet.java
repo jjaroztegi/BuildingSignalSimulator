@@ -22,17 +22,17 @@ public class OptimizationServlet extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
-        String idConfiguracion = request.getParameter("id_configuraciones");
-        String idFrecuencia = request.getParameter("id_frecuencias");
+        String id_configuraciones = request.getParameter("id_configuraciones");
+        String id_frecuencias = request.getParameter("id_frecuencias");
 
         // Log the received parameters
-        System.out.println("Received parameters - id_configuraciones: " + idConfiguracion + ", id_frecuencias: " + idFrecuencia);
+        System.out.println("Received parameters - id_configuraciones: " + id_configuraciones + ", id_frecuencias: " + id_frecuencias);
 
-        if (idConfiguracion == null || idFrecuencia == null) {
+        if (id_configuraciones == null || id_frecuencias == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             String errorMsg = "Missing required parameters";
-            if (idConfiguracion == null) errorMsg += " (id_configuraciones)";
-            if (idFrecuencia == null) errorMsg += " (id_frecuencias)";
+            if (id_configuraciones == null) errorMsg += " (id_configuraciones)";
+            if (id_frecuencias == null) errorMsg += " (id_frecuencias)";
             out.write("{\"error\":\"" + errorMsg + "\"}");
             return;
         }
@@ -40,7 +40,7 @@ public class OptimizationServlet extends HttpServlet {
         try {
             // Get configuration details
             ConfiguracionDAO configuracionDAO = new ConfiguracionDAO();
-            Configuracion configuracion = configuracionDAO.findById(Integer.parseInt(idConfiguracion));
+            Configuracion configuracion = configuracionDAO.findById(Integer.parseInt(id_configuraciones));
 
             if (configuracion == null) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -53,7 +53,7 @@ public class OptimizationServlet extends HttpServlet {
             List<MargenCalidad> margenes = margenCalidadDAO.findAll();
             MargenCalidad margenCalidad = null;
             for (MargenCalidad m : margenes) {
-                if ("TV".equals(m.getTipoSenal())) {
+                if ("TV Digital".equals(m.getTipo_senal()) || "TV Analógica".equals(m.getTipo_senal())) {
                     margenCalidad = m;
                     break;
                 }
@@ -72,9 +72,9 @@ public class OptimizationServlet extends HttpServlet {
             List<Component> amplificadores = getComponents("AmplificadoresRuidoBase");
 
             // Optimize configuration
-            optimizeConfiguration(Integer.parseInt(idConfiguracion), configuracion.getNumPisos(),
-                    configuracion.getNivelCabecera(), margenCalidad.getNivelMinimo(),
-                    margenCalidad.getNivelMaximo(), Integer.parseInt(idFrecuencia),
+            optimizeConfiguration(Integer.parseInt(id_configuraciones), configuracion.getNum_pisos(),
+                    configuracion.getNivel_cabecera(), margenCalidad.getNivel_minimo(),
+                    margenCalidad.getNivel_maximo(), Integer.parseInt(id_frecuencias),
                     cables, derivadores, distribuidores, amplificadores);
 
             out.write("{\"success\":\"Configuration optimized successfully\"}");
@@ -92,36 +92,36 @@ public class OptimizationServlet extends HttpServlet {
             case "Cables":
                 CableDAO cableDAO = new CableDAO();
                 for (Cable cable : cableDAO.findAll()) {
-                    Componente componente = componenteDAO.findById(cable.getIdComponente());
+                    Componente componente = componenteDAO.findById(cable.getId_componentes());
                     if (componente != null) {
-                        components.add(new Component(cable.getIdCable(), componente.getCosto()));
+                        components.add(new Component(cable.getId_cables(), componente.getCosto()));
                     }
                 }
                 break;
             case "Derivadores":
                 DerivadorDAO derivadorDAO = new DerivadorDAO();
                 for (Derivador derivador : derivadorDAO.findAll()) {
-                    Componente componente = componenteDAO.findById(derivador.getIdComponente());
+                    Componente componente = componenteDAO.findById(derivador.getId_componentes());
                     if (componente != null) {
-                        components.add(new Component(derivador.getIdDerivador(), componente.getCosto()));
+                        components.add(new Component(derivador.getId_derivadores(), componente.getCosto()));
                     }
                 }
                 break;
             case "Distribuidores":
                 DistribuidorDAO distribuidorDAO = new DistribuidorDAO();
                 for (Distribuidor distribuidor : distribuidorDAO.findAll()) {
-                    Componente componente = componenteDAO.findById(distribuidor.getIdComponente());
+                    Componente componente = componenteDAO.findById(distribuidor.getId_componentes());
                     if (componente != null) {
-                        components.add(new Component(distribuidor.getIdDistribuidor(), componente.getCosto()));
+                        components.add(new Component(distribuidor.getId_distribuidores(), componente.getCosto()));
                     }
                 }
                 break;
             case "AmplificadoresRuidoBase":
                 AmplificadorRuidoBaseDAO amplificadorDAO = new AmplificadorRuidoBaseDAO();
                 for (AmplificadorRuidoBase amplificador : amplificadorDAO.findAll()) {
-                    Componente componente = componenteDAO.findById(amplificador.getIdComponente());
+                    Componente componente = componenteDAO.findById(amplificador.getId_componentes());
                     if (componente != null) {
-                        components.add(new Component(amplificador.getIdAmplificadorRuidoBase(), componente.getCosto()));
+                        components.add(new Component(amplificador.getId_amplificadoresruidobase(), componente.getCosto()));
                     }
                 }
                 break;
@@ -129,8 +129,8 @@ public class OptimizationServlet extends HttpServlet {
         return components;
     }
 
-    private void optimizeConfiguration(int idConfiguracion, int numPisos,
-            double nivelCabecera, double nivelMinimo, double nivelMaximo, int idFrecuencia,
+    private void optimizeConfiguration(int id_configuraciones, int numPisos,
+            double nivelCabecera, double nivelMinimo, double nivelMaximo, int id_frecuencias,
             List<Component> cables, List<Component> derivadores, List<Component> distribuidores,
             List<Component> amplificadores) throws SQLException {
 
@@ -138,9 +138,9 @@ public class OptimizationServlet extends HttpServlet {
         double currentSignal = nivelCabecera;
 
         // First, delete existing details for this configuration
-        List<DetalleConfiguracion> existingDetails = detalleConfiguracionDAO.findByConfiguracionId(idConfiguracion);
+        List<DetalleConfiguracion> existingDetails = detalleConfiguracionDAO.findByConfiguracionId(id_configuraciones);
         for (DetalleConfiguracion detail : existingDetails) {
-            detalleConfiguracionDAO.delete(detail.getIdDetalle());
+            detalleConfiguracionDAO.delete(detail.getId_detallesconfiguracion());
         }
 
         // Format current date in a format the database can understand
@@ -156,19 +156,19 @@ public class OptimizationServlet extends HttpServlet {
 
             // Calculate signal level after components
             currentSignal = calculateSignalLevel(currentSignal, cable, derivador,
-                    distribuidor, amplificador, idFrecuencia);
+                    distribuidor, amplificador, id_frecuencias);
 
             // Create or update detail configuration
             DetalleConfiguracion detalle = new DetalleConfiguracion();
-            detalle.setIdConfiguracion(idConfiguracion);
+            detalle.setId_configuraciones(id_configuraciones);
             detalle.setPiso(piso);
-            detalle.setIdCable(cable.id);
-            detalle.setLongitudCable(10.0); // Default cable length
-            detalle.setIdDerivador(derivador.id);
-            detalle.setIdDistribuidor(distribuidor.id);
-            detalle.setIdAmplificadorRuidoBase(amplificador.id);
-            detalle.setNivelSenal(currentSignal);
-            detalle.setFechaCalculo(currentDate);
+            detalle.setId_cables(cable.id);
+            detalle.setLongitud_cable(10.0); // Default cable length
+            detalle.setId_derivadores(derivador.id);
+            detalle.setId_distribuidores(distribuidor.id);
+            detalle.setId_amplificadoresruidobase(amplificador.id);
+            detalle.setNivel_senal(currentSignal);
+            detalle.setFecha_calculo(currentDate);
 
             detalleConfiguracionDAO.insert(detalle);
         }
@@ -182,7 +182,7 @@ public class OptimizationServlet extends HttpServlet {
     }
 
     private double calculateSignalLevel(double inputSignal, Component cable, Component derivador,
-            Component distribuidor, Component amplificador, int idFrecuencia) {
+            Component distribuidor, Component amplificador, int id_frecuencias) {
         // Simplified signal level calculation
         // In a real implementation, you would use the actual component properties
         // and calculate the exact signal level based on attenuation/gain values

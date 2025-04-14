@@ -15,7 +15,7 @@ public class TomaDAO extends BaseDAO<Toma> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_componentes", "atenuacion"
+            "id_tomas", "id_componentes", "atenuacion"
         };
     }
 

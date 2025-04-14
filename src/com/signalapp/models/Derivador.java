@@ -1,43 +1,43 @@
 package com.signalapp.models;
 
 public class Derivador {
-    private int idDerivador;
-    private int idComponente;
-    private double atenuacionInsercion;
-    private double atenuacionDerivacion;
-    private int numSalidas;
+    private int id_derivadores;
+    private int id_componentes;
+    private double atenuacion_insercion;
+    private double atenuacion_derivacion;
+    private int num_salidas;
     private double directividad;
     private double desacoplo;
 
     public Derivador() {}
 
-    public Derivador(int idDerivador, int idComponente, double atenuacionInsercion, 
-                    double atenuacionDerivacion, int numSalidas, double directividad, 
+    public Derivador(int id_derivadores, int id_componentes, double atenuacion_insercion, 
+                    double atenuacion_derivacion, int num_salidas, double directividad, 
                     double desacoplo) {
-        this.idDerivador = idDerivador;
-        this.idComponente = idComponente;
-        this.atenuacionInsercion = atenuacionInsercion;
-        this.atenuacionDerivacion = atenuacionDerivacion;
-        this.numSalidas = numSalidas;
+        this.id_derivadores = id_derivadores;
+        this.id_componentes = id_componentes;
+        this.atenuacion_insercion = atenuacion_insercion;
+        this.atenuacion_derivacion = atenuacion_derivacion;
+        this.num_salidas = num_salidas;
         this.directividad = directividad;
         this.desacoplo = desacoplo;
     }
 
     // Getters and Setters
-    public int getIdDerivador() { return idDerivador; }
-    public void setIdDerivador(int idDerivador) { this.idDerivador = idDerivador; }
+    public int getId_derivadores() { return id_derivadores; }
+    public void setId_derivadores(int id_derivadores) { this.id_derivadores = id_derivadores; }
     
-    public int getIdComponente() { return idComponente; }
-    public void setIdComponente(int idComponente) { this.idComponente = idComponente; }
+    public int getId_componentes() { return id_componentes; }
+    public void setId_componentes(int id_componentes) { this.id_componentes = id_componentes; }
     
-    public double getAtenuacionInsercion() { return atenuacionInsercion; }
-    public void setAtenuacionInsercion(double atenuacionInsercion) { this.atenuacionInsercion = atenuacionInsercion; }
+    public double getAtenuacion_insercion() { return atenuacion_insercion; }
+    public void setAtenuacion_insercion(double atenuacion_insercion) { this.atenuacion_insercion = atenuacion_insercion; }
     
-    public double getAtenuacionDerivacion() { return atenuacionDerivacion; }
-    public void setAtenuacionDerivacion(double atenuacionDerivacion) { this.atenuacionDerivacion = atenuacionDerivacion; }
+    public double getAtenuacion_derivacion() { return atenuacion_derivacion; }
+    public void setAtenuacion_derivacion(double atenuacion_derivacion) { this.atenuacion_derivacion = atenuacion_derivacion; }
     
-    public int getNumSalidas() { return numSalidas; }
-    public void setNumSalidas(int numSalidas) { this.numSalidas = numSalidas; }
+    public int getNum_salidas() { return num_salidas; }
+    public void setNum_salidas(int num_salidas) { this.num_salidas = num_salidas; }
     
     public double getDirectividad() { return directividad; }
     public void setDirectividad(double directividad) { this.directividad = directividad; }

@@ -15,7 +15,7 @@ public class ComponenteDAO extends BaseDAO<Componente> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_tiposcomponente", "modelo", "costo", "fecha_creacion", 
+            "id_componentes", "id_tiposcomponente", "modelo", "costo", "fecha_creacion", 
             "usuario_creacion", "fecha_modificacion", "usuario_modificacion"
         };
     }
@@ -36,13 +36,13 @@ public class ComponenteDAO extends BaseDAO<Componente> {
 
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, Componente entity) throws SQLException {
-        ps.setInt(1, entity.getIdTipo());
+        ps.setInt(1, entity.getId_tiposcomponente());
         ps.setString(2, entity.getModelo());
         ps.setDouble(3, entity.getCosto());
-        ps.setString(4, entity.getFechaCreacion());
-        ps.setString(5, entity.getUsuarioCreacion());
-        ps.setString(6, entity.getFechaModificacion());
-        ps.setString(7, entity.getUsuarioModificacion());
+        ps.setString(4, entity.getFecha_creacion());
+        ps.setString(5, entity.getUsuario_creacion());
+        ps.setString(6, entity.getFecha_modificacion());
+        ps.setString(7, entity.getUsuario_modificacion());
     }
 
     public int getIdByModelo(String modelo) throws SQLException {

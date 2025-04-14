@@ -1,63 +1,63 @@
 package com.signalapp.models;
 
 public class DetalleConfiguracion {
-    private int idDetalle;
-    private int idConfiguracion;
+    private int id_detallesconfiguracion;
+    private int id_configuraciones;
     private int piso;
-    private int idCable;
-    private double longitudCable;
-    private Integer idDerivador;
-    private Integer idDistribuidor;
-    private Integer idAmplificadorRuidoBase;
-    private double nivelSenal;
-    private String fechaCalculo;
+    private int id_cables;
+    private double longitud_cable;
+    private Integer id_derivadores;
+    private Integer id_distribuidores;
+    private Integer id_amplificadoresruidobase;
+    private double nivel_senal;
+    private String fecha_calculo;
 
     public DetalleConfiguracion() {}
 
-    public DetalleConfiguracion(int idDetalle, int idConfiguracion, int piso, 
-                               int idCable, double longitudCable, Integer idDerivador, 
-                               Integer idDistribuidor, Integer idAmplificadorRuidoBase, 
-                               double nivelSenal, String fechaCalculo) {
-        this.idDetalle = idDetalle;
-        this.idConfiguracion = idConfiguracion;
+    public DetalleConfiguracion(int id_detallesconfiguracion, int id_configuraciones, int piso, 
+                               int id_cables, double longitud_cable, Integer id_derivadores, 
+                               Integer id_distribuidores, Integer id_amplificadoresruidobase, 
+                               double nivel_senal, String fecha_calculo) {
+        this.id_detallesconfiguracion = id_detallesconfiguracion;
+        this.id_configuraciones = id_configuraciones;
         this.piso = piso;
-        this.idCable = idCable;
-        this.longitudCable = longitudCable;
-        this.idDerivador = idDerivador;
-        this.idDistribuidor = idDistribuidor;
-        this.idAmplificadorRuidoBase = idAmplificadorRuidoBase;
-        this.nivelSenal = nivelSenal;
-        this.fechaCalculo = fechaCalculo;
+        this.id_cables = id_cables;
+        this.longitud_cable = longitud_cable;
+        this.id_derivadores = id_derivadores;
+        this.id_distribuidores = id_distribuidores;
+        this.id_amplificadoresruidobase = id_amplificadoresruidobase;
+        this.nivel_senal = nivel_senal;
+        this.fecha_calculo = fecha_calculo;
     }
 
     // Getters and Setters
-    public int getIdDetalle() { return idDetalle; }
-    public void setIdDetalle(int idDetalle) { this.idDetalle = idDetalle; }
+    public int getId_detallesconfiguracion() { return id_detallesconfiguracion; }
+    public void setId_detallesconfiguracion(int id_detallesconfiguracion) { this.id_detallesconfiguracion = id_detallesconfiguracion; }
     
-    public int getIdConfiguracion() { return idConfiguracion; }
-    public void setIdConfiguracion(int idConfiguracion) { this.idConfiguracion = idConfiguracion; }
+    public int getId_configuraciones() { return id_configuraciones; }
+    public void setId_configuraciones(int id_configuraciones) { this.id_configuraciones = id_configuraciones; }
     
     public int getPiso() { return piso; }
     public void setPiso(int piso) { this.piso = piso; }
     
-    public int getIdCable() { return idCable; }
-    public void setIdCable(int idCable) { this.idCable = idCable; }
+    public int getId_cables() { return id_cables; }
+    public void setId_cables(int id_cables) { this.id_cables = id_cables; }
     
-    public double getLongitudCable() { return longitudCable; }
-    public void setLongitudCable(double longitudCable) { this.longitudCable = longitudCable; }
+    public double getLongitud_cable() { return longitud_cable; }
+    public void setLongitud_cable(double longitud_cable) { this.longitud_cable = longitud_cable; }
     
-    public Integer getIdDerivador() { return idDerivador; }
-    public void setIdDerivador(Integer idDerivador) { this.idDerivador = idDerivador; }
+    public Integer getId_derivadores() { return id_derivadores; }
+    public void setId_derivadores(Integer id_derivadores) { this.id_derivadores = id_derivadores; }
     
-    public Integer getIdDistribuidor() { return idDistribuidor; }
-    public void setIdDistribuidor(Integer idDistribuidor) { this.idDistribuidor = idDistribuidor; }
+    public Integer getId_distribuidores() { return id_distribuidores; }
+    public void setId_distribuidores(Integer id_distribuidores) { this.id_distribuidores = id_distribuidores; }
     
-    public Integer getIdAmplificadorRuidoBase() { return idAmplificadorRuidoBase; }
-    public void setIdAmplificadorRuidoBase(Integer idAmplificadorRuidoBase) { this.idAmplificadorRuidoBase = idAmplificadorRuidoBase; }
+    public Integer getId_amplificadoresruidobase() { return id_amplificadoresruidobase; }
+    public void setId_amplificadoresruidobase(Integer id_amplificadoresruidobase) { this.id_amplificadoresruidobase = id_amplificadoresruidobase; }
     
-    public double getNivelSenal() { return nivelSenal; }
-    public void setNivelSenal(double nivelSenal) { this.nivelSenal = nivelSenal; }
+    public double getNivel_senal() { return nivel_senal; }
+    public void setNivel_senal(double nivel_senal) { this.nivel_senal = nivel_senal; }
     
-    public String getFechaCalculo() { return fechaCalculo; }
-    public void setFechaCalculo(String fechaCalculo) { this.fechaCalculo = fechaCalculo; }
+    public String getFecha_calculo() { return fecha_calculo; }
+    public void setFecha_calculo(String fecha_calculo) { this.fecha_calculo = fecha_calculo; }
 } 

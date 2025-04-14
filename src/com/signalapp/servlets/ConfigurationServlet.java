@@ -35,12 +35,12 @@ public class ConfigurationServlet extends HttpServlet {
                 first = false;
                 jsonBuilder.append(String.format(
                         "{\"id_configuraciones\":%d,\"nombre\":\"%s\",\"nivel_cabecera\":%.2f,\"num_pisos\":%d,\"costo_total\":%.2f,\"fecha_creacion\":\"%s\"}",
-                        config.getIdConfiguracion(),
+                        config.getId_configuraciones(),
                         escapeJson(config.getNombre()),
-                        config.getNivelCabecera(),
-                        config.getNumPisos(),
-                        config.getCostoTotal(),
-                        escapeJson(config.getFechaCreacion())));
+                        config.getNivel_cabecera(),
+                        config.getNum_pisos(),
+                        config.getCosto_total(),
+                        escapeJson(config.getFecha_creacion())));
             }
             jsonBuilder.append("]");
             out.write(jsonBuilder.toString());
@@ -69,9 +69,9 @@ public class ConfigurationServlet extends HttpServlet {
         try {
             Configuracion configuracion = new Configuracion();
             configuracion.setNombre(nombre);
-            configuracion.setNivelCabecera(Double.parseDouble(nivelCabecera));
-            configuracion.setNumPisos(Integer.parseInt(numPisos));
-            configuracion.setCostoTotal(0.0);
+            configuracion.setNivel_cabecera(Double.parseDouble(nivelCabecera));
+            configuracion.setNum_pisos(Integer.parseInt(numPisos));
+            configuracion.setCosto_total(0.0);
 
             ConfiguracionDAO configuracionDAO = new ConfiguracionDAO();
             configuracionDAO.insert(configuracion);
@@ -108,10 +108,10 @@ public class ConfigurationServlet extends HttpServlet {
 
         try {
             Configuracion configuracion = new Configuracion();
-            configuracion.setIdConfiguracion(Integer.parseInt(idConfiguracion));
+            configuracion.setId_configuraciones(Integer.parseInt(idConfiguracion));
             configuracion.setNombre(nombre);
-            configuracion.setNivelCabecera(Double.parseDouble(nivelCabecera));
-            configuracion.setNumPisos(Integer.parseInt(numPisos));
+            configuracion.setNivel_cabecera(Double.parseDouble(nivelCabecera));
+            configuracion.setNum_pisos(Integer.parseInt(numPisos));
 
             ConfiguracionDAO configuracionDAO = new ConfiguracionDAO();
             configuracionDAO.update(configuracion, Integer.parseInt(idConfiguracion));

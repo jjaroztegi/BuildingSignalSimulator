@@ -10,9 +10,6 @@ import com.signalapp.models.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +47,7 @@ public class QualityValidationServlet extends HttpServlet {
             List<MargenCalidad> margenes = margenCalidadDAO.findAll();
             MargenCalidad margenCalidad = null;
             for (MargenCalidad m : margenes) {
-                if (tipoSenal.equals(m.getTipoSenal())) {
+                if (tipoSenal.equals(m.getTipo_senal())) {
                     margenCalidad = m;
                     break;
                 }
@@ -75,8 +72,8 @@ public class QualityValidationServlet extends HttpServlet {
                 }
                 first = false;
 
-                boolean isValid = level.signalLevel >= margenCalidad.getNivelMinimo() && 
-                                level.signalLevel <= margenCalidad.getNivelMaximo();
+                boolean isValid = level.signalLevel >= margenCalidad.getNivel_minimo() && 
+                                level.signalLevel <= margenCalidad.getNivel_maximo();
 
                 jsonBuilder.append("{")
                     .append("\"piso\":").append(level.floor)
@@ -102,7 +99,7 @@ public class QualityValidationServlet extends HttpServlet {
         for (DetalleConfiguracion detalle : detalles) {
             FloorSignalLevel level = new FloorSignalLevel();
             level.floor = detalle.getPiso();
-            level.signalLevel = detalle.getNivelSenal();
+            level.signalLevel = detalle.getNivel_senal();
             levels.add(level);
         }
         
@@ -127,9 +124,9 @@ public class QualityValidationServlet extends HttpServlet {
 
         try {
             MargenCalidad margenCalidad = new MargenCalidad();
-            margenCalidad.setTipoSenal(tipoSenal);
-            margenCalidad.setNivelMinimo(Double.parseDouble(nivelMinimo));
-            margenCalidad.setNivelMaximo(Double.parseDouble(nivelMaximo));
+            margenCalidad.setTipo_senal(tipoSenal);
+            margenCalidad.setNivel_minimo(Double.parseDouble(nivelMinimo));
+            margenCalidad.setNivel_maximo(Double.parseDouble(nivelMaximo));
 
             MargenCalidadDAO margenCalidadDAO = new MargenCalidadDAO();
             margenCalidadDAO.insert(margenCalidad);

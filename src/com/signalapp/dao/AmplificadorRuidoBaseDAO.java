@@ -15,7 +15,7 @@ public class AmplificadorRuidoBaseDAO extends BaseDAO<AmplificadorRuidoBase> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_componentes", "atenuacion", "ganancia", "figura_ruido"
+            "id_amplificadoresruidobase", "id_componentes", "atenuacion", "ganancia", "figura_ruido"
         };
     }
 
@@ -32,9 +32,9 @@ public class AmplificadorRuidoBaseDAO extends BaseDAO<AmplificadorRuidoBase> {
 
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, AmplificadorRuidoBase entity) throws SQLException {
-        ps.setInt(1, entity.getIdComponente());
+        ps.setInt(1, entity.getId_componentes());
         ps.setDouble(2, entity.getAtenuacion());
         ps.setDouble(3, entity.getGanancia());
-        ps.setDouble(4, entity.getFiguraRuido());
+        ps.setDouble(4, entity.getFigura_ruido());
     }
 } 

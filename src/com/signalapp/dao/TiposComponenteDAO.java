@@ -15,7 +15,7 @@ public class TiposComponenteDAO extends BaseDAO<TipoComponente> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "nombre"
+            "id_tiposcomponente", "nombre"
         };
     }
 
