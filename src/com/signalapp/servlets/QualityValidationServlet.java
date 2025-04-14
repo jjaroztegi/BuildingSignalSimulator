@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.signalapp.dao.*;
 import com.signalapp.models.*;
+import com.signalapp.utils.SignalCalculator;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,6 +23,36 @@ public class QualityValidationServlet extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
+        // Check if this is a request for signal types
+        if ("true".equals(request.getParameter("get_signal_types"))) {
+            try {
+                MargenCalidadDAO margenCalidadDAO = new MargenCalidadDAO();
+                List<MargenCalidad> margenes = margenCalidadDAO.findAll();
+                
+                StringBuilder jsonBuilder = new StringBuilder("[");
+                boolean first = true;
+                for (MargenCalidad margen : margenes) {
+                    if (!first) {
+                        jsonBuilder.append(",");
+                    }
+                    jsonBuilder.append("{")
+                              .append("\"tipo_senal\":\"").append(escapeJson(margen.getTipo_senal())).append("\",")
+                              .append("\"nivel_minimo\":").append(margen.getNivel_minimo()).append(",")
+                              .append("\"nivel_maximo\":").append(margen.getNivel_maximo())
+                              .append("}");
+                    first = false;
+                }
+                jsonBuilder.append("]");
+                out.write(jsonBuilder.toString());
+                return;
+            } catch (SQLException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                out.write("{\"error\":\"" + escapeJson(e.getMessage()) + "\"}");
+                return;
+            }
+        }
+
+        // Handle existing validation logic
         String idConfiguracion = request.getParameter("id_configuraciones");
         String tipoSenal = request.getParameter("tipo_senal");
 
@@ -72,14 +103,13 @@ public class QualityValidationServlet extends HttpServlet {
                 }
                 first = false;
 
-                boolean isValid = level.signalLevel >= margenCalidad.getNivel_minimo() && 
-                                level.signalLevel <= margenCalidad.getNivel_maximo();
+                boolean isValid = SignalCalculator.isSignalValid(level.signalLevel, tipoSenal);
 
                 jsonBuilder.append("{")
-                    .append("\"piso\":").append(level.floor)
-                    .append(",\"nivel_senal\":").append(level.signalLevel)
-                    .append(",\"is_valid\":").append(isValid)
-                    .append("}");
+                        .append("\"piso\":").append(level.floor)
+                        .append(",\"nivel_senal\":").append(level.signalLevel)
+                        .append(",\"is_valid\":").append(isValid)
+                        .append("}");
             }
             jsonBuilder.append("]");
 
@@ -92,17 +122,17 @@ public class QualityValidationServlet extends HttpServlet {
 
     private List<FloorSignalLevel> getFloorSignalLevels(int idConfiguracion) throws SQLException {
         List<FloorSignalLevel> levels = new ArrayList<>();
-        
+
         DetalleConfiguracionDAO detalleConfiguracionDAO = new DetalleConfiguracionDAO();
         List<DetalleConfiguracion> detalles = detalleConfiguracionDAO.findByConfiguracionId(idConfiguracion);
-        
+
         for (DetalleConfiguracion detalle : detalles) {
             FloorSignalLevel level = new FloorSignalLevel();
             level.floor = detalle.getPiso();
             level.signalLevel = detalle.getNivel_senal();
             levels.add(level);
         }
-        
+
         return levels;
     }
 
@@ -139,14 +169,15 @@ public class QualityValidationServlet extends HttpServlet {
     }
 
     private String escapeJson(String input) {
-        if (input == null) return "";
+        if (input == null)
+            return "";
         return input.replace("\\", "\\\\")
-                   .replace("\"", "\\\"")
-                   .replace("\b", "\\b")
-                   .replace("\f", "\\f")
-                   .replace("\n", "\\n")
-                   .replace("\r", "\\r")
-                   .replace("\t", "\\t");
+                .replace("\"", "\\\"")
+                .replace("\b", "\\b")
+                .replace("\f", "\\f")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
 
     private static class FloorSignalLevel {

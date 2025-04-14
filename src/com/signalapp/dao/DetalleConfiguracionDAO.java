@@ -17,7 +17,7 @@ public class DetalleConfiguracionDAO extends BaseDAO<DetalleConfiguracion> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_detallesconfiguracion", "id_configuraciones", "piso", "id_cables", "longitud_cable",
+            "id_detalleconfiguracion", "id_configuraciones", "piso", "id_cables", "longitud_cable",
             "id_derivadores", "id_distribuidores", "id_amplificadoresruidobase",
             "nivel_senal", "fecha_calculo"
         };
@@ -26,7 +26,7 @@ public class DetalleConfiguracionDAO extends BaseDAO<DetalleConfiguracion> {
     @Override
     protected DetalleConfiguracion mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new DetalleConfiguracion(
-            rs.getInt("id_detallesconfiguracion"),
+            rs.getInt("id_detalleconfiguracion"),
             rs.getInt("id_configuraciones"),
             rs.getInt("piso"),
             rs.getInt("id_cables"),
@@ -41,7 +41,7 @@ public class DetalleConfiguracionDAO extends BaseDAO<DetalleConfiguracion> {
 
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, DetalleConfiguracion entity) throws SQLException {
-        // id_detallesconfiguracion is auto-generated
+        // id_detalleconfiguracion is auto-generated
         ps.setInt(1, entity.getId_configuraciones());
         ps.setInt(2, entity.getPiso());
         ps.setInt(3, entity.getId_cables());

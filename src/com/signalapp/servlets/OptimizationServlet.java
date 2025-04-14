@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.signalapp.dao.*;
 import com.signalapp.models.*;
+import com.signalapp.utils.SignalCalculator;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -26,13 +27,16 @@ public class OptimizationServlet extends HttpServlet {
         String id_frecuencias = request.getParameter("id_frecuencias");
 
         // Log the received parameters
-        System.out.println("Received parameters - id_configuraciones: " + id_configuraciones + ", id_frecuencias: " + id_frecuencias);
+        System.out.println("Received parameters - id_configuraciones: " + id_configuraciones + ", id_frecuencias: "
+                + id_frecuencias);
 
         if (id_configuraciones == null || id_frecuencias == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             String errorMsg = "Missing required parameters";
-            if (id_configuraciones == null) errorMsg += " (id_configuraciones)";
-            if (id_frecuencias == null) errorMsg += " (id_frecuencias)";
+            if (id_configuraciones == null)
+                errorMsg += " (id_configuraciones)";
+            if (id_frecuencias == null)
+                errorMsg += " (id_frecuencias)";
             out.write("{\"error\":\"" + errorMsg + "\"}");
             return;
         }
@@ -121,7 +125,8 @@ public class OptimizationServlet extends HttpServlet {
                 for (AmplificadorRuidoBase amplificador : amplificadorDAO.findAll()) {
                     Componente componente = componenteDAO.findById(amplificador.getId_componentes());
                     if (componente != null) {
-                        components.add(new Component(amplificador.getId_amplificadoresruidobase(), componente.getCosto()));
+                        components.add(
+                                new Component(amplificador.getId_amplificadoresruidobase(), componente.getCosto()));
                     }
                 }
                 break;
@@ -181,12 +186,36 @@ public class OptimizationServlet extends HttpServlet {
                 .orElseThrow(() -> new RuntimeException("No components available"));
     }
 
-    private double calculateSignalLevel(double inputSignal, Component cable, Component derivador,
+    private double calculateSignalLevel(double currentSignal, Component cable, Component derivador,
             Component distribuidor, Component amplificador, int id_frecuencias) {
-        // Simplified signal level calculation
-        // In a real implementation, you would use the actual component properties
-        // and calculate the exact signal level based on attenuation/gain values
-        return inputSignal - 5.0; // Placeholder calculation
+        try {
+            // Get the specific component details from their respective DAOs
+            CableDAO cableDAO = new CableDAO();
+            DerivadorDAO derivadorDAO = new DerivadorDAO();
+            DistribuidorDAO distribuidorDAO = new DistribuidorDAO();
+            AmplificadorRuidoBaseDAO amplificadorDAO = new AmplificadorRuidoBaseDAO();
+
+            Cable cableDetails = cable != null ? cableDAO.findById(cable.id) : null;
+            Derivador derivadorDetails = derivador != null ? derivadorDAO.findById(derivador.id) : null;
+            Distribuidor distribuidorDetails = distribuidor != null ? distribuidorDAO.findById(distribuidor.id) : null;
+            AmplificadorRuidoBase amplificadorDetails = amplificador != null ? amplificadorDAO.findById(amplificador.id)
+                    : null;
+
+            // Calculate signal level using the SignalCalculator
+            return SignalCalculator.calculateSignalLevel(
+                    currentSignal,
+                    cableDetails,
+                    10.0, // Default cable length, should be configurable in the future
+                    derivadorDetails,
+                    distribuidorDetails,
+                    amplificadorDetails,
+                    false // This should be determined based on floor number
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Return a conservative estimate if there's an error
+            return currentSignal - 10.0;
+        }
     }
 
     private static class Component {

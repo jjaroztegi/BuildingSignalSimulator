@@ -1,7 +1,7 @@
 package com.signalapp.models;
 
 public class DetalleConfiguracion {
-    private int id_detallesconfiguracion;
+    private int id_detalleconfiguracion;
     private int id_configuraciones;
     private int piso;
     private int id_cables;
@@ -14,11 +14,11 @@ public class DetalleConfiguracion {
 
     public DetalleConfiguracion() {}
 
-    public DetalleConfiguracion(int id_detallesconfiguracion, int id_configuraciones, int piso, 
+    public DetalleConfiguracion(int id_detalleconfiguracion, int id_configuraciones, int piso, 
                                int id_cables, double longitud_cable, Integer id_derivadores, 
                                Integer id_distribuidores, Integer id_amplificadoresruidobase, 
                                double nivel_senal, String fecha_calculo) {
-        this.id_detallesconfiguracion = id_detallesconfiguracion;
+        this.id_detalleconfiguracion = id_detalleconfiguracion;
         this.id_configuraciones = id_configuraciones;
         this.piso = piso;
         this.id_cables = id_cables;
@@ -31,8 +31,8 @@ public class DetalleConfiguracion {
     }
 
     // Getters and Setters
-    public int getId_detallesconfiguracion() { return id_detallesconfiguracion; }
-    public void setId_detallesconfiguracion(int id_detallesconfiguracion) { this.id_detallesconfiguracion = id_detallesconfiguracion; }
+    public int getId_detallesconfiguracion() { return id_detalleconfiguracion; }
+    public void setId_detallesconfiguracion(int id_detalleconfiguracion) { this.id_detalleconfiguracion = id_detalleconfiguracion; }
     
     public int getId_configuraciones() { return id_configuraciones; }
     public void setId_configuraciones(int id_configuraciones) { this.id_configuraciones = id_configuraciones; }
