@@ -110,12 +110,12 @@
                                 class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
                                 required
                             >
-                                <option value="">Select type</option>
-                                <option value="cables">Cable</option>
-                                <option value="derivadores">Splitter</option>
-                                <option value="distribuidores">Distributor</option>
-                                <option value="amplificadores">Amplifier</option>
-                                <option value="tomas">Outlet</option>
+                                <option value="">Seleccionar tipo</option>
+                                <option value="cable">Cable</option>
+                                <option value="derivador">Derivador</option>
+                                <option value="distribuidor">Distribuidor</option>
+                                <option value="amplificador">Amplificador</option>
+                                <option value="toma">Toma</option>
                             </select>
                         </div>
                         <div>
@@ -236,7 +236,7 @@
                         </h2>
                         <div class="flex space-x-4">
                             <select
-                                id="id_configuracion"
+                                id="id_configuraciones"
                                 class="border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
                             >
                                 <option value="">Select Configuration</option>
@@ -269,23 +269,23 @@
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
                         <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
                             <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Cables</h3>
-                            <div id="cables-list" class="space-y-2"></div>
+                            <div id="cable-list" class="space-y-2"></div>
                         </div>
                         <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
-                            <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Separadores</h3>
-                            <div id="derivadores-list" class="space-y-2"></div>
+                            <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Derivadores</h3>
+                            <div id="derivador-list" class="space-y-2"></div>
                         </div>
                         <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
                             <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Distribuidores</h3>
-                            <div id="distribuidores-list" class="space-y-2"></div>
+                            <div id="distribuidor-list" class="space-y-2"></div>
                         </div>
                         <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
                             <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Amplificadores</h3>
-                            <div id="amplificadores-list" class="space-y-2"></div>
+                            <div id="amplificador-list" class="space-y-2"></div>
                         </div>
                         <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
-                            <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Salidas</h3>
-                            <div id="tomas-list" class="space-y-2"></div>
+                            <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Tomas</h3>
+                            <div id="toma-list" class="space-y-2"></div>
                         </div>
                     </div>
                 </section>

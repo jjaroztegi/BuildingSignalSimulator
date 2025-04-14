@@ -5,14 +5,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.signalapp.dao.AccessConnection;
+import com.signalapp.dao.*;
+import com.signalapp.models.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class ConfigurationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -23,29 +22,28 @@ public class ConfigurationServlet extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
-        try (Connection connection = new AccessConnection().getConnection()) {
-            String query = "SELECT id_configuracion, nombre, nivel_cabecera, num_pisos, costo_total FROM Configuraciones";
-            try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                try (ResultSet rs = stmt.executeQuery()) {
-                    StringBuilder jsonBuilder = new StringBuilder("[");
-                    boolean first = true;
-                    while (rs.next()) {
-                        if (!first) {
-                            jsonBuilder.append(",");
-                        }
-                        first = false;
-                        jsonBuilder.append(String.format(
-                                "{\"id\":%d,\"nombre\":\"%s\",\"nivel_cabecera\":%.2f,\"num_pisos\":%d,\"costo_total\":%.2f}",
-                                rs.getInt("id_configuracion"),
-                                escapeJson(rs.getString("nombre")),
-                                rs.getDouble("nivel_cabecera"),
-                                rs.getInt("num_pisos"),
-                                rs.getDouble("costo_total")));
-                    }
-                    jsonBuilder.append("]");
-                    out.write(jsonBuilder.toString());
+        try {
+            ConfiguracionDAO configuracionDAO = new ConfiguracionDAO();
+            List<Configuracion> configuraciones = configuracionDAO.findAll();
+
+            StringBuilder jsonBuilder = new StringBuilder("[");
+            boolean first = true;
+            for (Configuracion config : configuraciones) {
+                if (!first) {
+                    jsonBuilder.append(",");
                 }
+                first = false;
+                jsonBuilder.append(String.format(
+                        "{\"id_configuraciones\":%d,\"nombre\":\"%s\",\"nivel_cabecera\":%.2f,\"num_pisos\":%d,\"costo_total\":%.2f,\"fecha_creacion\":\"%s\"}",
+                        config.getIdConfiguracion(),
+                        escapeJson(config.getNombre()),
+                        config.getNivelCabecera(),
+                        config.getNumPisos(),
+                        config.getCostoTotal(),
+                        escapeJson(config.getFechaCreacion())));
             }
+            jsonBuilder.append("]");
+            out.write(jsonBuilder.toString());
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\":\"" + e.getMessage() + "\"}");
@@ -68,31 +66,23 @@ public class ConfigurationServlet extends HttpServlet {
             return;
         }
 
-        try (Connection connection = new AccessConnection().getConnection()) {
-            connection.setAutoCommit(false);
+        try {
+            Configuracion configuracion = new Configuracion();
+            configuracion.setNombre(nombre);
+            configuracion.setNivelCabecera(Double.parseDouble(nivelCabecera));
+            configuracion.setNumPisos(Integer.parseInt(numPisos));
+            configuracion.setCostoTotal(0.0);
 
-            String query = "INSERT INTO Configuraciones (nombre, nivel_cabecera, num_pisos, costo_total) VALUES (?, ?, ?, 0)";
-            try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setString(1, nombre);
-                stmt.setDouble(2, Double.parseDouble(nivelCabecera));
-                stmt.setInt(3, Integer.parseInt(numPisos));
-                stmt.executeUpdate();
+            ConfiguracionDAO configuracionDAO = new ConfiguracionDAO();
+            configuracionDAO.insert(configuracion);
 
-                // Get the generated ID
-                try (PreparedStatement idStmt = connection
-                        .prepareStatement("SELECT MAX(id_configuracion) FROM Configuraciones")) {
-                    try (ResultSet rs = idStmt.executeQuery()) {
-                        if (rs.next()) {
-                            int idConfiguracion = rs.getInt(1);
-                            connection.commit();
-                            out.write("{\"success\":\"Configuration created successfully\",\"id\":" + idConfiguracion
-                                    + "}");
-                        } else {
-                            throw new SQLException("Could not retrieve configuration ID");
-                        }
-                    }
-                }
+            // Get the generated ID
+            int idConfiguracion = configuracionDAO.getIdByNombre(nombre);
+            if (idConfiguracion == -1) {
+                throw new SQLException("Could not retrieve configuration ID");
             }
+
+            out.write("{\"success\":\"Configuration created successfully\",\"id\":" + idConfiguracion + "}");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\":\"" + e.getMessage() + "\"}");
@@ -105,7 +95,7 @@ public class ConfigurationServlet extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
-        String idConfiguracion = request.getParameter("id_configuracion");
+        String idConfiguracion = request.getParameter("id_configuraciones");
         String nombre = request.getParameter("nombre");
         String nivelCabecera = request.getParameter("nivel_cabecera");
         String numPisos = request.getParameter("num_pisos");
@@ -116,26 +106,17 @@ public class ConfigurationServlet extends HttpServlet {
             return;
         }
 
-        try (Connection connection = new AccessConnection().getConnection()) {
-            connection.setAutoCommit(false);
+        try {
+            Configuracion configuracion = new Configuracion();
+            configuracion.setIdConfiguracion(Integer.parseInt(idConfiguracion));
+            configuracion.setNombre(nombre);
+            configuracion.setNivelCabecera(Double.parseDouble(nivelCabecera));
+            configuracion.setNumPisos(Integer.parseInt(numPisos));
 
-            String query = "UPDATE Configuraciones SET nombre = ?, nivel_cabecera = ?, num_pisos = ? WHERE id_configuracion = ?";
-            try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setString(1, nombre);
-                stmt.setDouble(2, Double.parseDouble(nivelCabecera));
-                stmt.setInt(3, Integer.parseInt(numPisos));
-                stmt.setInt(4, Integer.parseInt(idConfiguracion));
-                int rows = stmt.executeUpdate();
+            ConfiguracionDAO configuracionDAO = new ConfiguracionDAO();
+            configuracionDAO.update(configuracion, Integer.parseInt(idConfiguracion));
 
-                if (rows == 0) {
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    out.write("{\"error\":\"Configuration not found\"}");
-                    return;
-                }
-
-                connection.commit();
-                out.write("{\"success\":\"Configuration updated successfully\"}");
-            }
+            out.write("{\"success\":\"Configuration updated successfully\"}");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\":\"" + e.getMessage() + "\"}");
@@ -148,30 +129,17 @@ public class ConfigurationServlet extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
-        String idConfiguracion = request.getParameter("id_configuracion");
+        String idConfiguracion = request.getParameter("id_configuraciones");
         if (idConfiguracion == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error\":\"Missing configuration ID\"}");
             return;
         }
 
-        try (Connection connection = new AccessConnection().getConnection()) {
-            connection.setAutoCommit(false);
-
-            String query = "DELETE FROM Configuraciones WHERE id_configuracion = ?";
-            try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setInt(1, Integer.parseInt(idConfiguracion));
-                int rows = stmt.executeUpdate();
-
-                if (rows == 0) {
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    out.write("{\"error\":\"Configuration not found\"}");
-                    return;
-                }
-
-                connection.commit();
-                out.write("{\"success\":\"Configuration deleted successfully\"}");
-            }
+        try {
+            ConfiguracionDAO configuracionDAO = new ConfiguracionDAO();
+            configuracionDAO.delete(Integer.parseInt(idConfiguracion));
+            out.write("{\"success\":\"Configuration deleted successfully\"}");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\":\"" + e.getMessage() + "\"}");

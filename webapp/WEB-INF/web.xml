@@ -24,7 +24,7 @@
 
     <servlet>
         <servlet-name>OptimizationServlet</servlet-name>
-        <servlet-class>com.signalapp.servlets.SignalCalculationServlet</servlet-class>
+        <servlet-class>com.signalapp.servlets.OptimizationServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>OptimizationServlet</servlet-name>

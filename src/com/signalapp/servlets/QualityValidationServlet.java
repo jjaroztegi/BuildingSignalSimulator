@@ -5,7 +5,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.signalapp.dao.AccessConnection;
+import com.signalapp.dao.*;
+import com.signalapp.models.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,6 +14,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class QualityValidationServlet extends HttpServlet {
 
@@ -22,58 +25,88 @@ public class QualityValidationServlet extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
-        String idConfiguracion = request.getParameter("id_configuracion");
-        if (idConfiguracion == null) {
+        String idConfiguracion = request.getParameter("id_configuraciones");
+        String tipoSenal = request.getParameter("tipo_senal");
+
+        if (idConfiguracion == null || tipoSenal == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.write("{\"error\":\"Missing configuration ID\"}");
+            out.write("{\"error\":\"Missing required parameters: id_configuraciones and tipo_senal\"}");
             return;
         }
 
-        try (Connection connection = new AccessConnection().getConnection()) {
+        try {
             // Get configuration details
-            String configQuery = "SELECT nivel_cabecera, num_pisos FROM Configuraciones WHERE id_configuracion = ?";
-            try (PreparedStatement configStmt = connection.prepareStatement(configQuery)) {
-                configStmt.setInt(1, Integer.parseInt(idConfiguracion));
-                try (ResultSet configRs = configStmt.executeQuery()) {
-                    if (!configRs.next()) {
-                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                        out.write("{\"error\":\"Configuration not found\"}");
-                        return;
-                    }
+            ConfiguracionDAO configuracionDAO = new ConfiguracionDAO();
+            Configuracion configuracion = configuracionDAO.findById(Integer.parseInt(idConfiguracion));
 
-                    double nivelCabecera = configRs.getDouble("nivel_cabecera");
-                    int numPisos = configRs.getInt("num_pisos");
+            if (configuracion == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                out.write("{\"error\":\"Configuration not found\"}");
+                return;
+            }
 
-                    // Get quality margins
-                    String marginsQuery = "SELECT nivel_minimo, nivel_maximo FROM MargenesCalidad WHERE tipo_senal = 'TV'";
-                    try (PreparedStatement marginsStmt = connection.prepareStatement(marginsQuery)) {
-                        try (ResultSet marginsRs = marginsStmt.executeQuery()) {
-                            if (!marginsRs.next()) {
-                                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                                out.write("{\"error\":\"Quality margins not found\"}");
-                                return;
-                            }
-
-                            double nivelMinimo = marginsRs.getDouble("nivel_minimo");
-                            double nivelMaximo = marginsRs.getDouble("nivel_maximo");
-
-                            // Build response
-                            StringBuilder jsonBuilder = new StringBuilder("{");
-                            jsonBuilder.append("\"nivel_cabecera\":").append(nivelCabecera).append(",");
-                            jsonBuilder.append("\"num_pisos\":").append(numPisos).append(",");
-                            jsonBuilder.append("\"nivel_minimo\":").append(nivelMinimo).append(",");
-                            jsonBuilder.append("\"nivel_maximo\":").append(nivelMaximo);
-                            jsonBuilder.append("}");
-
-                            out.write(jsonBuilder.toString());
-                        }
-                    }
+            // Get quality margins for the specified signal type
+            MargenCalidadDAO margenCalidadDAO = new MargenCalidadDAO();
+            List<MargenCalidad> margenes = margenCalidadDAO.findAll();
+            MargenCalidad margenCalidad = null;
+            for (MargenCalidad m : margenes) {
+                if (tipoSenal.equals(m.getTipoSenal())) {
+                    margenCalidad = m;
+                    break;
                 }
             }
+
+            if (margenCalidad == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                out.write("{\"error\":\"Quality margins not found for signal type: " + tipoSenal + "\"}");
+                return;
+            }
+
+            // Get signal levels per floor
+            List<FloorSignalLevel> floorLevels = getFloorSignalLevels(Integer.parseInt(idConfiguracion));
+
+            // Build response array
+            StringBuilder jsonBuilder = new StringBuilder("[");
+            boolean first = true;
+
+            for (FloorSignalLevel level : floorLevels) {
+                if (!first) {
+                    jsonBuilder.append(",");
+                }
+                first = false;
+
+                boolean isValid = level.signalLevel >= margenCalidad.getNivelMinimo() && 
+                                level.signalLevel <= margenCalidad.getNivelMaximo();
+
+                jsonBuilder.append("{")
+                    .append("\"piso\":").append(level.floor)
+                    .append(",\"nivel_senal\":").append(level.signalLevel)
+                    .append(",\"is_valid\":").append(isValid)
+                    .append("}");
+            }
+            jsonBuilder.append("]");
+
+            out.write(jsonBuilder.toString());
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.write("{\"error\":\"" + e.getMessage() + "\"}");
+            out.write("{\"error\":\"" + escapeJson(e.getMessage()) + "\"}");
         }
+    }
+
+    private List<FloorSignalLevel> getFloorSignalLevels(int idConfiguracion) throws SQLException {
+        List<FloorSignalLevel> levels = new ArrayList<>();
+        
+        DetalleConfiguracionDAO detalleConfiguracionDAO = new DetalleConfiguracionDAO();
+        List<DetalleConfiguracion> detalles = detalleConfiguracionDAO.findByConfiguracionId(idConfiguracion);
+        
+        for (DetalleConfiguracion detalle : detalles) {
+            FloorSignalLevel level = new FloorSignalLevel();
+            level.floor = detalle.getPiso();
+            level.signalLevel = detalle.getNivelSenal();
+            levels.add(level);
+        }
+        
+        return levels;
     }
 
     @Override
@@ -92,21 +125,35 @@ public class QualityValidationServlet extends HttpServlet {
             return;
         }
 
-        try (Connection connection = new AccessConnection().getConnection()) {
-            connection.setAutoCommit(false);
+        try {
+            MargenCalidad margenCalidad = new MargenCalidad();
+            margenCalidad.setTipoSenal(tipoSenal);
+            margenCalidad.setNivelMinimo(Double.parseDouble(nivelMinimo));
+            margenCalidad.setNivelMaximo(Double.parseDouble(nivelMaximo));
 
-            String query = "INSERT INTO MargenesCalidad (tipo_senal, nivel_minimo, nivel_maximo) VALUES (?, ?, ?)";
-            try (PreparedStatement stmt = connection.prepareStatement(query)) {
-                stmt.setString(1, tipoSenal);
-                stmt.setDouble(2, Double.parseDouble(nivelMinimo));
-                stmt.setDouble(3, Double.parseDouble(nivelMaximo));
-                stmt.executeUpdate();
-                connection.commit();
-                out.write("{\"success\":\"Quality margins added successfully\"}");
-            }
+            MargenCalidadDAO margenCalidadDAO = new MargenCalidadDAO();
+            margenCalidadDAO.insert(margenCalidad);
+
+            out.write("{\"success\":\"Quality margins added successfully\"}");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.write("{\"error\":\"" + e.getMessage() + "\"}");
+            out.write("{\"error\":\"" + escapeJson(e.getMessage()) + "\"}");
         }
+    }
+
+    private String escapeJson(String input) {
+        if (input == null) return "";
+        return input.replace("\\", "\\\\")
+                   .replace("\"", "\\\"")
+                   .replace("\b", "\\b")
+                   .replace("\f", "\\f")
+                   .replace("\n", "\\n")
+                   .replace("\r", "\\r")
+                   .replace("\t", "\\t");
+    }
+
+    private static class FloorSignalLevel {
+        int floor;
+        double signalLevel;
     }
 }

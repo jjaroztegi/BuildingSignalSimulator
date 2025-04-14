@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const optimizeButton = document.getElementById("optimize-button");
     const componentForm = document.getElementById("component-form");
     const qualityForm = document.getElementById("quality-form");
-    const configSelect = document.getElementById("id_configuracion");
+    const configSelect = document.getElementById("id_configuraciones");
 
     // --- Form Submission Logic ---
     if (initialConfigForm) {
@@ -131,8 +131,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: new URLSearchParams({
-                    id_configuracion: idConfiguracion,
-                    id_frecuencia: "1", // Default frequency ID
+                    id_configuraciones: idConfiguracion,
+                    id_frecuencias: "1", // Default frequency ID
                 }).toString(),
             });
             const data = await response.json();
@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function fetchComponents() {
-        const types = ["cables", "derivadores", "distribuidores", "amplificadores", "tomas"];
+        const types = ["cable", "derivador", "distribuidor", "amplificador", "toma"];
         try {
             await Promise.all(types.map((type) => fetchComponentsByType(type)));
         } catch (error) {
@@ -353,7 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const response = await fetch(
-                `validate-quality?id_configuracion=${idConfiguracion}&tipo_senal=${tipoSenal}`
+                `validate-quality?id_configuraciones=${idConfiguracion}&tipo_senal=${tipoSenal}`
             );
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -372,7 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
         configSelect.innerHTML = configurations
             .map((config) => {
                 const option = document.createElement("option");
-                option.value = config.id;
+                option.value = config.id_configuraciones || config.id;
                 option.textContent = config.nombre;
                 option.dataset.config = JSON.stringify(config);
                 return option.outerHTML;
@@ -380,7 +380,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .join("");
 
         if (configurations.length > 0 && !configSelect.value) {
-            configSelect.value = configurations[0].id;
+            configSelect.value = configurations[0].id_configuraciones || configurations[0].id;
         }
     }
 
@@ -429,6 +429,20 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderSimulationDetails(data) {
         if (!simulationDetailsElement) return;
 
+        // Format the date if it exists
+        let formattedDate = "N/A";
+        if (data.fecha_creacion) {
+            try {
+                // Parse the date string using the Date constructor
+                const date = new Date(data.fecha_creacion);
+                if (!isNaN(date.getTime())) {
+                    formattedDate = date.toLocaleString();
+                }
+            } catch (e) {
+                console.error("Error formatting date:", e);
+            }
+        }
+
         const detailsHtml = `
             <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
                 <h3 class="text-lg font-semibold mb-4">Simulation Details</h3>
@@ -447,7 +461,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                     <div>
                         <p class="text-sm text-gray-600 dark:text-gray-400">Created</p>
-                        <p class="font-medium">${new Date(data.fecha_creacion).toLocaleString()}</p>
+                        <p class="font-medium">${formattedDate}</p>
                     </div>
                 </div>
             </div>
@@ -458,10 +472,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function setLoadingState(button, isLoading) {
         if (!button) return;
+        
+        // Save original state if not already saved
+        if (!button.hasAttribute("data-original-text")) {
+            button.setAttribute("data-original-text", button.innerHTML);
+        }
+        
         button.disabled = isLoading;
         button.innerHTML = isLoading
             ? '<span class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></span>'
-            : button.getAttribute("data-original-text") || button.textContent;
+            : button.getAttribute("data-original-text");
     }
 
     function displayError(message) {
@@ -481,5 +501,40 @@ document.addEventListener("DOMContentLoaded", () => {
     function clearMessages() {
         errorMessageElement?.classList.add("hidden");
         successMessageElement?.classList.add("hidden");
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return "N/A";
+        
+        // Log the date string to see its format
+        console.log("Date string received:", dateString);
+        
+        // Try to parse the date string
+        const date = new Date(dateString);
+        
+        // Check if the date is valid
+        if (isNaN(date.getTime())) {
+            // If the date is in a different format, try to parse it manually
+            // The date might be in a format like "2025-03-20 12:17:15"
+            const parts = dateString.split(/[- :]/);
+            if (parts.length >= 6) {
+                const year = parseInt(parts[0]);
+                const month = parseInt(parts[1]) - 1; // Month is 0-indexed
+                const day = parseInt(parts[2]);
+                const hours = parseInt(parts[3]);
+                const minutes = parseInt(parts[4]);
+                const seconds = parseInt(parts[5]);
+                
+                const validDate = new Date(year, month, day, hours, minutes, seconds);
+                if (!isNaN(validDate.getTime())) {
+                    return validDate.toLocaleString();
+                }
+            }
+            
+            // If we still can't parse it, return the original string
+            return dateString;
+        }
+        
+        return date.toLocaleString();
     }
 });
