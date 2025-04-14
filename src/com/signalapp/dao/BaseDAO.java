@@ -50,9 +50,16 @@ public abstract class BaseDAO<T> {
     }
 
     public void insert(T entity) throws SQLException {
-        String columns = String.join(", ", getColumnNames());
-        String placeholders = String.join(", ", getColumnNames()).replaceAll("[^,]+", "?");
-        String sql = "INSERT INTO " + getTableName() + " (" + columns + ") VALUES (" + placeholders + ")";
+        // Get all column names except the ID column
+        String[] columns = getColumnNames();
+        String[] insertColumns = new String[columns.length - 1];
+        for (int i = 1; i < columns.length; i++) {
+            insertColumns[i-1] = columns[i];
+        }
+        
+        String columnsStr = String.join(", ", insertColumns);
+        String placeholders = String.join(", ", insertColumns).replaceAll("[^,]+", "?");
+        String sql = "INSERT INTO " + getTableName() + " (" + columnsStr + ") VALUES (" + placeholders + ")";
         
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             setPreparedStatementParams(ps, entity);

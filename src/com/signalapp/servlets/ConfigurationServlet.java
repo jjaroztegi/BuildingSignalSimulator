@@ -72,6 +72,14 @@ public class ConfigurationServlet extends HttpServlet {
             configuracion.setNivel_cabecera(Double.parseDouble(nivelCabecera));
             configuracion.setNum_pisos(Integer.parseInt(numPisos));
             configuracion.setCosto_total(0.0);
+            
+            // Add current date and user information
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String currentDate = sdf.format(new java.util.Date());
+            configuracion.setFecha_creacion(currentDate);
+            configuracion.setUsuario_creacion("admin");
+            configuracion.setFecha_modificacion(currentDate);
+            configuracion.setUsuario_modificacion("admin");
 
             ConfiguracionDAO configuracionDAO = new ConfiguracionDAO();
             configuracionDAO.insert(configuracion);
