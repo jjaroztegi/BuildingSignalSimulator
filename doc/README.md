@@ -6,19 +6,19 @@ Building Signal Simulator is a web-based application that simulates and optimize
 
 ## Key Features
 
-- **Signal Level Calculation**: Computes signal levels floor-by-floor based on network components
-- **Real-time Simulation**: Interactive adjustment of parameters with instant signal level updates
-- **Cost Optimization**: Identifies most cost-effective component configuration while maintaining signal quality
-- **Quality Validation**: Ensures signal levels meet predefined margins at each floor
-- **Visual Feedback**: Clear visualization of signal levels with color-coded quality indicators
+-   **Signal Level Calculation**: Computes signal levels floor-by-floor based on network components
+-   **Real-time Simulation**: Interactive adjustment of parameters with instant signal level updates
+-   **Cost Optimization**: Identifies most cost-effective component configuration while maintaining signal quality
+-   **Quality Validation**: Ensures signal levels meet predefined margins at each floor
+-   **Visual Feedback**: Clear visualization of signal levels with color-coded quality indicators
 
 ## Technical Stack
 
-- **Backend**: Java 1.8 (JDK 1.8.0_131)
-- **Server**: Apache Tomcat 9.0.89
-- **Frontend**: HTML, Vanilla JavaScript, Tailwind CSS
-- **Database**: MS Access/Derby via JDBC
-- **Build**: Manual compilation via script
+-   **Backend**: Java 1.8 (JDK 1.8.0_131)
+-   **Server**: Apache Tomcat 9.0.89
+-   **Frontend**: HTML, Vanilla JavaScript, Tailwind CSS
+-   **Database**: MS Access/Derby via JDBC
+-   **Build**: Manual compilation via script
 
 ## Project Structure
 
@@ -44,10 +44,10 @@ Building Signal Simulator is a web-based application that simulates and optimize
 
 ## Prerequisites
 
-- Java JDK 1.8.0_131
-- Apache Tomcat 9.0.89
-- MS Access or Derby database
-- Web browser with JavaScript enabled
+-   Java JDK 1.8.0_131
+-   Apache Tomcat 9.0.89
+-   MS Access or Derby database
+-   Web browser with JavaScript enabled
 
 ## Setup and Deployment
 
@@ -56,15 +56,15 @@ Building Signal Simulator is a web-based application that simulates and optimize
 3. Install Apache Tomcat 9.0.89
 4. Run the build script:
 
-   ```bash
-   build.bat
-   ```
+    ```bash
+    build.bat
+    ```
 
-   This script handles:
+    This script handles:
 
-   - Java compilation
-   - Database connection testing
-   - Deployment to Tomcat
+    - Java compilation
+    - Database connection testing
+    - Deployment to Tomcat
 
 5. Access the application at: http://localhost:8080/BuildingSignalSimulator
 
@@ -72,16 +72,16 @@ Building Signal Simulator is a web-based application that simulates and optimize
 
 The application supports both MS Access and Derby databases:
 
-- MS Access database file: `database/signal_distribution.accdb`
-- Derby database: `database/signal_distribution/`
-- SQL scripts used for setup: `database/sentencias_sql/`
+-   MS Access database file: `database/signal_distribution.accdb`
+-   Derby database: `database/signal_distribution/`
+-   SQL scripts used for setup: `database/sentencias_sql/`
 
 ## Documentation
 
 Detailed documentation available in `doc/` directory:
 
-- [Database Schema](doc/Database.md)
-- [Structure Details](doc/Estructura.md)
+-   [Database Schema](doc/Database.md)
+-   [Structure Details](doc/Estructura.md)
 
 ## License
 
