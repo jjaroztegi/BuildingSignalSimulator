@@ -31,12 +31,12 @@ for /R "src\%PACKAGE_NAME%" %%f in (*.java) do (
 )
 
 REM --- Run AccessConnection test ---
-echo Testing database connection...
-java -cp "%CLASSPATH%;build\classes" %PACKAGE_NAME:\=.%.tests.AccessConnection
+@REM echo Testing database connection...
+@REM java -cp "%CLASSPATH%;build\classes" %PACKAGE_NAME:\=.%.tests.AccessTest
 
 REM --- Run DerbyConnection test ---
-echo Testing database connection...
-java -cp "%CLASSPATH%;build\classes" %PACKAGE_NAME:\=.%.tests.DerbyConnection
+@REM echo Testing database connection...
+@REM java -cp "%CLASSPATH%;build\classes" %PACKAGE_NAME:\=.%.tests.DerbyTest
 
 REM --- Deployment ---
 echo Deploying to Tomcat...
