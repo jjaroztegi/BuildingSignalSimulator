@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="es" class="dark">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Building Signal Distribution Simulator</title>
+        <title>Simulador de Distribución de Señales en Edificios</title>
         <!-- Include Tailwind CSS via Play CDN -->
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
@@ -19,10 +19,10 @@
         <div class="container mx-auto max-w-7xl bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
             <header class="mb-8 border-b dark:border-gray-700 pb-4">
                 <h1 class="text-3xl md:text-4xl font-bold mb-2 text-center text-blue-700 dark:text-blue-400">
-                    Building Signal Distribution Simulator
+                    Simulador de Distribución de Señales en Edificios
                 </h1>
                 <p class="text-center text-gray-600 dark:text-gray-400">
-                    Calculate, simulate, and optimize signal distribution in multi-floor buildings.
+                    Calcula, simula y optimiza la distribución de señales en edificios de múltiples pisos.
                 </p>
             </header>
 
@@ -30,13 +30,13 @@
             <div class="mb-6 border-b dark:border-gray-700">
                 <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
                     <button id="config-tab" class="tab-button active-tab mr-4 py-2 px-1 border-b-2 font-medium text-sm">
-                        Configuration
+                        Configuración
                     </button>
                     <button id="components-tab" class="tab-button mr-4 py-2 px-1 border-b-2 font-medium text-sm">
-                        Components
+                        Componentes
                     </button>
                     <button id="optimization-tab" class="tab-button mr-4 py-2 px-1 border-b-2 font-medium text-sm">
-                        Optimization / Simulation
+                        Optimización / Simulación
                     </button>
                 </nav>
             </div>
@@ -48,7 +48,7 @@
                         <!-- Left Column: New Configuration Form -->
                         <div class="space-y-6">
                             <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
-                                Create New Configuration
+                                Crear Nueva Configuración
                             </h2>
                             <form
                                 id="initial-config-form"
@@ -56,13 +56,13 @@
                             >
                                 <div>
                                     <label for="config-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >Configuration Name</label
+                                        >Nombre de la Configuración</label
                                     >
                                     <input
                                         type="text"
                                         id="config-name"
                                         name="nombre"
-                                        placeholder="e.g., Building A"
+                                        placeholder="ej., Edificio A"
                                         class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
                                         required
                                     />
@@ -71,28 +71,28 @@
                                     <label
                                         for="nivel-cabecera"
                                         class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >Headend Level (dBm)</label
+                                        >Nivel de Cabecera (dBm)</label
                                     >
                                     <input
                                         type="number"
                                         step="0.1"
                                         id="nivel-cabecera"
                                         name="nivel_cabecera"
-                                        placeholder="e.g., 95.0"
+                                        placeholder="ej., 95.0"
                                         class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
                                         required
                                     />
                                 </div>
                                 <div>
                                     <label for="num-pisos" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >Number of Floors</label
+                                        >Número de Pisos</label
                                     >
                                     <input
                                         type="number"
                                         id="num-pisos"
                                         name="num_pisos"
                                         min="1"
-                                        placeholder="e.g., 5"
+                                        placeholder="ej., 5"
                                         class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
                                         required
                                     />
@@ -101,7 +101,7 @@
                                     type="submit"
                                     class="w-full px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition duration-150 ease-in-out"
                                 >
-                                    Create
+                                    Crear
                                 </button>
                             </form>
                         </div>
@@ -109,18 +109,18 @@
                         <!-- Right Column: Existing Configurations -->
                         <div class="space-y-6">
                             <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
-                                Existing Configurations
+                                Configuraciones Existentes
                             </h2>
                             <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-md border dark:border-gray-600">
                                 <div class="mb-4">
                                     <label for="id_configuraciones" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Select Configuration
+                                        Seleccionar Configuración
                                     </label>
                                     <select
                                         id="id_configuraciones"
                                         class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
                                     >
-                                        <option value="">Select Configuration</option>
+                                        <option value="">Seleccionar Configuración</option>
                                     </select>
                                 </div>
                                 
@@ -142,7 +142,7 @@
                         <!-- Left Column: Add New Component Form -->
                         <div class="space-y-6">
                             <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
-                                Add New Component
+                                Añadir Nuevo Componente
                             </h2>
                             <form
                                 id="component-form"
@@ -152,7 +152,7 @@
                                     <label
                                         for="component-type"
                                         class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >Component Type</label
+                                        >Tipo de Componente</label
                                     >
                                     <select
                                         id="component-type"
@@ -172,13 +172,13 @@
                                     <label
                                         for="component-model"
                                         class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >Model</label
+                                        >Modelo</label
                                     >
                                     <input
                                         type="text"
                                         id="component-model"
                                         name="modelo"
-                                        placeholder="e.g., RG-6"
+                                        placeholder="ej., RG-6"
                                         class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
                                         required
                                     />
@@ -187,14 +187,14 @@
                                     <label
                                         for="component-cost"
                                         class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >Cost</label
+                                        >Costo</label
                                     >
                                     <input
                                         type="number"
                                         step="0.01"
                                         id="component-cost"
                                         name="costo"
-                                        placeholder="e.g., 10.50"
+                                        placeholder="ej., 10.50"
                                         class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
                                         required
                                     />
@@ -203,7 +203,7 @@
                                     type="submit"
                                     class="w-full px-4 py-2 bg-green-600 dark:bg-green-500 text-white rounded-md hover:bg-green-700 dark:hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-green-400 transition duration-150 ease-in-out"
                                 >
-                                    Add Component
+                                    Añadir Componente
                                 </button>
                             </form>
                         </div>
@@ -211,12 +211,12 @@
                         <!-- Right Column: Component Lists -->
                         <div class="space-y-6">
                             <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
-                                Available Components
+                                Componentes Disponibles
                             </h2>
                             <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
                                 <div class="mb-4">
                                     <label for="component-list-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Component Type
+                                        Tipo de Componente
                                     </label>
                                     <select
                                         id="component-list-type"
@@ -249,7 +249,7 @@
                         <!-- Left Column: Quality Margins Form -->
                         <div class="space-y-6">
                             <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
-                                Quality Margins
+                                Márgenes de Calidad
                             </h2>
                             <div
                                 id="quality-form"
@@ -257,7 +257,7 @@
                             >
                                 <div>
                                     <label for="signal-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >Signal Type</label
+                                        >Tipo de Señal</label
                                     >
                                     <select
                                         id="signal-type"
@@ -265,12 +265,12 @@
                                         class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
                                         required
                                     >
-                                        <option value="">Select signal type</option>
+                                        <option value="">Seleccionar tipo de señal</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label for="min-level" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >Minimum Level (dB)</label
+                                        >Nivel Mínimo (dB)</label
                                     >
                                     <input
                                         type="number"
@@ -284,7 +284,7 @@
                                 </div>
                                 <div>
                                     <label for="max-level" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >Maximum Level (dB)</label
+                                        >Nivel Máximo (dB)</label
                                     >
                                     <input
                                         type="number"
@@ -303,20 +303,20 @@
                         <div class="space-y-6">
                             <div class="flex justify-between items-center">
                                 <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
-                                    Simulation Results
+                                    Resultados de la Simulación
                                 </h2>
                                 <button
                                     id="optimize-button"
                                     class="px-4 py-2 bg-yellow-600 dark:bg-yellow-500 text-white rounded-md hover:bg-yellow-700 dark:hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:focus:ring-yellow-400 transition duration-150 ease-in-out"
                                 >
-                                    Optimize Configuration
+                                    Optimizar Configuración
                                 </button>
                             </div>
 
                             <div id="simulation-details" class="space-y-4">
                                 <!-- Simulation details (floor by floor table) will be dynamically loaded here -->
                                 <p class="text-center text-gray-500 dark:text-gray-400 italic p-4">
-                                    Loading simulation data...
+                                    Cargando datos de simulación...
                                 </p>
                             </div>
                         </div>
@@ -340,7 +340,7 @@
             <footer
                 class="mt-8 pt-4 border-t dark:border-gray-700 text-center text-sm text-gray-500 dark:text-gray-400"
             >
-                Building Signal Simulator © 2025
+                Simulador de Señales en Edificios © 2025
             </footer>
         </div>
     </body>

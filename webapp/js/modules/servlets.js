@@ -14,7 +14,7 @@ export async function handleFormSubmit(event, initialConfigForm, errorMessageEle
 
     // Basic client-side validation
     if (!configName || !nivelCabecera || !numPisos || isNaN(nivelCabecera) || isNaN(numPisos) || parseInt(numPisos) <= 0) {
-        displayError("Please fill in all fields with valid values (Floors > 0).", errorMessageElement, successMessageElement);
+        displayError("Por favor complete todos los campos con valores válidos (Pisos > 0).", errorMessageElement, successMessageElement);
         return;
     }
 
@@ -51,12 +51,12 @@ export async function handleFormSubmit(event, initialConfigForm, errorMessageEle
                 switchTab(optimizationTab.id);
             }
         } else {
-            const errorMsg = data?.error || `Request failed with status ${response.status}`;
-            displayError(`Configuration Error: ${errorMsg}`, errorMessageElement, successMessageElement);
+            const errorMsg = data?.error || `Error en la solicitud con estado ${response.status}`;
+            displayError(`Error de Configuración: ${errorMsg}`, errorMessageElement, successMessageElement);
         }
     } catch (error) {
         console.error("Error submitting configuration:", error);
-        displayError(`A network or unexpected error occurred: ${error.message}`, errorMessageElement, successMessageElement);
+        displayError(`Ocurrió un error de red o inesperado: ${error.message}`, errorMessageElement, successMessageElement);
     } finally {
         setLoadingState(submitButton, false);
     }
@@ -67,7 +67,7 @@ export async function handleOptimization(configSelect, optimizeButton, simulatio
     const signalType = document.getElementById("signal-type")?.value || "TV Digital";
 
     if (!idConfiguracion) {
-        displayError("Please select a configuration.", errorMessageElement, successMessageElement);
+        displayError("Por favor seleccione una configuración.", errorMessageElement, successMessageElement);
         return;
     }
 
@@ -86,7 +86,7 @@ export async function handleOptimization(configSelect, optimizeButton, simulatio
         const optimizeData = await optimizeResponse.json();
 
         if (!optimizeResponse.ok) {
-            throw new Error(optimizeData?.error || "Optimization failed");
+            throw new Error(optimizeData?.error || "Falló la optimización");
         }
 
         // Then validate the signal quality
@@ -96,17 +96,17 @@ export async function handleOptimization(configSelect, optimizeButton, simulatio
         const validationData = await validateResponse.json();
 
         if (!validateResponse.ok) {
-            throw new Error(validationData?.error || "Validation failed");
+            throw new Error(validationData?.error || "Falló la validación");
         }
 
         // Update the UI with the results
         updateSignalLevelDisplay(validationData, simulationDetailsElement);
         updateComponentDetails(idConfiguracion);
         updateSignalQualitySummary(validationData);
-        displaySuccess("Configuration optimized and validated successfully", successMessageElement, errorMessageElement);
+        displaySuccess("Configuración optimizada y validada exitosamente", successMessageElement, errorMessageElement);
     } catch (error) {
         console.error("Error during optimization:", error);
-        displayError(`Failed to optimize configuration: ${error.message}`, errorMessageElement, successMessageElement);
+        displayError(`Error al optimizar la configuración: ${error.message}`, errorMessageElement, successMessageElement);
     } finally {
         setLoadingState(optimizeButton, false);
     }
@@ -122,7 +122,7 @@ export async function handleComponentSubmit(event, componentForm, errorMessageEl
     const costo = formData.get("costo");
 
     if (!type || !modelo || !costo || isNaN(costo)) {
-        displayError("Please fill in all fields with valid values.", errorMessageElement, successMessageElement);
+        displayError("Por favor complete todos los campos con valores válidos.", errorMessageElement, successMessageElement);
         return;
     }
 
@@ -143,8 +143,8 @@ export async function handleComponentSubmit(event, componentForm, errorMessageEl
             // Refresh only the relevant component list
             await fetchComponentsByType(type);
         } else {
-            const errorMsg = data?.error || `Request failed with status ${response.status}`;
-            displayError(`Component Error: ${errorMsg}`, errorMessageElement, successMessageElement);
+            const errorMsg = data?.error || `Error en la solicitud con estado ${response.status}`;
+            displayError(`Error de Componente: ${errorMsg}`, errorMessageElement, successMessageElement);
         }
     } catch (error) {
         console.error("Error adding component:", error);
@@ -159,7 +159,7 @@ export async function fetchComponentsByType(type, idConfiguracion = null) {
     if (!listElement) return;
 
     try {
-        listElement.innerHTML = '<div class="text-gray-500 dark:text-gray-400">Loading...</div>';
+        listElement.innerHTML = '<div class="text-gray-500 dark:text-gray-400">Cargando...</div>';
 
         const url = new URL('components', window.location.href);
         url.searchParams.append('type', type);
@@ -179,8 +179,8 @@ export async function fetchComponentsByType(type, idConfiguracion = null) {
 
         updateComponentList(type, data);
     } catch (error) {
-        console.error(`Error fetching ${type}:`, error);
-        listElement.innerHTML = `<div class="text-red-500 dark:text-red-400">Error loading ${type}: ${error.message}</div>`;
+        console.error(`Error al obtener ${type}:`, error);
+        listElement.innerHTML = `<div class="text-red-500 dark:text-red-400">Error al cargar ${type}: ${error.message}</div>`;
     }
 }
 
@@ -190,7 +190,7 @@ export async function fetchComponents() {
         await Promise.all(types.map((type) => fetchComponentsByType(type)));
     } catch (error) {
         console.error("Error in fetchComponents:", error);
-        displayError("Failed to load some components. Please try refreshing the page.");
+        displayError("Error al cargar algunos componentes. Por favor, intente actualizar la página.");
     }
 }
 
@@ -212,7 +212,7 @@ export async function fetchInitialData(configSelect) {
         }
     } catch (error) {
         console.error("Error fetching initial data:", error);
-        displayError(`Failed to load configurations: ${error.message}`);
+        displayError(`Error al cargar configuraciones: ${error.message}`);
         throw error; // Re-throw the error to be caught by the caller
     }
 }
@@ -222,7 +222,7 @@ export async function fetchQualityMargins(configSelect, qualityForm) {
     const tipoSenal = qualityForm?.querySelector('select[name="tipo_senal"]')?.value;
 
     if (!idConfiguracion || !tipoSenal) {
-        console.warn("Missing required parameters for quality margins");
+        console.warn("Faltan parámetros requeridos para los márgenes de calidad");
         return;
     }
 
@@ -237,7 +237,7 @@ export async function fetchQualityMargins(configSelect, qualityForm) {
         updateQualityDisplay(data);
     } catch (error) {
         console.error("Error fetching quality margins:", error);
-        displayError(`Failed to load quality margins: ${error.message}`);
+        displayError(`Error al cargar márgenes de calidad: ${error.message}`);
     }
 }
 

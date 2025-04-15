@@ -22,7 +22,7 @@ export function updateSignalLevelDisplay(data, simulationDetailsElement) {
         // Floor number
         const floorNum = document.createElement("div");
         floorNum.className = "w-16 font-medium";
-        floorNum.textContent = `Floor ${floor.piso}`;
+        floorNum.textContent = `Piso ${floor.piso}`;
 
         // Signal level bar
         const barContainer = document.createElement("div");
@@ -47,7 +47,7 @@ export function updateSignalLevelDisplay(data, simulationDetailsElement) {
                 ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
                 : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
         }`;
-        status.textContent = floor.is_valid ? "Valid" : "Invalid";
+        status.textContent = floor.is_valid ? "Válido" : "Inválido";
 
         floorElement.appendChild(floorNum);
         floorElement.appendChild(barContainer);
@@ -64,11 +64,11 @@ export function updateSignalLevelDisplay(data, simulationDetailsElement) {
     legend.innerHTML = `
         <div class="flex items-center">
             <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-            <span>Valid Signal</span>
+            <span>Señal Válida</span>
         </div>
         <div class="flex items-center">
             <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-            <span>Invalid Signal</span>
+            <span>Señal Inválida</span>
         </div>
     `;
     container.appendChild(legend);
@@ -95,22 +95,22 @@ export function renderSimulationDetails(data, simulationDetailsElement) {
 
     const detailsHtml = `
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-            <h3 class="text-lg font-semibold mb-4">Simulation Details</h3>
+            <h3 class="text-lg font-semibold mb-4">Detalles de la Simulación</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Configuration</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Configuración</p>
                     <p class="font-medium">${data.nombre}</p>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Headend Level</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Nivel de Cabecera</p>
                     <p class="font-medium">${data.nivel_cabecera} dB</p>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Number of Floors</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Número de Pisos</p>
                     <p class="font-medium">${data.num_pisos}</p>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Created</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Creado</p>
                     <p class="font-medium">${formattedDate}</p>
                 </div>
             </div>
@@ -135,13 +135,13 @@ export function updateComponentSection(type, components) {
         let details = "";
         switch (type) {
             case "cable":
-                details = `Length: ${comp.longitud_cable}m`;
+                details = `Longitud: ${comp.longitud_cable}m`;
                 break;
             case "derivador":
                 details = `IL: ${comp.atenuacion_insercion}dB, BL: ${comp.atenuacion_derivacion}dB`;
                 break;
             case "distribuidor":
-                details = `Loss: ${comp.atenuacion_distribucion}dB`;
+                details = `Pérdida: ${comp.atenuacion_distribucion}dB`;
                 break;
             case "amplificador":
                 details = `Gain: ${comp.ganancia}dB, NF: ${comp.figura_ruido}dB`;
@@ -179,13 +179,13 @@ export function updateSignalQualitySummary(data) {
                 }">
                     ${validFloors}/${totalFloors}
                 </div>
-                <div class="text-sm text-gray-600 dark:text-gray-400">Valid Floors</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">Pisos Válidos</div>
             </div>
             <div class="text-center">
                 <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">
                     ${averageSignal.toFixed(1)}
                 </div>
-                <div class="text-sm text-gray-600 dark:text-gray-400">Avg. Signal (dB)</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">Señal Promedio (dB)</div>
             </div>
             <div class="text-center">
                 <div class="text-2xl font-bold ${
@@ -193,9 +193,9 @@ export function updateSignalQualitySummary(data) {
                         ? "text-green-600 dark:text-green-400"
                         : "text-red-600 dark:text-red-400"
                 }">
-                    ${validFloors === totalFloors ? "PASS" : "REVIEW"}
+                    ${validFloors === totalFloors ? "APROBADO" : "REVISAR"}
                 </div>
-                <div class="text-sm text-gray-600 dark:text-gray-400">Status</div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">Estado</div>
             </div>
         </div>
     `;
@@ -212,12 +212,12 @@ export function updateComponentList(type, componentModelos) {
     listElement.innerHTML = "";
 
     if (!Array.isArray(componentModelos)) {
-        listElement.innerHTML = '<div class="text-red-500 dark:text-red-400">Invalid data format</div>';
+        listElement.innerHTML = '<div class="text-red-500 dark:text-red-400">Formato de datos inválido</div>';
         return;
     }
 
     if (componentModelos.length === 0) {
-        listElement.innerHTML = '<div class="text-gray-500 dark:text-gray-400">No components available</div>';
+        listElement.innerHTML = '<div class="text-gray-500 dark:text-gray-400">No hay componentes disponibles</div>';
         return;
     }
 
@@ -243,9 +243,9 @@ export function updateQualityDisplay(data) {
     thead.className = 'bg-gray-50 dark:bg-gray-800';
     thead.innerHTML = `
         <tr>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Floor</th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Signal Level (dB)</th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Piso</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nivel de Señal (dB)</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Estado</th>
         </tr>
     `;
     qualityTable.appendChild(thead);
@@ -263,10 +263,10 @@ export function updateQualityDisplay(data) {
             : 'text-red-800 dark:text-red-400';
         
         tr.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Floor ${floor.piso}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Piso ${floor.piso}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${floor.nivel_senal.toFixed(2)}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm ${statusClass} font-medium">
-                ${floor.is_valid ? 'Valid' : 'Invalid'}
+                ${floor.is_valid ? 'Válido' : 'Inválido'}
             </td>
         `;
         tbody.appendChild(tr);
