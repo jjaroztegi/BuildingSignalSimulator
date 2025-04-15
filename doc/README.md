@@ -19,7 +19,7 @@ Building Signal Simulator is a web-based application that simulates and optimize
 -   **Server**: Apache Tomcat 9.0.89
 -   **Frontend**: HTML, Vanilla JavaScript, Tailwind CSS
 -   **Database**: MS Access/Derby via JDBC
--   **Build**: Manual compilation via script
+-   **Build**: Manual compilation via script or Docker containerization
 
 ## Project Structure
 
@@ -40,17 +40,27 @@ Building Signal Simulator is a web-based application that simulates and optimize
 │   └── signal_distribution.accdb    # MS Access database
 ├── doc/                   # Documentation
 ├── lib/                   # Required JAR dependencies
+├── Dockerfile            # Docker configuration
+├── docker-compose.yml    # Docker Compose configuration
 └── build.bat             # Build and deployment script
 ```
 
 ## Prerequisites
 
+### Manual Setup
 -   Java JDK 1.8.0_131
 -   Apache Tomcat 9.0.89
 -   MS Access database
 -   Web browser with JavaScript enabled
 
+### Docker Setup
+-   Docker
+-   Docker Compose
+-   Web browser with JavaScript enabled
+
 ## Setup and Deployment
+
+### Option 1: Manual Setup
 
 1. Clone the repository
 2. Ensure Java 1.8.0_131 is installed and JAVA_HOME is set
@@ -58,7 +68,7 @@ Building Signal Simulator is a web-based application that simulates and optimize
 4. Run the build script:
 
     ```bash
-    build.bat
+    build_uni.bat
     ```
 
     This script handles:
@@ -67,7 +77,21 @@ Building Signal Simulator is a web-based application that simulates and optimize
     - Database connection testing
     - Deployment to Tomcat
 
-5. Access the application at: http://localhost:8080/BuildingSignalSimulator
+5. Access the application at: http://localhost:8082/BuildingSignalSimulator
+
+### Option 2: Docker Setup
+
+1. Clone the repository
+2. Navigate to the project directory
+3. Build and start the container:
+
+    ```bash
+    docker-compose up -d
+    ```
+
+4. Access the application at: http://localhost:1313/BuildingSignalSimulator
+
+The Docker setup provides an isolated environment with all dependencies pre-configured.
 
 ## Database Configuration
 
