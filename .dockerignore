@@ -1,0 +1,11 @@
+.git
+.gitignore
+.venv
+*.log
+*.md
+*.bat
+*.sh
+derby.log
+!README.md
+doc/
+tools/ 
