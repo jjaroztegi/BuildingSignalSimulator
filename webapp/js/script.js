@@ -1,6 +1,6 @@
 // Main script file
 import { initTheme } from './modules/theme.js';
-import { initTabs } from './modules/tabs.js';
+import { initTabs, switchTab } from './modules/tabs.js';
 import { handleFormSubmit, handleOptimization, handleComponentSubmit, fetchComponents, fetchInitialData, fetchQualityMargins, loadSignalTypes } from './modules/servlets.js';
 import { renderSimulationDetails } from './modules/ui.js';
 
@@ -10,6 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initialize tabs
     initTabs();
+
+    // Flag to track initial load
+    let isInitialLoad = true;
 
     // --- DOM Element References ---
     const initialConfigForm = document.getElementById("initial-config-form");
@@ -83,6 +86,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (tipoSenal) {
                     fetchQualityMargins(configSelect, qualityForm);
                 }
+                // Only switch tabs if it's not the initial load
+                if (!isInitialLoad) {
+                    const optimizationTab = document.getElementById("optimization-tab");
+                    if (optimizationTab) {
+                        switchTab(optimizationTab.id);
+                    }
+                }
             }
         });
     }
@@ -92,6 +102,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // After loading initial data, trigger change event to render simulation details
         if (configSelect && configSelect.value) {
             configSelect.dispatchEvent(new Event('change'));
+            // Set the flag to false after initial load
+            isInitialLoad = false;
         }
     });
     fetchComponents();

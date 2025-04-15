@@ -1,6 +1,7 @@
 // Servlet interaction module
 import { setLoadingState, displayError, displaySuccess, clearMessages } from './utils.js';
 import { updateComponentList, updateSignalLevelDisplay, renderSimulationDetails, updateComponentSection, updateSignalQualitySummary, updateQualityDisplay } from './ui.js';
+import { switchTab } from './tabs.js';
 
 export async function handleFormSubmit(event, initialConfigForm, errorMessageElement, successMessageElement, configSelect) {
     event.preventDefault();
@@ -47,7 +48,7 @@ export async function handleFormSubmit(event, initialConfigForm, errorMessageEle
             // Switch to the optimization tab
             const optimizationTab = document.getElementById("optimization-tab");
             if (optimizationTab) {
-                optimizationTab.click();
+                switchTab(optimizationTab.id);
             }
         } else {
             const errorMsg = data?.error || `Request failed with status ${response.status}`;
