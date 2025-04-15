@@ -7,13 +7,26 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object for managing configuration details in the database.
+ * Handles CRUD operations for the DetalleConfiguracion table, which stores
+ * specific settings and parameters for each network configuration.
+ */
 public class DetalleConfiguracionDAO extends BaseDAO<DetalleConfiguracion> {
     
+    /**
+     * Returns the name of the database table for configuration details.
+     * @return The table name "DetalleConfiguracion"
+     */
     @Override
     protected String getTableName() {
         return "DetalleConfiguracion";
     }
 
+    /**
+     * Returns the column names for the DetalleConfiguracion table.
+     * @return Array containing all column names for the DetalleConfiguracion table
+     */
     @Override
     protected String[] getColumnNames() {
         return new String[] {
@@ -23,6 +36,12 @@ public class DetalleConfiguracionDAO extends BaseDAO<DetalleConfiguracion> {
         };
     }
 
+    /**
+     * Maps a database result set row to a DetalleConfiguracion entity.
+     * @param rs The ResultSet containing the database row
+     * @return A new DetalleConfiguracion object with data from the row
+     * @throws SQLException if there is an error accessing the ResultSet
+     */
     @Override
     protected DetalleConfiguracion mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new DetalleConfiguracion(
@@ -39,6 +58,12 @@ public class DetalleConfiguracionDAO extends BaseDAO<DetalleConfiguracion> {
         );
     }
 
+    /**
+     * Sets the parameters for database operations using a DetalleConfiguracion entity.
+     * @param ps The PreparedStatement to set parameters for
+     * @param entity The DetalleConfiguracion entity containing the data
+     * @throws SQLException if there is an error setting the parameters
+     */
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, DetalleConfiguracion entity) throws SQLException {
         // id_detalleconfiguracion is auto-generated
@@ -53,6 +78,12 @@ public class DetalleConfiguracionDAO extends BaseDAO<DetalleConfiguracion> {
         ps.setString(9, entity.getFecha_calculo());
     }
     
+    /**
+     * Retrieves all configuration details associated with a specific configuration ID.
+     * @param idConfiguracion The ID of the configuration to find details for
+     * @return A list of DetalleConfiguracion objects containing the configuration details
+     * @throws SQLException if a database error occurs during the query
+     */
     public List<DetalleConfiguracion> findByConfiguracionId(int idConfiguracion) throws SQLException {
         String sql = "SELECT * FROM " + getTableName() + " WHERE id_configuraciones = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

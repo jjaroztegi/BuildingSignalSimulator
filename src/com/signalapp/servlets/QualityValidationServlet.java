@@ -15,8 +15,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Servlet that handles signal quality validation operations.
+ * Provides endpoints for:
+ * - Retrieving signal quality margins
+ * - Validating signal levels for each floor in a configuration
+ * - Adding new quality margin definitions
+ */
 public class QualityValidationServlet extends HttpServlet {
 
+    /**
+     * Handles GET requests for quality validation.
+     * Endpoints:
+     * - /quality?get_signal_types=true: Returns all signal types and their quality margins
+     * - /quality?id_configuraciones=X&tipo_senal=Y: Validates signal levels for configuration X
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -120,6 +133,9 @@ public class QualityValidationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Retrieves signal levels for each floor in a configuration
+     */
     private List<FloorSignalLevel> getFloorSignalLevels(int idConfiguracion) throws SQLException {
         List<FloorSignalLevel> levels = new ArrayList<>();
 
@@ -136,6 +152,10 @@ public class QualityValidationServlet extends HttpServlet {
         return levels;
     }
 
+    /**
+     * Handles POST requests to add new quality margins
+     * Parameters: tipo_senal, nivel_minimo, nivel_maximo
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -168,6 +188,9 @@ public class QualityValidationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Escapes special characters in a string for JSON formatting
+     */
     private String escapeJson(String input) {
         if (input == null)
             return "";
@@ -180,6 +203,9 @@ public class QualityValidationServlet extends HttpServlet {
                 .replace("\t", "\\t");
     }
 
+    /**
+     * Represents signal level data for a floor
+     */
     private static class FloorSignalLevel {
         int floor;
         double signalLevel;

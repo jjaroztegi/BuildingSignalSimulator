@@ -16,6 +16,10 @@ import java.util.List;
 public class ConfigurationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Handles GET requests for configuration information
+     * Retrieves all configurations from the database and returns them as JSON
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -50,6 +54,10 @@ public class ConfigurationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles POST requests to create new configurations
+     * Creates a new configuration with the specified name, headend level, and number of floors
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -97,6 +105,10 @@ public class ConfigurationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles PUT requests to update existing configurations
+     * Updates a configuration with the specified ID, name, headend level, and number of floors
+     */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -131,6 +143,10 @@ public class ConfigurationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles DELETE requests to remove configurations
+     * Deletes a configuration with the specified ID
+     */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -154,6 +170,11 @@ public class ConfigurationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Escapes special characters in a string for JSON formatting
+     * @param input The string to escape
+     * @return The escaped string safe for JSON output
+     */
     private String escapeJson(String input) {
         if (input == null)
             return "";

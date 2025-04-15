@@ -16,6 +16,10 @@ import java.util.List;
 
 public class ComponentServlet extends HttpServlet {
 
+    /**
+     * Handles GET requests for component information
+     * Retrieves a list of component models based on the specified component type
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -73,7 +77,7 @@ public class ComponentServlet extends HttpServlet {
                 case "toma":
                     TomaDAO tomaDAO = new TomaDAO();
                     for (Toma toma : tomaDAO.findAll()) {
-                        Componente componente = componenteDAO.findById(toma.getIdComponente());
+                        Componente componente = componenteDAO.findById(toma.getId_componentes());
                         if (componente != null) {
                             components.add(componente.getModelo());
                         }
@@ -103,6 +107,10 @@ public class ComponentServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles POST requests to add new components
+     * Creates a new component record with the specified type, model, and cost
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -179,7 +187,7 @@ public class ComponentServlet extends HttpServlet {
                     break;
                 case "toma":
                     Toma toma = new Toma();
-                    toma.setIdComponente(idComponente);
+                    toma.setId_componentes(idComponente);
                     toma.setAtenuacion(1);
                     new TomaDAO().insert(toma);
                     break;
@@ -196,6 +204,12 @@ public class ComponentServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Retrieves the component type ID based on the type name
+     * @param tipoNombre The name of the component type
+     * @return The ID of the component type
+     * @throws SQLException If a database error occurs or the type is invalid
+     */
     private int getTipoComponenteId(String tipoNombre) throws SQLException {
         TiposComponenteDAO tiposComponenteDAO = new TiposComponenteDAO();
         int idTipo = tiposComponenteDAO.getIdByNombre(tipoNombre);
@@ -205,6 +219,12 @@ public class ComponentServlet extends HttpServlet {
         return idTipo;
     }
 
+    /**
+     * Retrieves the component ID based on the model name
+     * @param modelo The model name of the component
+     * @return The ID of the component
+     * @throws SQLException If a database error occurs or the component is not found
+     */
     private int getComponenteIdByModelo(String modelo) throws SQLException {
         ComponenteDAO componenteDAO = new ComponenteDAO();
         int idComponente = componenteDAO.getIdByModelo(modelo);
@@ -214,6 +234,11 @@ public class ComponentServlet extends HttpServlet {
         return idComponente;
     }
 
+    /**
+     * Escapes special characters in a string for JSON formatting
+     * @param input The string to escape
+     * @return The escaped string safe for JSON output
+     */
     private String escapeJson(String input) {
         if (input == null)
             return "";

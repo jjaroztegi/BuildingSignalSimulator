@@ -15,8 +15,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Servlet that handles network configuration optimization.
+ * Provides endpoints for optimizing signal distribution networks to minimize cost
+ * while maintaining signal quality across all floors of a building.
+ */
 public class OptimizationServlet extends HttpServlet {
 
+    /**
+     * Handles POST requests for configuration optimization.
+     * Parameters:
+     * - id_configuraciones: ID of the configuration to optimize
+     * - id_frecuencias: ID of the frequency to use for calculations
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -88,6 +99,12 @@ public class OptimizationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Retrieves components of a specific type from the database
+     * @param type The type of component to retrieve (Cables, Derivadores, Distribuidores, AmplificadoresRuidoBase)
+     * @return A list of Component objects containing component IDs and costs
+     * @throws SQLException If a database error occurs
+     */
     private List<Component> getComponents(String type) throws SQLException {
         List<Component> components = new ArrayList<>();
         ComponenteDAO componenteDAO = new ComponenteDAO();
@@ -134,6 +151,20 @@ public class OptimizationServlet extends HttpServlet {
         return components;
     }
 
+    /**
+     * Optimizes the configuration for a building with the specified parameters
+     * @param id_configuraciones The ID of the configuration to optimize
+     * @param numPisos The number of floors in the building
+     * @param nivelCabecera The initial signal level at the headend
+     * @param nivelMinimo The minimum acceptable signal level
+     * @param nivelMaximo The maximum acceptable signal level
+     * @param id_frecuencias The frequency ID to use for calculations
+     * @param cables Available cable components
+     * @param derivadores Available splitter components
+     * @param distribuidores Available distributor components
+     * @param amplificadores Available amplifier components
+     * @throws SQLException If a database error occurs
+     */
     private void optimizeConfiguration(int id_configuraciones, int numPisos,
             double nivelCabecera, double nivelMinimo, double nivelMaximo, int id_frecuencias,
             List<Component> cables, List<Component> derivadores, List<Component> distribuidores,
@@ -145,7 +176,7 @@ public class OptimizationServlet extends HttpServlet {
         // First, delete existing details for this configuration
         List<DetalleConfiguracion> existingDetails = detalleConfiguracionDAO.findByConfiguracionId(id_configuraciones);
         for (DetalleConfiguracion detail : existingDetails) {
-            detalleConfiguracionDAO.delete(detail.getId_detallesconfiguracion());
+            detalleConfiguracionDAO.delete(detail.getId_detalleconfiguracion());
         }
 
         // Format current date in a format the database can understand
@@ -179,6 +210,12 @@ public class OptimizationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Selects the optimal component from a list based on cost
+     * @param components List of available components
+     * @return The component with the lowest cost
+     * @throws RuntimeException If no components are available
+     */
     private Component selectOptimalComponent(List<Component> components) {
         // Simple selection: choose the component with lowest cost
         return components.stream()
@@ -186,6 +223,16 @@ public class OptimizationServlet extends HttpServlet {
                 .orElseThrow(() -> new RuntimeException("No components available"));
     }
 
+    /**
+     * Calculates the signal level after passing through a set of components
+     * @param currentSignal The current signal level
+     * @param cable The cable component
+     * @param derivador The splitter component
+     * @param distribuidor The distributor component
+     * @param amplificador The amplifier component
+     * @param id_frecuencias The frequency ID to use for calculations
+     * @return The calculated signal level after passing through the components
+     */
     private double calculateSignalLevel(double currentSignal, Component cable, Component derivador,
             Component distribuidor, Component amplificador, int id_frecuencias) {
         try {
@@ -218,6 +265,9 @@ public class OptimizationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Represents a component with its ID and cost
+     */
     private static class Component {
         int id;
         double cost;
@@ -228,6 +278,11 @@ public class OptimizationServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Escapes special characters in a string for JSON formatting
+     * @param input The string to escape
+     * @return The escaped string safe for JSON output
+     */
     private String escapeJson(String input) {
         StringBuilder sb = new StringBuilder();
         for (char c : input.toCharArray()) {

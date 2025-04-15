@@ -5,13 +5,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Data Access Object for the Configuraciones table
+ * Handles database operations for configuration entities
+ */
 public class ConfiguracionDAO extends BaseDAO<Configuracion> {
     
+    /**
+     * Gets the name of the database table
+     * @return The table name "Configuraciones"
+     */
     @Override
     protected String getTableName() {
         return "Configuraciones";
     }
 
+    /**
+     * Gets the column names for the Configuraciones table
+     * @return Array of column names
+     */
     @Override
     protected String[] getColumnNames() {
         return new String[] {
@@ -20,6 +32,12 @@ public class ConfiguracionDAO extends BaseDAO<Configuracion> {
         };
     }
 
+    /**
+     * Maps a ResultSet row to a Configuracion entity
+     * @param rs The ResultSet containing the database row
+     * @return A new Configuracion object with data from the ResultSet
+     * @throws SQLException if a database error occurs
+     */
     @Override
     protected Configuracion mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new Configuracion(
@@ -35,6 +53,12 @@ public class ConfiguracionDAO extends BaseDAO<Configuracion> {
         );
     }
 
+    /**
+     * Sets the parameters for a PreparedStatement based on Configuracion properties
+     * @param ps The PreparedStatement to set parameters for
+     * @param entity The Configuracion entity containing the values to set
+     * @throws SQLException if a database error occurs
+     */
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, Configuracion entity) throws SQLException {
         ps.setString(1, entity.getNombre());
@@ -47,6 +71,12 @@ public class ConfiguracionDAO extends BaseDAO<Configuracion> {
         ps.setString(8, entity.getUsuario_modificacion());
     }
 
+    /**
+     * Retrieves the ID of a configuration by its name
+     * @param nombre The name of the configuration
+     * @return The ID of the configuration, or -1 if not found
+     * @throws SQLException if a database error occurs
+     */
     public int getIdByNombre(String nombre) throws SQLException {
         String sql = "SELECT MAX(id_configuraciones) FROM " + getTableName() + " WHERE nombre = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

@@ -5,13 +5,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Data Access Object for the Distribuidores table
+ * Handles database operations for splitter/distributor entities
+ */
 public class DistribuidorDAO extends BaseDAO<Distribuidor> {
     
+    /**
+     * Gets the name of the database table
+     * @return The table name "Distribuidores"
+     */
     @Override
     protected String getTableName() {
         return "Distribuidores";
     }
 
+    /**
+     * Gets the column names for the Distribuidores table
+     * @return Array of column names
+     */
     @Override
     protected String[] getColumnNames() {
         return new String[] {
@@ -19,6 +31,12 @@ public class DistribuidorDAO extends BaseDAO<Distribuidor> {
         };
     }
 
+    /**
+     * Maps a ResultSet row to a Distribuidor entity
+     * @param rs The ResultSet containing the database row
+     * @return A new Distribuidor object with data from the ResultSet
+     * @throws SQLException if a database error occurs
+     */
     @Override
     protected Distribuidor mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new Distribuidor(
@@ -30,6 +48,12 @@ public class DistribuidorDAO extends BaseDAO<Distribuidor> {
         );
     }
 
+    /**
+     * Sets the parameters for a PreparedStatement based on Distribuidor properties
+     * @param ps The PreparedStatement to set parameters for
+     * @param entity The Distribuidor entity containing the values to set
+     * @throws SQLException if a database error occurs
+     */
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, Distribuidor entity) throws SQLException {
         ps.setInt(1, entity.getId_componentes());

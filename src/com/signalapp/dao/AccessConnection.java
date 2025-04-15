@@ -4,6 +4,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Singleton class that manages the connection to the MS Access database
+ * Provides methods to get and close database connections
+ */
 public class AccessConnection {
     static String root = "";
     static {
@@ -11,8 +15,13 @@ public class AccessConnection {
 
         if (os.contains("win")) {
             root = "C:/Temp/Tomcat/webapps/BuildingSignalSimulator/WEB-INF/";
-        } else {
+        // Mac os
+        } else if (os.contains("mac")){
             root = "/opt/homebrew/opt/tomcat/libexec/webapps/BuildingSignalSimulator/WEB-INF/";
+        }
+        // Docker
+        else{
+            root = "/usr/local/tomcat/webapps/BuildingSignalSimulator/WEB-INF/";
         }
     }
 
@@ -21,10 +30,19 @@ public class AccessConnection {
     private static AccessConnection instance;
     private static final Object LOCK = new Object();
 
+    /**
+     * Private constructor to prevent instantiation
+     * Initializes the database connection
+     * @throws SQLException if a database error occurs
+     */
     private AccessConnection() throws SQLException {
         initializeConnection();
     }
 
+    /**
+     * Initializes the database connection using the UCanAccess driver
+     * @throws SQLException if a database error occurs
+     */
     private void initializeConnection() throws SQLException {
         try {
             Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
@@ -34,6 +52,12 @@ public class AccessConnection {
         }
     }
 
+    /**
+     * Gets a connection to the database
+     * Creates a new connection if one doesn't exist or if the existing one is closed
+     * @return A Connection object to the database
+     * @throws SQLException if a database error occurs
+     */
     public static Connection getConnection() throws SQLException {
         synchronized (LOCK) {
             if (instance == null) {
@@ -59,6 +83,10 @@ public class AccessConnection {
         }
     }
 
+    /**
+     * Closes the database connection
+     * @throws SQLException if a database error occurs
+     */
     public static void close() throws SQLException {
         synchronized (LOCK) {
             if (connection != null && !connection.isClosed()) {

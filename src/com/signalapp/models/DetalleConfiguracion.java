@@ -31,8 +31,8 @@ public class DetalleConfiguracion {
     }
 
     // Getters and Setters
-    public int getId_detallesconfiguracion() { return id_detalleconfiguracion; }
-    public void setId_detallesconfiguracion(int id_detalleconfiguracion) { this.id_detalleconfiguracion = id_detalleconfiguracion; }
+    public int getId_detalleconfiguracion() { return id_detalleconfiguracion; }
+    public void setId_detalleconfiguracion(int id_detalleconfiguracion) { this.id_detalleconfiguracion = id_detalleconfiguracion; }
     
     public int getId_configuraciones() { return id_configuraciones; }
     public void setId_configuraciones(int id_configuraciones) { this.id_configuraciones = id_configuraciones; }

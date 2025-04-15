@@ -5,13 +5,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Data Access Object for the Derivadores table
+ * Handles database operations for tap/splitter entities
+ */
 public class DerivadorDAO extends BaseDAO<Derivador> {
     
+    /**
+     * Gets the name of the database table
+     * @return The table name "Derivadores"
+     */
     @Override
     protected String getTableName() {
         return "Derivadores";
     }
 
+    /**
+     * Gets the column names for the Derivadores table
+     * @return Array of column names
+     */
     @Override
     protected String[] getColumnNames() {
         return new String[] {
@@ -20,6 +32,12 @@ public class DerivadorDAO extends BaseDAO<Derivador> {
         };
     }
 
+    /**
+     * Maps a ResultSet row to a Derivador entity
+     * @param rs The ResultSet containing the database row
+     * @return A new Derivador object with data from the ResultSet
+     * @throws SQLException if a database error occurs
+     */
     @Override
     protected Derivador mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new Derivador(
@@ -33,6 +51,12 @@ public class DerivadorDAO extends BaseDAO<Derivador> {
         );
     }
 
+    /**
+     * Sets the parameters for a PreparedStatement based on Derivador properties
+     * @param ps The PreparedStatement to set parameters for
+     * @param entity The Derivador entity containing the values to set
+     * @throws SQLException if a database error occurs
+     */
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, Derivador entity) throws SQLException {
         ps.setInt(1, entity.getId_componentes());

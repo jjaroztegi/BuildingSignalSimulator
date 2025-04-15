@@ -1,25 +1,25 @@
 package com.signalapp.models;
 
 public class Toma {
-    private int idToma;
-    private int idComponente;
-    private int atenuacion;
+    private int id_tomas;
+    private int id_componentes;
+    private double atenuacion;
 
     public Toma() {}
 
-    public Toma(int idToma, int idComponente, int atenuacion) {
-        this.idToma = idToma;
-        this.idComponente = idComponente;
+    public Toma(int id_tomas, int id_componentes, double atenuacion) {
+        this.id_tomas = id_tomas;
+        this.id_componentes = id_componentes;
         this.atenuacion = atenuacion;
     }
 
     // Getters and Setters
-    public int getIdToma() { return idToma; }
-    public void setIdToma(int idToma) { this.idToma = idToma; }
+    public int getId_tomas() { return id_tomas; }
+    public void setId_tomas(int id_tomas) { this.id_tomas = id_tomas; }
     
-    public int getIdComponente() { return idComponente; }
-    public void setIdComponente(int idComponente) { this.idComponente = idComponente; }
+    public int getId_componentes() { return id_componentes; }
+    public void setId_componentes(int id_componentes) { this.id_componentes = id_componentes; }
     
-    public int getAtenuacion() { return atenuacion; }
-    public void setAtenuacion(int atenuacion) { this.atenuacion = atenuacion; }
+    public double getAtenuacion() { return atenuacion; }
+    public void setAtenuacion(double atenuacion) { this.atenuacion = atenuacion; }
 } 
