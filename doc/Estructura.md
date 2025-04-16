@@ -9,7 +9,7 @@ Este proyecto desarrolla una aplicación web para calcular y optimizar la distri
 ### Cálculo de Nivel de Señal
 
 -   **Cálculo por Piso:** Determinación del nivel de señal para cada piso basado en una configuración de red específica.
--   **Componentes Integrados:** Considera cables, derivadores, distribuidores, amplificadores y tomas, utilizando propiedades técnicas como atenuación y ganancia.
+-   **Componentes Integrados:** Considera cables coaxiales, derivadores, distribuidores y tomas, utilizando propiedades técnicas como atenuación y desacoplo.
 -   **Validación de Calidad:** Compara los niveles de señal calculados con los márgenes definidos en la tabla _MargenesCalidad_ (nivel_minimo y nivel_maximo).
 
 ### Optimización de Configuración de Red
@@ -37,21 +37,33 @@ Este proyecto desarrolla una aplicación web para calcular y optimizar la distri
 #### Modelos de Datos
 
 -   **Componente.java:** Clase base para todos los componentes de red.
--   **Cable.java:** Representa cables con propiedades como longitud máxima y atenuación.
--   **Derivador.java:** Modela derivadores con atenuación de inserción y derivación.
--   **Distribuidor.java:** Representa distribuidores con número de salidas y atenuación.
--   **AmplificadorRuidoBase.java:** Modela amplificadores con ganancia y figura de ruido.
+-   **Coaxial.java:** Representa cables coaxiales con propiedades como atenuación a frecuencias específicas (470 MHz y 694 MHz).
+-   **Derivador.java:** Modela derivadores con atenuación de paso y derivación, directividad, desacoplo y pérdidas de retorno.
+-   **Distribuidor.java:** Representa distribuidores con número de salidas, atenuación de distribución, desacoplo y pérdidas de retorno.
 -   **Toma.java:** Representa tomas con atenuación y desacoplo.
+-   **TipoComponente.java:** Define los tipos de componentes disponibles en el sistema.
 -   **Configuracion.java:** Almacena la configuración general del edificio.
--   **DetalleConfiguracion.java:** Detalla la configuración por piso.
 -   **MargenCalidad.java:** Define los márgenes de calidad aceptables.
+
+#### Capa de Acceso a Datos (DAO)
+
+-   **BaseDAO.java:** Clase base con funcionalidad común para todos los DAOs.
+-   **AccessConnection.java:** Gestiona la conexión a la base de datos MS Access.
+-   **DerbyConnection.java:** Gestiona la conexión a la base de datos Derby.
+-   **ComponenteDAO.java:** Acceso a datos para la tabla Componentes.
+-   **TiposComponenteDAO.java:** Acceso a datos para la tabla TiposComponente.
+-   **CoaxialDAO.java:** Acceso a datos para la tabla Coaxiales.
+-   **DerivadorDAO.java:** Acceso a datos para la tabla Derivadores.
+-   **DistribuidorDAO.java:** Acceso a datos para la tabla Distribuidores.
+-   **TomaDAO.java:** Acceso a datos para la tabla Tomas.
+-   **ConfiguracionDAO.java:** Acceso a datos para la tabla Configuraciones.
+-   **MargenCalidadDAO.java:** Acceso a datos para la tabla MargenesCalidad.
 
 #### Servlets
 
 -   **ConfigurationServlet.java:** Gestiona la creación y modificación de configuraciones.
 -   **ComponentServlet.java:** Maneja operaciones CRUD para componentes.
--   **QualityValidationServlet.java:** Valida los niveles de señal contra los márgenes de calidad.
--   **OptimizationServlet.java:** Implementa el algoritmo de optimización de costos.
+-   **SignalTypeServlet.java:** Proporciona información sobre los tipos de señal disponibles.
 
 ### Frontend
 
@@ -62,12 +74,16 @@ Este proyecto desarrolla una aplicación web para calcular y optimizar la distri
     -   Componentes: Administración de componentes de red
     -   Optimización/Simulación: Cálculo y optimización de señales
 
-#### JavaScript (script.js)
+#### JavaScript (Modular)
 
--   **Gestión de Estado:** Manejo del estado de la aplicación y sincronización con el backend.
--   **Validación de Formularios:** Verificación de datos de entrada en el cliente.
--   **Actualización en Tiempo Real:** Cálculos y actualizaciones dinámicas de la interfaz.
--   **Visualización de Datos:** Generación de gráficos y tablas interactivas.
+-   **script.js:** Archivo principal que inicializa la aplicación y coordina los módulos.
+-   **Módulos:**
+    -   **servlet.js:** Gestiona las llamadas a la API y la comunicación con el backend.
+    -   **ui.js:** Maneja la actualización de la interfaz de usuario.
+    -   **forms.js:** Gestiona el envío y validación de formularios.
+    -   **tabs.js:** Controla la navegación entre pestañas.
+    -   **theme.js:** Implementa el cambio entre modo claro y oscuro.
+    -   **utils.js:** Proporciona funciones de utilidad para toda la aplicación.
 
 #### Estilos
 
@@ -83,23 +99,19 @@ La base de datos está organizada en tres bloques principales:
 
 -   **Tablas Principales:**
 
-    -   **TiposComponente:** Registra los tipos de componentes
-    -   **Componentes:** Almacena información general de componentes
-    -   **Frecuencias:** Define frecuencias estándar para mediciones
+    -   **TiposComponente:** Registra los tipos de componentes (Cable Coaxial, Base de Toma, Derivador, Distribuidor)
+    -   **Componentes:** Almacena información general de componentes (modelo, costo)
 
 -   **Tablas de Componentes Específicos:**
 
-    -   **Cables:** Propiedades específicas de cables
-    -   **AtenuacionesCable:** Atenuación por 100 metros por frecuencia
-    -   **Derivadores:** Características técnicas de derivadores
-    -   **Distribuidores:** Datos de splitters
-    -   **AmplificadoresRuidoBase:** Propiedades de amplificadores
-    -   **Tomas:** Características de tomas
+    -   **Coaxiales:** Propiedades específicas de cables coaxiales (atenuación a 470 MHz y 694 MHz)
+    -   **Derivadores:** Características técnicas de derivadores (atenuación de derivación, atenuación de paso, directividad, desacoplo, pérdidas de retorno)
+    -   **Distribuidores:** Datos de splitters (número de salidas, atenuación de distribución, desacoplo, pérdidas de retorno)
+    -   **Tomas:** Características de tomas (atenuación, desacoplo)
 
 -   **Tablas de Configuración:**
-    -   **Configuraciones:** Configuraciones generales
-    -   **DetalleConfiguracion:** Configuración por piso
-    -   **MargenesCalidad:** Márgenes de calidad aceptables
+    -   **Configuraciones:** Configuraciones generales (nombre, nivel de cabecera, número de pisos, costo total)
+    -   **MargenesCalidad:** Márgenes de calidad aceptables (tipo de señal, nivel mínimo, nivel máximo)
 
 ## Flujo de Trabajo
 
@@ -107,7 +119,7 @@ La base de datos está organizada en tres bloques principales:
 
     - Usuario ingresa nivel_cabecera y num_pisos
     - Se crea registro en Configuraciones
-    - Se inicializan pisos en DetalleConfiguracion
+    - Se inicializan pisos con sus componentes correspondientes
 
 2. **Gestión de Componentes:**
 

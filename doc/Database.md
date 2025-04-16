@@ -9,9 +9,9 @@
 Almacena los tipos de componentes disponibles en el sistema.
 
 -   Campos:
-    -   `id_tiposcomponente` (COUNTER, Primary Key): Identificador único.
-    -   `nombre` (VARCHAR(100)): Nombre del tipo ("cable", "derivador", "distribuidor", "amplificador", "toma").
-    -   `descripcion` (VARCHAR(255)): Descripción detallada del tipo de componente.
+    -   `id_tipos_componente` (COUNTER, Primary Key): Identificador único.
+    -   `nombre` (TEXT(50)): Nombre del tipo ("Cable Coaxial", "Base de Toma", "Derivador", "Distribuidor").
+    -   `descripcion` (TEXT(255)): Descripción detallada del tipo de componente.
 
 #### Tabla Componentes
 
@@ -19,43 +19,21 @@ Almacena información general sobre los componentes utilizados en la red.
 
 -   Campos:
     -   `id_componentes` (COUNTER, Primary Key): Identificador único.
-    -   `id_tiposcomponente` (INTEGER, Foreign Key a TiposComponente.id_tiposcomponente): Tipo de componente.
-    -   `modelo` (VARCHAR(100)): Nombre o modelo del componente (e.g., "Cable RG6").
+    -   `id_tipos_componente` (LONG, Foreign Key a TiposComponente.id_tipos_componente): Tipo de componente.
+    -   `modelo` (TEXT(100)): Nombre o modelo del componente (e.g., "CE-752", "BS-100").
     -   `costo` (CURRENCY): Costo unitario.
-    -   `fecha_creacion` (DATETIME): Fecha de registro del componente.
-    -   `usuario_creacion` (VARCHAR(100)): Usuario que registró el componente.
-    -   `fecha_modificacion` (DATETIME): Fecha de última modificación.
-    -   `usuario_modificacion` (VARCHAR(100)): Usuario que realizó la última modificación.
-
-#### Tabla Frecuencias
-
-Define las frecuencias estándar utilizadas para medir atenuaciones.
-
--   Campos:
-    -   `id_frecuencias` (COUNTER, Primary Key): Identificador único.
-    -   `valor` (DECIMAL(18)): Valor en MHz.
-    -   `descripcion` (VARCHAR(255)): Descripción de la frecuencia (e.g., "UHF Baja").
 
 ### Tablas de Componentes Específicos
 
-#### Tabla Cables
+#### Tabla Coaxiales
 
-Registra las propiedades técnicas específicas de los cables.
-
--   Campos:
-    -   `id_cables` (COUNTER, Primary Key): Identificador único.
-    -   `id_componentes` (INTEGER, Foreign Key a Componentes.id_componentes): Vinculación con Componentes.
-    -   `longitud_maxima` (DECIMAL(18)): Longitud máxima (metros).
-
-#### Tabla AtenuacionesCable
-
-Almacena las atenuaciones de cada cable para diferentes frecuencias.
+Registra las propiedades técnicas específicas de los cables coaxiales.
 
 -   Campos:
-    -   `id_atenuacionescable` (COUNTER, Primary Key): Identificador único.
-    -   `id_cables` (INTEGER, Foreign Key a Cables.id_cables): Cable relacionado.
-    -   `id_frecuencias` (INTEGER, Foreign Key a Frecuencias.id_frecuencias): Frecuencia relacionada.
-    -   `atenuacion_100m` (DECIMAL(18)): Atenuación en dB por 100 metros a la frecuencia indicada.
+    -   `id_coaxiales` (COUNTER, Primary Key): Identificador único.
+    -   `id_componentes` (LONG, Foreign Key a Componentes.id_componentes): Vinculación con Componentes.
+    -   `atenuacion_470mhz` (DOUBLE): Atenuación en dB a 470 MHz.
+    -   `atenuacion_694mhz` (DOUBLE): Atenuación en dB a 694 MHz.
 
 #### Tabla Derivadores
 
@@ -63,12 +41,12 @@ Contiene las características de los derivadores.
 
 -   Campos:
     -   `id_derivadores` (COUNTER, Primary Key): Identificador único.
-    -   `id_componentes` (INTEGER, Foreign Key a Componentes.id_componentes): Vinculación con Componentes.
-    -   `atenuacion_insercion` (DECIMAL(18)): Atenuación en dB al pasar por el derivador.
-    -   `atenuacion_derivacion` (DECIMAL(18)): Atenuación en dB en las salidas derivadas.
-    -   `num_salidas` (INTEGER): Número de salidas derivadas.
-    -   `directividad` (DECIMAL(18)): Directividad en dB.
-    -   `desacoplo` (DECIMAL(18)): Desacoplo en dB.
+    -   `id_componentes` (LONG, Foreign Key a Componentes.id_componentes): Vinculación con Componentes.
+    -   `atenuacion_derivacion` (DOUBLE): Atenuación en dB en las salidas derivadas.
+    -   `atenuacion_paso` (DOUBLE): Atenuación en dB al pasar por el derivador.
+    -   `directividad` (DOUBLE): Directividad en dB.
+    -   `desacoplo` (DOUBLE): Desacoplo en dB.
+    -   `perdidas_retorno` (DOUBLE): Pérdidas de retorno en dB.
 
 #### Tabla Distribuidores
 
@@ -76,21 +54,11 @@ Almacena datos de los distribuidores (splitters).
 
 -   Campos:
     -   `id_distribuidores` (COUNTER, Primary Key): Identificador único.
-    -   `id_componentes` (INTEGER, Foreign Key a Componentes.id_componentes): Vinculación con Componentes.
-    -   `num_salidas` (INTEGER): Número de salidas.
-    -   `atenuacion_distribucion` (DECIMAL(18)): Atenuación en dB por cada salida.
-    -   `desacoplo` (DECIMAL(18)): Desacoplo en dB.
-
-#### Tabla AmplificadoresRuidoBase
-
-Guarda información sobre amplificadores y sus características.
-
--   Campos:
-    -   `id_amplificadoresruidobase` (COUNTER, Primary Key): Identificador único.
-    -   `id_componentes` (INTEGER, Foreign Key a Componentes.id_componentes): Vinculación con Componentes.
-    -   `atenuacion` (DECIMAL(18)): Atenuación en dB.
-    -   `ganancia` (DECIMAL(18)): Ganancia en dB.
-    -   `figura_ruido` (DECIMAL(18)): Figura de ruido en dB.
+    -   `id_componentes` (LONG, Foreign Key a Componentes.id_componentes): Vinculación con Componentes.
+    -   `numero_salidas` (LONG): Número de salidas.
+    -   `atenuacion_distribucion` (DOUBLE): Atenuación en dB por cada salida.
+    -   `desacoplo` (DOUBLE): Desacoplo en dB.
+    -   `perdidas_retorno` (DOUBLE): Pérdidas de retorno en dB.
 
 #### Tabla Tomas
 
@@ -98,9 +66,9 @@ Registra las características técnicas de las tomas.
 
 -   Campos:
     -   `id_tomas` (COUNTER, Primary Key): Identificador único.
-    -   `id_componentes` (INTEGER, Foreign Key a Componentes.id_componentes): Vinculación con Componentes.
-    -   `atenuacion` (INTEGER): Atenuación en dB.
-    -   `directividad` (INTEGER): Directividad en dB.
+    -   `id_componentes` (LONG, Foreign Key a Componentes.id_componentes): Vinculación con Componentes.
+    -   `atenuacion` (DOUBLE): Atenuación en dB.
+    -   `desacoplo` (DOUBLE): Desacoplo en dB.
 
 ### Tablas de Configuración
 
@@ -110,53 +78,37 @@ Guarda las configuraciones generales creadas por los usuarios.
 
 -   Campos:
     -   `id_configuraciones` (COUNTER, Primary Key): Identificador único.
-    -   `nombre` (VARCHAR(255)): Nombre descriptivo (e.g., "Edificio A").
-    -   `nivel_cabecera` (DECIMAL(18)): Nivel de señal inicial (dB).
-    -   `num_pisos` (INTEGER): Número de pisos.
+    -   `nombre` (TEXT(100)): Nombre descriptivo (e.g., "Edificio A").
+    -   `nivel_cabecera` (DOUBLE): Nivel de señal inicial (dB).
+    -   `num_pisos` (LONG): Número de pisos.
     -   `costo_total` (CURRENCY): Costo total calculado.
     -   `fecha_creacion` (DATETIME): Fecha de creación.
-    -   `usuario_creacion` (VARCHAR(100)): Usuario que creó la configuración.
+    -   `usuario_creacion` (TEXT(50)): Usuario que creó la configuración.
     -   `fecha_modificacion` (DATETIME): Fecha de última modificación.
-    -   `usuario_modificacion` (VARCHAR(100)): Usuario que realizó la última modificación.
-
-#### Tabla DetalleConfiguracion
-
-Detalla la configuración específica de cada piso.
-
--   Campos:
-    -   `id_detalles` (COUNTER, Primary Key): Identificador único.
-    -   `id_configuraciones` (INTEGER, Foreign Key a Configuraciones.id_configuraciones): Vinculación con Configuraciones.
-    -   `piso` (INTEGER): Número del piso.
-    -   `id_cables` (INTEGER, Foreign Key a Cables.id_cables): Cable usado.
-    -   `longitud_cable` (DECIMAL(18)): Longitud del cable (metros).
-    -   `id_derivadores` (INTEGER, Foreign Key a Derivadores.id_derivadores, Permitir Nulos): Derivador usado (si aplica).
-    -   `id_distribuidores` (INTEGER, Foreign Key a Distribuidores.id_distribuidores, Permitir Nulos): Distribuidor usado (si aplica).
-    -   `id_amplificadoresruidobase` (INTEGER, Foreign Key a AmplificadoresRuidoBase.id_amplificadoresruidobase, Permitir Nulos): Amplificador usado (si aplica).
-    -   `nivel_senal` (DECIMAL(18)): Nivel de señal calculado (dB).
-    -   `fecha_calculo` (DATETIME): Fecha de cálculo o modificación.
+    -   `usuario_modificacion` (TEXT(50)): Usuario que realizó la última modificación.
 
 #### Tabla MargenesCalidad
 
 Define los márgenes de calidad aceptables para la señal.
 
 -   Campos:
-    -   `id_margenescalidad` (COUNTER, Primary Key): Identificador único.
-    -   `tipo_senal` (VARCHAR(100)): Tipo de señal.
-    -   `nivel_minimo` (DECIMAL(18)): Nivel mínimo aceptable (dB).
-    -   `nivel_maximo` (DECIMAL(18)): Nivel máximo aceptable (dB).
+    -   `id_margenes_calidad` (COUNTER, Primary Key): Identificador único.
+    -   `tipo_senal` (TEXT(50)): Tipo de señal (e.g., "TDT").
+    -   `nivel_minimo` (DOUBLE): Nivel mínimo aceptable (dB).
+    -   `nivel_maximo` (DOUBLE): Nivel máximo aceptable (dB).
 
 ### Relaciones entre Tablas
 
 1. `TiposComponente (1)` → `(N) Componentes`
 
-    - `Componentes.id_tiposcomponente` → `TiposComponente.id_tiposcomponente`
+    - `Componentes.id_tipos_componente` → `TiposComponente.id_tipos_componente`
     - Cada tipo de componente puede tener múltiples componentes específicos
-    - Ejemplo: El tipo "cable" tiene múltiples modelos como RG6, RG11, etc.
+    - Ejemplo: El tipo "Cable Coaxial" tiene múltiples modelos como CE-752, CE-740, etc.
 
-2. `Componentes (1)` → `(0..1) Cables`
+2. `Componentes (1)` → `(0..1) Coaxiales`
 
-    - `Cables.id_componentes` → `Componentes.id_componentes`
-    - Un componente de tipo cable tiene una entrada en la tabla Cables
+    - `Coaxiales.id_componentes` → `Componentes.id_componentes`
+    - Un componente de tipo cable coaxial tiene una entrada en la tabla Coaxiales
 
 3. `Componentes (1)` → `(0..1) Derivadores`
 
@@ -168,56 +120,36 @@ Define los márgenes de calidad aceptables para la señal.
     - `Distribuidores.id_componentes` → `Componentes.id_componentes`
     - Un componente de tipo distribuidor tiene una entrada en la tabla Distribuidores
 
-5. `Componentes (1)` → `(0..1) AmplificadoresRuidoBase`
-
-    - `AmplificadoresRuidoBase.id_componentes` → `Componentes.id_componentes`
-    - Un componente de tipo amplificador tiene una entrada en la tabla AmplificadoresRuidoBase
-
-6. `Componentes (1)` → `(0..1) Tomas`
+5. `Componentes (1)` → `(0..1) Tomas`
 
     - `Tomas.id_componentes` → `Componentes.id_componentes`
     - Un componente de tipo toma tiene una entrada en la tabla Tomas
 
-7. `Cables (1)` → `(N) AtenuacionesCable`
+### Índices para Mejor Rendimiento
 
-    - `AtenuacionesCable.id_cables` → `Cables.id_cables`
-    - Cada cable tiene múltiples atenuaciones para diferentes frecuencias
-    - Ejemplo: Un cable RG6 tiene atenuaciones específicas para VHF Baja, VHF Alta, etc.
+- `idx_componentes_tipo`: Índice en `Componentes(id_tipos_componente)`
+- `idx_coaxiales_componente`: Índice en `Coaxiales(id_componentes)`
+- `idx_derivadores_componente`: Índice en `Derivadores(id_componentes)`
+- `idx_distribuidores_componente`: Índice en `Distribuidores(id_componentes)`
+- `idx_tomas_componente`: Índice en `Tomas(id_componentes)`
 
-8. `Frecuencias (1)` → `(N) AtenuacionesCable`
+### Datos de Ejemplo
 
-    - `AtenuacionesCable.id_frecuencias` → `Frecuencias.id_frecuencias`
-    - Cada frecuencia puede estar asociada a múltiples atenuaciones de cables
+#### Tipos de Componentes
+- Cable Coaxial: Cables para conexión de componentes
+- Base de Toma: Dispositivos para derivar señal a diferentes pisos
+- Derivador: Dispositivos para distribuir señal a múltiples salidas
+- Distribuidor: Tomas de acceso para conexión final
 
-9. `Configuraciones (1)` → `(N) DetalleConfiguracion`
+#### Componentes
+- Cables: CE-752, CE-740, CE-170, FI-250, CL-200
+- Tomas: BS-100, BS-112, BS-110, BS-111, BS-210, BS-510
+- Derivadores: FP-414, FP-420, FP-426
+- Distribuidores: FI-243, FI-473, FI-253, FI-483
 
-    - `DetalleConfiguracion.id_configuraciones` → `Configuraciones.id_configuraciones`
-    - Una configuración tiene múltiples detalles, uno por cada piso
-    - Ejemplo: "Edificio A" tiene detalles para cada uno de sus 5 pisos
+#### Márgenes de Calidad
+- TDT: Nivel mínimo 45.0 dB, Nivel máximo 70.0 dB
 
-10. `Cables (1)` → `(0..N) DetalleConfiguracion`
-
-    - `DetalleConfiguracion.id_cables` → `Cables.id_cables` (nullable)
-    - Un cable puede ser usado en múltiples configuraciones de pisos
-
-11. `Derivadores (1)` → `(0..N) DetalleConfiguracion`
-
-    - `DetalleConfiguracion.id_derivadores` → `Derivadores.id_derivadores` (nullable)
-    - Un derivador puede ser usado en múltiples configuraciones de pisos
-
-12. `Distribuidores (1)` → `(0..N) DetalleConfiguracion`
-
-    - `DetalleConfiguracion.id_distribuidores` → `Distribuidores.id_distribuidores` (nullable)
-    - Un distribuidor puede ser usado en múltiples configuraciones de pisos
-
-13. `AmplificadoresRuidoBase (1)` → `(0..N) DetalleConfiguracion`
-    - `DetalleConfiguracion.id_amplificadoresruidobase` → `AmplificadoresRuidoBase.id_amplificadoresruidobase` (nullable)
-    - Un amplificador puede ser usado en múltiples configuraciones de pisos
-
-Notas:
-
--   Las relaciones (0..1) indican que un componente puede tener cero o un registro en la tabla específica correspondiente.
--   Las relaciones (0..N) en DetalleConfiguracion indican que los campos son opcionales (nullable).
--   Las relaciones (1:N) indican que un registro puede tener múltiples registros relacionados.
--   Cada tipo de componente tiene su propia tabla específica que almacena sus características técnicas únicas.
--   Las configuraciones pueden usar diferentes combinaciones de componentes en cada piso, lo que permite una gran flexibilidad en el diseño de la red.
+#### Configuraciones
+- Edificio A: 5 pisos, nivel de cabecera 95.0 dB, costo total 580.25
+- Edificio B: 8 pisos, nivel de cabecera 98.0 dB, costo total 920.50

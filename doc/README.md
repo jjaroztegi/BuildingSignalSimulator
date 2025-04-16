@@ -17,7 +17,7 @@ Building Signal Simulator is a web-based application that simulates and optimize
 
 -   **Backend**: Java 1.8 (JDK 1.8.0_131)
 -   **Server**: Apache Tomcat 9.0.89
--   **Frontend**: HTML, Vanilla JavaScript, Tailwind CSS
+-   **Frontend**: HTML, Vanilla JavaScript (ES6 modules), Tailwind CSS
 -   **Database**: MS Access/Derby via JDBC
 -   **Build**: Manual compilation via script or Docker containerization
 
@@ -33,7 +33,8 @@ Building Signal Simulator is a web-based application that simulates and optimize
 │           └── tests/      # Unit tests
 ├── webapp/                 # Web application files
 │   ├── js/                 # JavaScript files
-│   │   └── script.js       # Main application logic
+│   │   ├── script.js       # Main application logic
+│   │   └── modules/        # JavaScript modules
 │   ├── WEB-INF/           # Web configuration
 │   └── index.html         # Main application page
 ├── database/              # Database files and SQL scripts
@@ -112,10 +113,9 @@ The application supports both MS Access and Derby databases:
 ### Component Management
 
 -   Add and manage network components:
-    -   Cables
+    -   Coaxial Cables
     -   Splitters (Derivadores)
     -   Distributors
-    -   Amplifiers
     -   Outlets (Tomas)
 -   Set component properties and costs
 
