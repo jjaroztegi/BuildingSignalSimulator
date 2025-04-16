@@ -1,125 +1,94 @@
--- Create TiposComponente table
-CREATE TABLE TiposComponente (
-    id_tipo COUNTER PRIMARY KEY,
-    nombre TEXT(100) NOT NULL UNIQUE,
+-- Create tipos_componente table (base table with no dependencies)
+CREATE TABLE tipos_componente (
+    id_tipos_componente COUNTER PRIMARY KEY,
+    nombre TEXT(50) NOT NULL,
     descripcion TEXT(255)
 );
 
--- Create Componentes table
-CREATE TABLE Componentes (
-    id_componente COUNTER PRIMARY KEY,
-    id_tipo INTEGER NOT NULL,
-    modelo TEXT(100),
-    costo CURRENCY,
-    fecha_creacion DATETIME,
-    usuario_creacion TEXT(100),
+-- Create componentes table (depends on tipos_componente)
+CREATE TABLE componentes (
+    id_componentes COUNTER PRIMARY KEY,
+    id_tipos_componente LONG NOT NULL,
+    modelo TEXT(100) NOT NULL,
+    costo CURRENCY NOT NULL,
+    CONSTRAINT fk_componentes_tipos_componente 
+    FOREIGN KEY (id_tipos_componente) 
+    REFERENCES tipos_componente(id_tipos_componente)
+);
+
+-- Create coaxiales table (depends on componentes)
+CREATE TABLE coaxiales (
+    id_coaxiales COUNTER PRIMARY KEY,
+    id_componentes LONG NOT NULL,
+    atenuacion_470mhz DOUBLE NOT NULL,
+    atenuacion_694mhz DOUBLE NOT NULL,
+    CONSTRAINT fk_coaxiales_componente 
+    FOREIGN KEY (id_componentes) 
+    REFERENCES componentes(id_componentes)
+);
+
+-- Create derivadores table (depends on componentes)
+CREATE TABLE derivadores (
+    id_derivadores COUNTER PRIMARY KEY,
+    id_componentes LONG NOT NULL,
+    atenuacion_derivacion DOUBLE NOT NULL,
+    atenuacion_paso DOUBLE NOT NULL,
+    directividad DOUBLE NOT NULL,
+    desacoplo DOUBLE NOT NULL,
+    perdidas_retorno DOUBLE NOT NULL,
+    CONSTRAINT fk_derivadores_componente 
+    FOREIGN KEY (id_componentes) 
+    REFERENCES componentes(id_componentes)
+);
+
+-- Create distribuidores table (depends on componentes)
+CREATE TABLE distribuidores (
+    id_distribuidores COUNTER PRIMARY KEY,
+    id_componentes LONG NOT NULL,
+    numero_salidas LONG NOT NULL,
+    atenuacion_distribucion DOUBLE NOT NULL,
+    desacoplo DOUBLE NOT NULL,
+    perdidas_retorno DOUBLE NOT NULL,
+    CONSTRAINT fk_distribuidores_componente 
+    FOREIGN KEY (id_componentes) 
+    REFERENCES componentes(id_componentes)
+);
+
+-- Create tomas table (depends on componentes)
+CREATE TABLE tomas (
+    id_tomas COUNTER PRIMARY KEY,
+    id_componentes LONG NOT NULL,
+    atenuacion DOUBLE NOT NULL,
+    desacoplo DOUBLE NOT NULL,
+    CONSTRAINT fk_tomas_componente 
+    FOREIGN KEY (id_componentes) 
+    REFERENCES componentes(id_componentes)
+);
+
+-- Create configuraciones table (independent table)
+CREATE TABLE configuraciones (
+    id_configuraciones COUNTER PRIMARY KEY,
+    nombre TEXT(100) NOT NULL,
+    nivel_cabecera DOUBLE NOT NULL,
+    num_pisos LONG NOT NULL,
+    costo_total CURRENCY NOT NULL,
+    fecha_creacion DATETIME NOT NULL,
+    usuario_creacion TEXT(50) NOT NULL,
     fecha_modificacion DATETIME,
-    usuario_modificacion TEXT(100),
-    CONSTRAINT FK_Componentes_TiposComponente FOREIGN KEY (id_tipo) REFERENCES TiposComponente(id_tipo)
+    usuario_modificacion TEXT(50)
 );
 
--- Create Frecuencias table
-CREATE TABLE Frecuencias (
-    id_frecuencia COUNTER PRIMARY KEY,
-    valor CURRENCY,
-    descripcion TEXT(255)
+-- Create margenes_calidad table (independent table)
+CREATE TABLE margenes_calidad (
+    id_margenes_calidad COUNTER PRIMARY KEY,
+    tipo_senal TEXT(50) NOT NULL,
+    nivel_minimo DOUBLE NOT NULL,
+    nivel_maximo DOUBLE NOT NULL
 );
 
--- Create Cables table
-CREATE TABLE Cables (
-    id_cable COUNTER PRIMARY KEY,
-    id_componente INTEGER NOT NULL,
-    longitud_maxima CURRENCY,
-    CONSTRAINT FK_Cables_Componentes FOREIGN KEY (id_componente) REFERENCES Componentes(id_componente)
-);
-
--- Create AtenuacionesCable table
-CREATE TABLE AtenuacionesCable (
-    id_atenuacion COUNTER PRIMARY KEY,
-    id_cable INTEGER NOT NULL,
-    id_frecuencia INTEGER NOT NULL,
-    atenuacion_100m CURRENCY,
-    CONSTRAINT FK_AtenuacionesCable_Cables FOREIGN KEY (id_cable) REFERENCES Cables(id_cable),
-    CONSTRAINT FK_AtenuacionesCable_Frecuencias FOREIGN KEY (id_frecuencia) REFERENCES Frecuencias(id_frecuencia)
-);
-
--- Create Derivadores table
-CREATE TABLE Derivadores (
-    id_derivador COUNTER PRIMARY KEY,
-    id_componente INTEGER NOT NULL,
-    atenuacion_insercion CURRENCY,
-    atenuacion_derivacion CURRENCY,
-    num_salidas INTEGER,
-    directividad CURRENCY,
-    desacoplo CURRENCY,
-    CONSTRAINT FK_Derivadores_Componentes FOREIGN KEY (id_componente) REFERENCES Componentes(id_componente)
-);
-
--- Create Distribuidores table
-CREATE TABLE Distribuidores (
-    id_distribuidor COUNTER PRIMARY KEY,
-    id_componente INTEGER NOT NULL,
-    num_salidas INTEGER,
-    atenuacion_distribucion CURRENCY,
-    desacoplo CURRENCY,
-    CONSTRAINT FK_Distribuidores_Componentes FOREIGN KEY (id_componente) REFERENCES Componentes(id_componente)
-);
-
--- Create AmplificadoresRuidoBase table
-CREATE TABLE AmplificadoresRuidoBase (
-    id_amplificador_ruido_base COUNTER PRIMARY KEY,
-    id_componente INTEGER NOT NULL,
-    atenuacion CURRENCY,
-    ganancia CURRENCY,
-    figura_ruido CURRENCY,
-    CONSTRAINT FK_Amplificadores_Componentes FOREIGN KEY (id_componente) REFERENCES Componentes(id_componente)
-);
-
--- Create Tomas table
-CREATE TABLE Tomas (
-    id_toma COUNTER PRIMARY KEY,
-    id_componente INTEGER NOT NULL,
-    atenuacion CURRENCY NOT NULL,
-    desacoplo CURRENCY NOT NULL,
-    CONSTRAINT FK_Tomas_Componentes FOREIGN KEY (id_componente) REFERENCES Componentes(id_componente)
-);
-
--- Create Configuraciones table
-CREATE TABLE Configuraciones (
-    id_configuracion COUNTER PRIMARY KEY,
-    nombre TEXT(255),
-    nivel_cabecera CURRENCY,
-    num_pisos INTEGER,
-    costo_total CURRENCY,
-    fecha_creacion DATETIME,
-    usuario_creacion TEXT(100),
-    fecha_modificacion DATETIME,
-    usuario_modificacion TEXT(100)
-);
-
--- Create MargenesCalidad table
-CREATE TABLE MargenesCalidad (
-    id_margen COUNTER PRIMARY KEY,
-    tipo_senal TEXT(100),
-    nivel_minimo CURRENCY,
-    nivel_maximo CURRENCY
-);
-
--- Create DetalleConfiguracion table
-CREATE TABLE DetalleConfiguracion (
-    id_detalle COUNTER PRIMARY KEY,
-    id_configuracion INTEGER NOT NULL,
-    piso INTEGER,
-    id_cable INTEGER,
-    longitud_cable CURRENCY,
-    id_derivador INTEGER,
-    id_distribuidor INTEGER,
-    id_amplificador_ruido_base INTEGER,
-    nivel_senal CURRENCY,
-    fecha_calculo DATETIME,
-    CONSTRAINT FK_Detalle_Configuracion FOREIGN KEY (id_configuracion) REFERENCES Configuraciones(id_configuracion),
-    CONSTRAINT FK_Detalle_Cables FOREIGN KEY (id_cable) REFERENCES Cables(id_cable),
-    CONSTRAINT FK_Detalle_Derivadores FOREIGN KEY (id_derivador) REFERENCES Derivadores(id_derivador),
-    CONSTRAINT FK_Detalle_Distribuidores FOREIGN KEY (id_distribuidor) REFERENCES Distribuidores(id_distribuidor),
-    CONSTRAINT FK_Detalle_Amplificadores FOREIGN KEY (id_amplificador_ruido_base) REFERENCES AmplificadoresRuidoBase(id_amplificador_ruido_base)
-);
+-- Create indexes for better performance
+CREATE INDEX idx_componentes_tipo ON componentes(id_tipos_componente);
+CREATE INDEX idx_coaxiales_componente ON coaxiales(id_componentes);
+CREATE INDEX idx_derivadores_componente ON derivadores(id_componentes);
+CREATE INDEX idx_distribuidores_componente ON distribuidores(id_componentes);
+CREATE INDEX idx_tomas_componente ON tomas(id_componentes);
