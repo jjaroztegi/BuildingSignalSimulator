@@ -190,8 +190,27 @@ public class ComponentServlet extends HttpServlet {
      * @throws SQLException If a database error occurs or the type is invalid
      */
     private int getTipoComponenteId(String tipoNombre) throws SQLException {
+        // Map the frontend type names to database type names
+        String dbTipoNombre;
+        switch (tipoNombre) {
+            case "coaxial":
+                dbTipoNombre = "Cable Coaxial";
+                break;
+            case "toma":
+                dbTipoNombre = "Base de Toma";
+                break;
+            case "derivador":
+                dbTipoNombre = "Derivador";
+                break;
+            case "distribuidor":
+                dbTipoNombre = "Distribuidor";
+                break;
+            default:
+                throw new SQLException("Invalid component type");
+        }
+
         TiposComponenteDAO tiposComponenteDAO = new TiposComponenteDAO();
-        int idTipo = tiposComponenteDAO.getIdByNombre(tipoNombre);
+        int idTipo = tiposComponenteDAO.getIdByNombre(dbTipoNombre);
         if (idTipo == -1) {
             throw new SQLException("Invalid component type");
         }

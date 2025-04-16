@@ -53,7 +53,13 @@ export async function handleFormSubmit(
             
             // Fetch updated configurations
             const configurations = await fetchConfigurations();
+            
+            // Update both config selects
             updateConfigSelect(configurations, configSelect);
+            const simulationConfig = document.getElementById("simulation-config");
+            if (simulationConfig) {
+                updateConfigSelect(configurations, simulationConfig);
+            }
 
             // Find the newly created configuration in the select options
             const newConfigOption = Array.from(configSelect.options).find(
@@ -62,6 +68,10 @@ export async function handleFormSubmit(
 
             if (newConfigOption) {
                 configSelect.value = newConfigOption.value;
+                // Update simulation config value as well
+                if (simulationConfig) {
+                    simulationConfig.value = newConfigOption.value;
+                }
                 // Trigger the change event to update the UI
                 configSelect.dispatchEvent(new Event("change"));
             }

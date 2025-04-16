@@ -66,12 +66,12 @@ public class TiposComponenteDAO extends BaseDAO<TipoComponente> {
      * @throws SQLException if a database error occurs during the query
      */
     public int getIdByNombre(String nombre) throws SQLException {
-        String sql = "SELECT id_tiposcomponente FROM " + getTableName() + " WHERE nombre = ?";
+        String sql = "SELECT id_tipos_componente FROM " + getTableName() + " WHERE nombre = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, nombre);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("id_tiposcomponente");
+                    return rs.getInt("id_tipos_componente");
                 }
                 return -1;
             }

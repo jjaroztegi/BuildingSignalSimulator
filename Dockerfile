@@ -17,7 +17,7 @@ RUN mkdir -p ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/lib
 RUN mkdir -p ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/database
 
 # Copy the MS Access database
-COPY database/signal_distribution.accdb ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/database/
+COPY database/DistribucionDeSenal.accdb ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/database/
 
 # Copy the JAR dependencies
 COPY lib/*.jar ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/lib/
