@@ -22,11 +22,12 @@ for %%i in (lib\*.jar) do (
 
 REM --- Compilation ---
 echo Compiling Java files...
-mkdir "build\classes" 2>nul
+if exist "build\classes" rd /s /q "build\classes"
+mkdir "build\classes"
 
 REM Compile Java files dynamically based on the package name
 for /R "src\%PACKAGE_NAME%" %%f in (*.java) do (
-    echo Compiling %%~nxf...
+    @REM echo Compiling %%~nxf...
     "%JAVA_HOME%\bin\javac" -d build\classes -cp "%CLASSPATH%" "%%f"
 )
 
@@ -41,42 +42,51 @@ REM --- Run DerbyConnection test ---
 REM --- Deployment ---
 echo Deploying to Tomcat...
 
+REM Stop Tomcat before deployment
+echo Stopping Tomcat...
+call "%CATALINA_HOME%\bin\catalina.bat" stop > NUL 2>&1
+timeout /t 2 /nobreak > NUL
+
 REM Remove the existing application directory if it exists
 if exist "%TOMCAT_WEBAPPS%\%APP_NAME%" (
+    echo Removing existing application directory...
     rd /s /q "%TOMCAT_WEBAPPS%\%APP_NAME%"
+    timeout /t 1 /nobreak > NUL
 )
 
-REM Recreate the application directory
+REM Create fresh directories
+echo Creating application directories...
 mkdir "%TOMCAT_WEBAPPS%\%APP_NAME%"
+mkdir "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\%PACKAGE_NAME%"
+mkdir "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\lib"
+mkdir "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\database"
 
 REM Copy webapp folder content
-xcopy /E /I /Y "webapp\*" "%TOMCAT_WEBAPPS%\%APP_NAME%\"
-
-REM Create WEB-INF\classes directories
-mkdir "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\%PACKAGE_NAME%"
+echo Copying webapp files...
+xcopy /E /I /Y "webapp\*" "%TOMCAT_WEBAPPS%\%APP_NAME%\" > NUL
 
 REM Copy the compiled class files
-xcopy /E /I /Y "build\classes\*" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\"
+echo Copying compiled classes...
+xcopy /E /I /Y "build\classes\*" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\" > NUL
 
 REM Copy the source .java files
-xcopy /E /I /Y "src\%PACKAGE_NAME%\*.java" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\%PACKAGE_NAME%"
+echo Copying source files...
+xcopy /E /I /Y "src\%PACKAGE_NAME%\*.java" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\%PACKAGE_NAME%" > NUL
 
 REM Copy lib folder with all JARs
-mkdir "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\lib"
-xcopy /Y "lib\*.jar" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\lib\"
+echo Copying library files...
+xcopy /Y "lib\*.jar" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\lib\" > NUL
 
 REM Copy access database
-mkdir "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\database"
-xcopy /Y "database\*.accdb" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\database\"
+echo Copying database files...
+xcopy /Y "database\*.accdb" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\database\" > NUL
 
 echo Deployment complete.
 
-REM --- Restart Tomcat ---
-echo Restarting Tomcat...
-call "%CATALINA_HOME%\bin\catalina.bat" stop
-timeout /t 1 /nobreak > NUL
+REM --- Start Tomcat ---
+echo Starting Tomcat...
 call "%CATALINA_HOME%\bin\catalina.bat" start
-echo Tomcat restarted.
+echo Tomcat started.
 
 echo Access your application at http://localhost:8082/%APP_NAME%/
 exit
