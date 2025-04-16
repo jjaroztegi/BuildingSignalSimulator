@@ -51,4 +51,23 @@ public class CoaxialDAO extends BaseDAO<Coaxial> {
         ps.setDouble(2, entity.getAtenuacion_470mhz());
         ps.setDouble(3, entity.getAtenuacion_694mhz());
     }
+
+    /**
+     * Finds a coaxial component by its componente ID
+     * @param componenteId The ID of the associated componente
+     * @return The Coaxial object if found, null otherwise
+     * @throws SQLException if a database error occurs
+     */
+    public Coaxial findByComponenteId(int componenteId) throws SQLException {
+        String sql = "SELECT * FROM " + getTableName() + " WHERE id_componentes = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, componenteId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToEntity(rs);
+                }
+                return null;
+            }
+        }
+    }
 } 

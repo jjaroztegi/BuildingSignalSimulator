@@ -66,4 +66,23 @@ public class DerivadorDAO extends BaseDAO<Derivador> {
         ps.setDouble(5, entity.getDesacoplo());
         ps.setDouble(6, entity.getPerdidas_retorno());
     }
+
+    /**
+     * Finds a derivador component by its componente ID
+     * @param componenteId The ID of the associated componente
+     * @return The Derivador object if found, null otherwise
+     * @throws SQLException if a database error occurs
+     */
+    public Derivador findByComponenteId(int componenteId) throws SQLException {
+        String sql = "SELECT * FROM " + getTableName() + " WHERE id_componentes = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, componenteId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToEntity(rs);
+                }
+                return null;
+            }
+        }
+    }
 } 

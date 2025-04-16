@@ -27,6 +27,8 @@ public class ComponentServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         String type = request.getParameter("type");
+        String model = request.getParameter("model");
+
         if (type == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error\":\"Missing component type parameter\"}");
@@ -34,6 +36,70 @@ public class ComponentServlet extends HttpServlet {
         }
 
         try {
+            // If model is provided, return detailed information for that specific component
+            if (model != null) {
+                ComponenteDAO componenteDAO = new ComponenteDAO();
+                Componente componente = componenteDAO.findByModelo(model);
+                
+                if (componente == null) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    out.write("{\"error\":\"Component not found\"}");
+                    return;
+                }
+
+                StringBuilder jsonBuilder = new StringBuilder("{");
+                jsonBuilder.append("\"costo\":").append(componente.getCosto()).append(",");
+
+                // Add specific component details based on type
+                switch (type.toLowerCase()) {
+                    case "coaxial":
+                        CoaxialDAO coaxialDAO = new CoaxialDAO();
+                        Coaxial coaxial = coaxialDAO.findByComponenteId(componente.getId_componentes());
+                        if (coaxial != null) {
+                            jsonBuilder.append("\"atenuacion_470mhz\":").append(coaxial.getAtenuacion_470mhz()).append(",");
+                            jsonBuilder.append("\"atenuacion_694mhz\":").append(coaxial.getAtenuacion_694mhz());
+                        }
+                        break;
+                    case "derivador":
+                        DerivadorDAO derivadorDAO = new DerivadorDAO();
+                        Derivador derivador = derivadorDAO.findByComponenteId(componente.getId_componentes());
+                        if (derivador != null) {
+                            jsonBuilder.append("\"atenuacion_derivacion\":").append(derivador.getAtenuacion_derivacion()).append(",");
+                            jsonBuilder.append("\"atenuacion_paso\":").append(derivador.getAtenuacion_paso()).append(",");
+                            jsonBuilder.append("\"directividad\":").append(derivador.getDirectividad()).append(",");
+                            jsonBuilder.append("\"desacoplo\":").append(derivador.getDesacoplo()).append(",");
+                            jsonBuilder.append("\"perdidas_retorno\":").append(derivador.getPerdidas_retorno());
+                        }
+                        break;
+                    case "distribuidor":
+                        DistribuidorDAO distribuidorDAO = new DistribuidorDAO();
+                        Distribuidor distribuidor = distribuidorDAO.findByComponenteId(componente.getId_componentes());
+                        if (distribuidor != null) {
+                            jsonBuilder.append("\"numero_salidas\":").append(distribuidor.getNumero_salidas()).append(",");
+                            jsonBuilder.append("\"atenuacion_distribucion\":").append(distribuidor.getAtenuacion_distribucion()).append(",");
+                            jsonBuilder.append("\"desacoplo\":").append(distribuidor.getDesacoplo()).append(",");
+                            jsonBuilder.append("\"perdidas_retorno\":").append(distribuidor.getPerdidas_retorno());
+                        }
+                        break;
+                    case "toma":
+                        TomaDAO tomaDAO = new TomaDAO();
+                        Toma toma = tomaDAO.findByComponenteId(componente.getId_componentes());
+                        if (toma != null) {
+                            jsonBuilder.append("\"atenuacion\":").append(toma.getAtenuacion()).append(",");
+                            jsonBuilder.append("\"desacoplo\":").append(toma.getDesacoplo());
+                        }
+                        break;
+                    default:
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        out.write("{\"error\":\"Invalid component type\"}");
+                        return;
+                }
+                jsonBuilder.append("}");
+                out.write(jsonBuilder.toString());
+                return;
+            }
+
+            // If no model provided, return list of models for the type (existing functionality)
             List<String> components = new ArrayList<>();
             ComponenteDAO componenteDAO = new ComponenteDAO();
 

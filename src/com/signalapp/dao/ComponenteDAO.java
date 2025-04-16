@@ -78,4 +78,23 @@ public class ComponenteDAO extends BaseDAO<Componente> {
             }
         }
     }
+
+    /**
+     * Finds a component by its model name
+     * @param modelo The model name to search for
+     * @return The Componente object if found, null otherwise
+     * @throws SQLException if a database error occurs
+     */
+    public Componente findByModelo(String modelo) throws SQLException {
+        String sql = "SELECT * FROM " + getTableName() + " WHERE modelo = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, modelo);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToEntity(rs);
+                }
+                return null;
+            }
+        }
+    }
 } 

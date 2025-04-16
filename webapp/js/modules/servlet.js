@@ -53,12 +53,12 @@ export async function fetchSignalTypes(signalTypeSelect) {
         // Update the select element with the signal types
         if (signalTypeSelect) {
             signalTypeSelect.innerHTML = signalTypes
-                .map(type => `<option value="${type}">${type}</option>`)
+                .map(typeObj => `<option value="${typeObj.type}" data-min="${typeObj.min}" data-max="${typeObj.max}">${typeObj.type} (${typeObj.min}dB - ${typeObj.max}dB)</option>`)
                 .join("");
                 
             // Set default value if available
             if (signalTypes.length > 0) {
-                signalTypeSelect.value = signalTypes[0];
+                signalTypeSelect.value = signalTypes[0].type;
             }
         }
         

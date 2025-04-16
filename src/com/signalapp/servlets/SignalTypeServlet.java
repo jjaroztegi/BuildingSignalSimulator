@@ -11,7 +11,6 @@ import com.signalapp.models.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,27 +34,36 @@ public class SignalTypeServlet extends HttpServlet {
             MargenCalidadDAO margenCalidadDAO = new MargenCalidadDAO();
             List<MargenCalidad> margenes = margenCalidadDAO.findAll();
 
-            // Extract unique signal types
-            List<String> signalTypes = new ArrayList<>();
+            // Build JSON array of objects with type and margins
+            StringBuilder jsonBuilder = new StringBuilder("[");
+            String currentType = null;
+            
             for (MargenCalidad margen : margenes) {
                 String tipoSenal = margen.getTipo_senal();
-                if (!signalTypes.contains(tipoSenal)) {
-                    signalTypes.add(tipoSenal);
+                
+                if (!tipoSenal.equals(currentType)) {
+                    // Close previous object if not first
+                    if (currentType != null) {
+                        jsonBuilder.append("}");
+                        jsonBuilder.append(",");
+                    }
+                    
+                    // Start new object
+                    jsonBuilder.append("{");
+                    jsonBuilder.append("\"type\":\"").append(escapeJson(tipoSenal)).append("\",");
+                    jsonBuilder.append("\"min\":").append(margen.getNivel_minimo()).append(",");
+                    jsonBuilder.append("\"max\":").append(margen.getNivel_maximo());
+                    
+                    currentType = tipoSenal;
                 }
             }
-
-            // Convert to JSON array
-            StringBuilder jsonBuilder = new StringBuilder("[");
-            boolean first = true;
-            for (String type : signalTypes) {
-                if (!first) {
-                    jsonBuilder.append(",");
-                }
-                first = false;
-                jsonBuilder.append("\"").append(escapeJson(type)).append("\"");
+            
+            // Close last object if exists
+            if (currentType != null) {
+                jsonBuilder.append("}");
             }
+            
             jsonBuilder.append("]");
-
             out.write(jsonBuilder.toString());
 
         } catch (SQLException e) {
