@@ -35,8 +35,11 @@
                     <button id="components-tab" class="tab-button mr-4 py-2 px-1 border-b-2 font-medium text-sm">
                         Componentes
                     </button>
-                    <button id="optimization-tab" class="tab-button mr-4 py-2 px-1 border-b-2 font-medium text-sm">
-                        Optimización / Simulación
+                    <button id="simulation-tab" class="tab-button mr-4 py-2 px-1 border-b-2 font-medium text-sm">
+                        Simulación
+                    </button>
+                    <button id="results-tab" class="tab-button mr-4 py-2 px-1 border-b-2 font-medium text-sm">
+                        Resultados
                     </button>
                 </nav>
             </div>
@@ -161,10 +164,9 @@
                                         required
                                     >
                                         <option value="">Seleccionar tipo</option>
-                                        <option value="cable">Cable</option>
+                                        <option value="coaxial">Cable Coaxial</option>
                                         <option value="derivador">Derivador</option>
                                         <option value="distribuidor">Distribuidor</option>
-                                        <option value="amplificador">Amplificador</option>
                                         <option value="toma">Toma</option>
                                     </select>
                                 </div>
@@ -222,20 +224,18 @@
                                         id="component-list-type"
                                         class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
                                     >
-                                        <option value="cable">Cables</option>
+                                        <option value="coaxial">Cables Coaxiales</option>
                                         <option value="derivador">Derivadores</option>
                                         <option value="distribuidor">Distribuidores</option>
-                                        <option value="amplificador">Amplificadores</option>
                                         <option value="toma">Tomas</option>
                                     </select>
                                 </div>
                                 
                                 <!-- Component Lists Container -->
                                 <div class="space-y-2">
-                                    <div id="cable-list" class="component-list"></div>
+                                    <div id="coaxial-list" class="component-list"></div>
                                     <div id="derivador-list" class="component-list hidden"></div>
                                     <div id="distribuidor-list" class="component-list hidden"></div>
-                                    <div id="amplificador-list" class="component-list hidden"></div>
                                     <div id="toma-list" class="component-list hidden"></div>
                                 </div>
                             </div>
@@ -243,81 +243,105 @@
                     </div>
                 </section>
 
-                <!-- Optimization / Simulation Tab -->
-                <section id="optimization-tab-content" class="tab-content hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Left Column: Quality Margins Form -->
-                        <div class="space-y-6">
-                            <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
-                                Márgenes de Calidad
-                            </h2>
-                            <div
-                                id="quality-form"
-                                class="space-y-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-md border dark:border-gray-600"
-                            >
+                <!-- Simulation Tab -->
+                <section id="simulation-tab-content" class="tab-content hidden">
+                    <div class="space-y-6">
+                        <!-- Configuration Selection -->
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Configuración</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="signal-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >Tipo de Señal</label
-                                    >
-                                    <select
-                                        id="signal-type"
-                                        name="tipo_senal"
-                                        class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400"
-                                        required
-                                    >
-                                        <option value="">Seleccionar tipo de señal</option>
+                                    <label for="simulation-config" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Seleccionar Configuración</label>
+                                    <select id="simulation-config" name="id_configuraciones" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="">Seleccionar Configuración</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="min-level" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >Nivel Mínimo (dB)</label
-                                    >
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        id="min-level"
-                                        name="nivel_minimo"
-                                        class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 bg-gray-100 dark:bg-gray-700"
-                                        required
-                                        readonly
-                                    />
-                                </div>
-                                <div>
-                                    <label for="max-level" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >Nivel Máximo (dB)</label
-                                    >
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        id="max-level"
-                                        name="nivel_maximo"
-                                        class="mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 bg-gray-100 dark:bg-gray-700"
-                                        required
-                                        readonly
-                                    />
+                                    <label for="signal-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de Señal</label>
+                                    <select id="signal-type" name="tipo_senal" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="">Seleccionar Tipo de Señal</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Right Column: Simulation Results -->
+                        <!-- Component Selection -->
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Selección de Componentes</h3>
+                            <div class="space-y-4">
+                                <!-- Component Type Selection -->
+                                <div>
+                                    <label for="simulation-component-list-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de Componente</label>
+                                    <select id="simulation-component-list-type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="coaxial">Cable Coaxial</option>
+                                        <option value="derivador">Derivador</option>
+                                        <option value="distribuidor">Distribuidor</option>
+                                        <option value="toma">Toma</option>
+                                    </select>
+                                </div>
+
+                                <!-- Component Lists Container -->
+                                <div class="space-y-2">
+                                    <div id="simulation-coaxial-list" class="component-list"></div>
+                                    <div id="simulation-derivador-list" class="component-list hidden"></div>
+                                    <div id="simulation-distribuidor-list" class="component-list hidden"></div>
+                                    <div id="simulation-toma-list" class="component-list hidden"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Run Simulation Button -->
+                        <div class="flex justify-end">
+                            <button id="run-simulation" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                                Ejecutar Simulación
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Results Tab -->
+                <section id="results-tab-content" class="tab-content hidden">
+                    <div class="grid grid-cols-1 gap-8">
                         <div class="space-y-6">
-                            <div class="flex justify-between items-center">
-                                <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
-                                    Resultados de la Simulación
-                                </h2>
-                                <button
-                                    id="optimize-button"
-                                    class="px-4 py-2 bg-yellow-600 dark:bg-yellow-500 text-white rounded-md hover:bg-yellow-700 dark:hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 dark:focus:ring-yellow-400 transition duration-150 ease-in-out"
-                                >
-                                    Optimizar Configuración
-                                </button>
+                            <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
+                                Resultados de la Simulación
+                            </h2>
+                            
+                            <!-- Signal Levels Table -->
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                    <thead class="bg-gray-50 dark:bg-gray-800">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                Piso
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                Nivel de Señal (dB)
+                                            </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                Estado
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="signal-levels-table" class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                                        <!-- Results will be populated here -->
+                                    </tbody>
+                                </table>
                             </div>
 
-                            <div id="simulation-details" class="space-y-4">
-                                <!-- Simulation details (floor by floor table) will be dynamically loaded here -->
-                                <p class="text-center text-gray-500 dark:text-gray-400 italic p-4">
-                                    Cargando datos de simulación...
-                                </p>
+                            <!-- Summary Section -->
+                            <div id="simulation-summary" class="p-4 bg-gray-50 dark:bg-gray-700 rounded-md border dark:border-gray-600 hidden">
+                                <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Resumen</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Nivel de Cabecera:</p>
+                                        <p id="headend-level" class="font-medium"></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Márgenes de Calidad:</p>
+                                        <p id="quality-margins" class="font-medium"></p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

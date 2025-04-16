@@ -23,20 +23,12 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>OptimizationServlet</servlet-name>
-        <servlet-class>com.signalapp.servlets.OptimizationServlet</servlet-class>
+        <servlet-name>SignalTypeServlet</servlet-name>
+        <servlet-class>com.signalapp.servlets.SignalTypeServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>OptimizationServlet</servlet-name>
-        <url-pattern>/optimize</url-pattern>
+        <servlet-name>SignalTypeServlet</servlet-name>
+        <url-pattern>/signal-types</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>QualityValidationServlet</servlet-name>
-        <servlet-class>com.signalapp.servlets.QualityValidationServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>QualityValidationServlet</servlet-name>
-        <url-pattern>/validate-quality</url-pattern>
-    </servlet-mapping>
 </web-app>

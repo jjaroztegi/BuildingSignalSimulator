@@ -1,125 +1,4 @@
 // UI management module
-export function updateSignalLevelDisplay(data, simulationDetailsElement) {
-    if (!simulationDetailsElement) return;
-
-    // Create the signal level visualization
-    const container = document.createElement("div");
-    container.className = "space-y-6";
-
-    // Add floor-by-floor visualization
-    const floorViz = document.createElement("div");
-    floorViz.className = "relative bg-gray-100 dark:bg-gray-700 p-4 rounded-lg";
-
-    // Sort floors in descending order (top floor first)
-    const sortedData = [...data].sort((a, b) => b.piso - a.piso);
-
-    sortedData.forEach((floor) => {
-        const floorElement = document.createElement("div");
-        floorElement.className = `flex items-center space-x-4 mb-4 p-3 rounded-lg ${
-            floor.is_valid ? "bg-green-50 dark:bg-green-900/30" : "bg-red-50 dark:bg-red-900/30"
-        }`;
-
-        // Floor number
-        const floorNum = document.createElement("div");
-        floorNum.className = "w-16 font-medium";
-        floorNum.textContent = `Piso ${floor.piso}`;
-
-        // Signal level bar
-        const barContainer = document.createElement("div");
-        barContainer.className = "flex-1 bg-gray-200 dark:bg-gray-600 rounded-full h-4 overflow-hidden";
-
-        const bar = document.createElement("div");
-        // Calculate percentage based on min (40dB) and max (80dB) possible values
-        const percentage = Math.min(100, Math.max(0, ((floor.nivel_senal - 40) / (80 - 40)) * 100));
-        bar.className = `h-full ${floor.is_valid ? "bg-green-500" : "bg-red-500"}`;
-        bar.style.width = `${percentage}%`;
-        barContainer.appendChild(bar);
-
-        // Signal level value
-        const levelValue = document.createElement("div");
-        levelValue.className = "w-24 text-right";
-        levelValue.textContent = `${floor.nivel_senal.toFixed(1)} dB`;
-
-        // Status indicator
-        const status = document.createElement("div");
-        status.className = `w-20 text-center px-2 py-1 rounded-full text-xs font-medium ${
-            floor.is_valid
-                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-        }`;
-        status.textContent = floor.is_valid ? "Válido" : "Inválido";
-
-        floorElement.appendChild(floorNum);
-        floorElement.appendChild(barContainer);
-        floorElement.appendChild(levelValue);
-        floorElement.appendChild(status);
-        floorViz.appendChild(floorElement);
-    });
-
-    container.appendChild(floorViz);
-
-    // Add legend
-    const legend = document.createElement("div");
-    legend.className = "flex justify-center space-x-4 text-sm text-gray-600 dark:text-gray-400";
-    legend.innerHTML = `
-        <div class="flex items-center">
-            <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-            <span>Señal Válida</span>
-        </div>
-        <div class="flex items-center">
-            <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-            <span>Señal Inválida</span>
-        </div>
-    `;
-    container.appendChild(legend);
-
-    simulationDetailsElement.innerHTML = "";
-    simulationDetailsElement.appendChild(container);
-}
-
-export function renderSimulationDetails(data, simulationDetailsElement) {
-    if (!simulationDetailsElement) return;
-
-    // Format the date if it exists
-    let formattedDate = "N/A";
-    if (data.fecha_creacion) {
-        try {
-            const date = new Date(data.fecha_creacion);
-            if (!isNaN(date.getTime())) {
-                formattedDate = date.toLocaleString();
-            }
-        } catch (e) {
-            console.error("Error formatting date:", e);
-        }
-    }
-
-    const detailsHtml = `
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-            <h3 class="text-lg font-semibold mb-4">Detalles de la Simulación</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Configuración</p>
-                    <p class="font-medium">${data.nombre}</p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Nivel de Cabecera</p>
-                    <p class="font-medium">${data.nivel_cabecera} dB</p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Número de Pisos</p>
-                    <p class="font-medium">${data.num_pisos}</p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Creado</p>
-                    <p class="font-medium">${formattedDate}</p>
-                </div>
-            </div>
-        </div>
-    `;
-
-    simulationDetailsElement.innerHTML = detailsHtml;
-}
-
 export function updateComponentSection(type, components) {
     const detailsElement = document.getElementById(`${type}-details`);
     if (!detailsElement || !components || components.length === 0) return;
@@ -134,8 +13,8 @@ export function updateComponentSection(type, components) {
         // Create the details based on component type
         let details = "";
         switch (type) {
-            case "cable":
-                details = `Longitud: ${comp.longitud_cable}m`;
+            case "coaxial":
+                details = `Pérdida: ${comp.atenuacion_coaxial}dB`;
                 break;
             case "derivador":
                 details = `IL: ${comp.atenuacion_insercion}dB, BL: ${comp.atenuacion_derivacion}dB`;
@@ -143,8 +22,8 @@ export function updateComponentSection(type, components) {
             case "distribuidor":
                 details = `Pérdida: ${comp.atenuacion_distribucion}dB`;
                 break;
-            case "amplificador":
-                details = `Gain: ${comp.ganancia}dB, NF: ${comp.figura_ruido}dB`;
+            case "toma":
+                details = `Nivel: ${comp.nivel_senal}dB`;
                 break;
         }
 
@@ -204,80 +83,77 @@ export function updateSignalQualitySummary(data) {
     summaryElement.appendChild(summary);
 }
 
-export function updateComponentList(type, componentModelos) {
-    const listElement = document.getElementById(`${type}-list`);
+export function updateComponentList(type, data, customListId = null) {
+    const listElement = document.getElementById(customListId || `${type}-list`);
     if (!listElement) return;
 
-    // Clear existing content
-    listElement.innerHTML = "";
-
-    if (!Array.isArray(componentModelos)) {
-        listElement.innerHTML = '<div class="text-red-500 dark:text-red-400">Formato de datos inválido</div>';
+    if (!Array.isArray(data) || data.length === 0) {
+        listElement.innerHTML = `<div class="text-gray-500 dark:text-gray-400">No hay ${type} disponibles</div>`;
         return;
     }
 
-    if (componentModelos.length === 0) {
-        listElement.innerHTML = '<div class="text-gray-500 dark:text-gray-400">No hay componentes disponibles</div>';
-        return;
-    }
+    const list = document.createElement("ul");
+    list.className = "space-y-2";
 
-    // Add each component as a card
-    componentModelos.forEach((modelo) => {
-        const card = document.createElement("div");
-        card.className =
-            "bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600";
+    data.forEach((modelo) => {
+        const item = document.createElement("li");
+        item.className = "p-2 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer";
+        item.dataset.modelo = modelo;
+        
+        const content = document.createElement("div");
+        content.className = "flex justify-between items-center";
+        
+        const name = document.createElement("span");
+        name.className = "font-medium text-gray-900 dark:text-white";
+        name.textContent = modelo || "Sin nombre";
+        
+        content.appendChild(name);
+        item.appendChild(content);
+        list.appendChild(item);
 
-        card.innerHTML = `
-            <div class="font-medium text-gray-900 dark:text-gray-100">${modelo}</div>
-        `;
-        listElement.appendChild(card);
+        // Add click handler for selection
+        item.addEventListener("click", () => {
+            // Remove selected class from all items
+            list.querySelectorAll("li").forEach(li => {
+                li.classList.remove("bg-blue-50", "dark:bg-blue-900/30", "border", "border-blue-200", "dark:border-blue-800");
+            });
+            
+            // Add selected class to clicked item
+            item.classList.add("bg-blue-50", "dark:bg-blue-900/30", "border", "border-blue-200", "dark:border-blue-800");
+            
+            // Store the selected model in a hidden input or data attribute
+            const container = listElement.closest(".space-y-4");
+            if (container) {
+                let modelInput = container.querySelector("input[name='selected_model']");
+                if (!modelInput) {
+                    modelInput = document.createElement("input");
+                    modelInput.type = "hidden";
+                    modelInput.name = "selected_model";
+                    container.appendChild(modelInput);
+                }
+                modelInput.value = modelo;
+            }
+        });
     });
+
+    listElement.innerHTML = "";
+    listElement.appendChild(list);
 }
 
-export function updateQualityDisplay(data) {
-    const qualityTable = document.createElement('table');
-    qualityTable.className = 'min-w-full divide-y divide-gray-200 dark:divide-gray-700';
-    
-    // Create table header
-    const thead = document.createElement('thead');
-    thead.className = 'bg-gray-50 dark:bg-gray-800';
-    thead.innerHTML = `
-        <tr>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Piso</th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nivel de Señal (dB)</th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Estado</th>
-        </tr>
-    `;
-    qualityTable.appendChild(thead);
+export function updateConfigSelect(configurations, configSelect) {
+    if (!configSelect) return;
 
-    // Create table body
-    const tbody = document.createElement('tbody');
-    tbody.className = 'bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700';
+    configSelect.innerHTML = configurations
+        .map((config) => {
+            const option = document.createElement("option");
+            option.value = config.id_configuraciones || config.id;
+            option.textContent = config.nombre;
+            option.dataset.config = JSON.stringify(config);
+            return option.outerHTML;
+        })
+        .join("");
 
-    data.forEach((floor, index) => {
-        const tr = document.createElement('tr');
-        tr.className = index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800';
-        
-        const statusClass = floor.is_valid 
-            ? 'text-green-800 dark:text-green-400' 
-            : 'text-red-800 dark:text-red-400';
-        
-        tr.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">Piso ${floor.piso}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">${floor.nivel_senal.toFixed(2)}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm ${statusClass} font-medium">
-                ${floor.is_valid ? 'Válido' : 'Inválido'}
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-
-    qualityTable.appendChild(tbody);
-
-    // Update the simulation details section
-    const simulationDetails = document.getElementById('simulation-details');
-    if (simulationDetails) {
-        simulationDetails.innerHTML = '';
-        simulationDetails.appendChild(qualityTable);
+    if (configurations.length > 0 && !configSelect.value) {
+        configSelect.value = configurations[0].id_configuraciones || configurations[0].id;
     }
-} 
+}

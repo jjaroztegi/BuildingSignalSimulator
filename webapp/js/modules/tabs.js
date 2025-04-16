@@ -1,9 +1,8 @@
 // Tab management module
-// Module-level constants for tab elements
-const tabButtons = document.querySelectorAll(".tab-button");
-const tabContents = document.querySelectorAll(".tab-content");
-
 export function initTabs() {
+    const tabButtons = document.querySelectorAll(".tab-button");
+    const tabContents = document.querySelectorAll(".tab-content");
+
     // Add click event listeners to tab buttons
     tabButtons.forEach((button) => {
         button.addEventListener("click", () => {
@@ -19,14 +18,15 @@ export function initTabs() {
     }
 }
 
-// Function to switch tabs
 export function switchTab(tabId) {
     // Hide all tab contents
+    const tabContents = document.querySelectorAll(".tab-content");
     tabContents.forEach((content) => {
         content.classList.add("hidden");
     });
 
     // Remove active class from all tab buttons
+    const tabButtons = document.querySelectorAll(".tab-button");
     tabButtons.forEach((button) => {
         button.classList.remove("active-tab", "border-blue-500", "text-blue-600", "dark:text-blue-400");
         button.classList.add(
