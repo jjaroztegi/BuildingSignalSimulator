@@ -25,7 +25,7 @@ public class AccessConnection {
         }
     }
 
-    private static final String DB_URL = "jdbc:ucanaccess://" + root + "database/signal_distribution.accdb";
+    private static final String DB_URL = "jdbc:ucanaccess://" + root + "database/DistribucionDeSenal.accdb";
     private static Connection connection;
     private static AccessConnection instance;
     private static final Object LOCK = new Object();

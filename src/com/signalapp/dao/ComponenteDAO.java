@@ -13,11 +13,11 @@ public class ComponenteDAO extends BaseDAO<Componente> {
     
     /**
      * Gets the name of the database table
-     * @return The table name "Componentes"
+     * @return The table name "componentes"
      */
     @Override
     protected String getTableName() {
-        return "Componentes";
+        return "componentes";
     }
 
     /**
@@ -27,8 +27,7 @@ public class ComponenteDAO extends BaseDAO<Componente> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_componentes", "id_tiposcomponente", "modelo", "costo", "fecha_creacion", 
-            "usuario_creacion", "fecha_modificacion", "usuario_modificacion"
+            "id_componentes", "id_tipos_componente", "modelo", "costo"
         };
     }
 
@@ -42,13 +41,9 @@ public class ComponenteDAO extends BaseDAO<Componente> {
     protected Componente mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new Componente(
             rs.getInt("id_componentes"),
-            rs.getInt("id_tiposcomponente"),
+            rs.getInt("id_tipos_componente"),
             rs.getString("modelo"),
-            rs.getDouble("costo"),
-            rs.getString("fecha_creacion"),
-            rs.getString("usuario_creacion"),
-            rs.getString("fecha_modificacion"),
-            rs.getString("usuario_modificacion")
+            rs.getDouble("costo")
         );
     }
 
@@ -60,13 +55,9 @@ public class ComponenteDAO extends BaseDAO<Componente> {
      */
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, Componente entity) throws SQLException {
-        ps.setInt(1, entity.getId_tiposcomponente());
+        ps.setInt(1, entity.getId_tipos_componente());
         ps.setString(2, entity.getModelo());
         ps.setDouble(3, entity.getCosto());
-        ps.setString(4, entity.getFecha_creacion());
-        ps.setString(5, entity.getUsuario_creacion());
-        ps.setString(6, entity.getFecha_modificacion());
-        ps.setString(7, entity.getUsuario_modificacion());
     }
 
     /**

@@ -13,11 +13,11 @@ public class ConfiguracionDAO extends BaseDAO<Configuracion> {
     
     /**
      * Gets the name of the database table
-     * @return The table name "Configuraciones"
+     * @return The table name "configuraciones"
      */
     @Override
     protected String getTableName() {
-        return "Configuraciones";
+        return "configuraciones";
     }
 
     /**

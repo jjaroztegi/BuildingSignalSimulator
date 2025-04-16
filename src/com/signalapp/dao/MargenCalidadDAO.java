@@ -13,11 +13,11 @@ public class MargenCalidadDAO extends BaseDAO<MargenCalidad> {
     
     /**
      * Gets the name of the database table
-     * @return The table name "MargenesCalidad"
+     * @return The table name "margenes_calidad"
      */
     @Override
     protected String getTableName() {
-        return "MargenesCalidad";
+        return "margenes_calidad";
     }
 
     /**
@@ -27,7 +27,7 @@ public class MargenCalidadDAO extends BaseDAO<MargenCalidad> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_margenescalidad", "tipo_senal", "nivel_minimo", "nivel_maximo"
+            "id_margenes_calidad", "tipo_senal", "nivel_minimo", "nivel_maximo"
         };
     }
 
@@ -40,7 +40,7 @@ public class MargenCalidadDAO extends BaseDAO<MargenCalidad> {
     @Override
     protected MargenCalidad mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new MargenCalidad(
-            rs.getInt("id_margenescalidad"),
+            rs.getInt("id_margenes_calidad"),
             rs.getString("tipo_senal"),
             rs.getDouble("nivel_minimo"),
             rs.getDouble("nivel_maximo")

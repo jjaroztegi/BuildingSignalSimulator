@@ -13,11 +13,11 @@ public class DistribuidorDAO extends BaseDAO<Distribuidor> {
     
     /**
      * Gets the name of the database table
-     * @return The table name "Distribuidores"
+     * @return The table name "distribuidores"
      */
     @Override
     protected String getTableName() {
-        return "Distribuidores";
+        return "distribuidores";
     }
 
     /**
@@ -27,7 +27,8 @@ public class DistribuidorDAO extends BaseDAO<Distribuidor> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_distribuidores", "id_componentes", "num_salidas", "atenuacion_distribucion", "desacoplo"
+            "id_distribuidores", "id_componentes", "numero_salidas", "atenuacion_distribucion", 
+            "desacoplo", "perdidas_retorno"
         };
     }
 
@@ -42,9 +43,10 @@ public class DistribuidorDAO extends BaseDAO<Distribuidor> {
         return new Distribuidor(
             rs.getInt("id_distribuidores"),
             rs.getInt("id_componentes"),
-            rs.getInt("num_salidas"),
+            rs.getInt("numero_salidas"),
             rs.getDouble("atenuacion_distribucion"),
-            rs.getDouble("desacoplo")
+            rs.getDouble("desacoplo"),
+            rs.getDouble("perdidas_retorno")
         );
     }
 
@@ -57,8 +59,9 @@ public class DistribuidorDAO extends BaseDAO<Distribuidor> {
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, Distribuidor entity) throws SQLException {
         ps.setInt(1, entity.getId_componentes());
-        ps.setInt(2, entity.getNum_salidas());
+        ps.setInt(2, entity.getNumero_salidas());
         ps.setDouble(3, entity.getAtenuacion_distribucion());
         ps.setDouble(4, entity.getDesacoplo());
+        ps.setDouble(5, entity.getPerdidas_retorno());
     }
 } 

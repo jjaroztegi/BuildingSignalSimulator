@@ -4,13 +4,15 @@ public class Toma {
     private int id_tomas;
     private int id_componentes;
     private double atenuacion;
+    private double desacoplo;
 
     public Toma() {}
 
-    public Toma(int id_tomas, int id_componentes, double atenuacion) {
+    public Toma(int id_tomas, int id_componentes, double atenuacion, double desacoplo) {
         this.id_tomas = id_tomas;
         this.id_componentes = id_componentes;
         this.atenuacion = atenuacion;
+        this.desacoplo = desacoplo;
     }
 
     // Getters and Setters
@@ -22,4 +24,7 @@ public class Toma {
     
     public double getAtenuacion() { return atenuacion; }
     public void setAtenuacion(double atenuacion) { this.atenuacion = atenuacion; }
+    
+    public double getDesacoplo() { return desacoplo; }
+    public void setDesacoplo(double desacoplo) { this.desacoplo = desacoplo; }
 } 

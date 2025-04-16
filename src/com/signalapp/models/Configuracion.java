@@ -13,10 +13,9 @@ public class Configuracion {
 
     public Configuracion() {}
 
-    public Configuracion(int id_configuraciones, String nombre, double nivel_cabecera, 
-                        int num_pisos, double costo_total, String fecha_creacion, 
-                        String usuario_creacion, String fecha_modificacion, 
-                        String usuario_modificacion) {
+    public Configuracion(int id_configuraciones, String nombre, double nivel_cabecera, int num_pisos, 
+                        double costo_total, String fecha_creacion, String usuario_creacion, 
+                        String fecha_modificacion, String usuario_modificacion) {
         this.id_configuraciones = id_configuraciones;
         this.nombre = nombre;
         this.nivel_cabecera = nivel_cabecera;

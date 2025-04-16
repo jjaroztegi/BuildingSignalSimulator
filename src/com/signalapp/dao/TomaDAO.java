@@ -13,11 +13,11 @@ public class TomaDAO extends BaseDAO<Toma> {
     
     /**
      * Gets the name of the database table
-     * @return The table name "Tomas"
+     * @return The table name "tomas"
      */
     @Override
     protected String getTableName() {
-        return "Tomas";
+        return "tomas";
     }
 
     /**
@@ -27,7 +27,7 @@ public class TomaDAO extends BaseDAO<Toma> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_tomas", "id_componentes", "atenuacion"
+            "id_tomas", "id_componentes", "atenuacion", "desacoplo"
         };
     }
 
@@ -42,7 +42,8 @@ public class TomaDAO extends BaseDAO<Toma> {
         return new Toma(
             rs.getInt("id_tomas"),
             rs.getInt("id_componentes"),
-            rs.getInt("atenuacion")
+            rs.getDouble("atenuacion"),
+            rs.getDouble("desacoplo")
         );
     }
 
@@ -56,5 +57,6 @@ public class TomaDAO extends BaseDAO<Toma> {
     protected void setPreparedStatementParams(PreparedStatement ps, Toma entity) throws SQLException {
         ps.setInt(1, entity.getId_componentes());
         ps.setDouble(2, entity.getAtenuacion());
+        ps.setDouble(3, entity.getDesacoplo());
     }
 } 

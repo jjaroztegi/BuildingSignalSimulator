@@ -38,10 +38,10 @@ public class ComponentServlet extends HttpServlet {
             ComponenteDAO componenteDAO = new ComponenteDAO();
 
             switch (type.toLowerCase()) {
-                case "cable":
-                    CableDAO cableDAO = new CableDAO();
-                    for (Cable cable : cableDAO.findAll()) {
-                        Componente componente = componenteDAO.findById(cable.getId_componentes());
+                case "coaxial":
+                    CoaxialDAO coaxialDAO = new CoaxialDAO();
+                    for (Coaxial coaxial : coaxialDAO.findAll()) {
+                        Componente componente = componenteDAO.findById(coaxial.getId_componentes());
                         if (componente != null) {
                             components.add(componente.getModelo());
                         }
@@ -60,15 +60,6 @@ public class ComponentServlet extends HttpServlet {
                     DistribuidorDAO distribuidorDAO = new DistribuidorDAO();
                     for (Distribuidor distribuidor : distribuidorDAO.findAll()) {
                         Componente componente = componenteDAO.findById(distribuidor.getId_componentes());
-                        if (componente != null) {
-                            components.add(componente.getModelo());
-                        }
-                    }
-                    break;
-                case "amplificador":
-                    AmplificadorRuidoBaseDAO amplificadorDAO = new AmplificadorRuidoBaseDAO();
-                    for (AmplificadorRuidoBase amplificador : amplificadorDAO.findAll()) {
-                        Componente componente = componenteDAO.findById(amplificador.getId_componentes());
                         if (componente != null) {
                             components.add(componente.getModelo());
                         }
@@ -120,7 +111,6 @@ public class ComponentServlet extends HttpServlet {
         String type = request.getParameter("type");
         String modelo = request.getParameter("modelo");
         String costo = request.getParameter("costo");
-        String usuario = "system";
 
         if (type == null || modelo == null || costo == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -133,19 +123,10 @@ public class ComponentServlet extends HttpServlet {
             Componente componente = new Componente();
             componente.setModelo(modelo);
             componente.setCosto(Double.parseDouble(costo));
-            
-            // Format current date in a format the database can understand
-            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String currentDate = sdf.format(new java.util.Date());
-            
-            componente.setFecha_creacion(currentDate);
-            componente.setUsuario_creacion(usuario);
-            componente.setFecha_modificacion(currentDate);
-            componente.setUsuario_modificacion(usuario);
 
-            // Get id_tiposcomponente from TiposComponente
+            // Get id_tipos_componente from TiposComponente
             int idTipo = getTipoComponenteId(type.toLowerCase());
-            componente.setId_tiposcomponente(idTipo);
+            componente.setId_tipos_componente(idTipo);
 
             // Insert Componente
             ComponenteDAO componenteDAO = new ComponenteDAO();
@@ -156,39 +137,37 @@ public class ComponentServlet extends HttpServlet {
 
             // Insert specific component
             switch (type.toLowerCase()) {
-                case "cable":
-                    Cable cable = new Cable();
-                    cable.setId_componentes(idComponente);
-                    cable.setLongitud_maxima(100);
-                    new CableDAO().insert(cable);
+                case "coaxial":
+                    Coaxial coaxial = new Coaxial();
+                    coaxial.setId_componentes(idComponente);
+                    coaxial.setAtenuacion_470mhz(0.0);
+                    coaxial.setAtenuacion_694mhz(0.0);
+                    new CoaxialDAO().insert(coaxial);
                     break;
                 case "derivador":
                     Derivador derivador = new Derivador();
                     derivador.setId_componentes(idComponente);
-                    derivador.setAtenuacion_insercion(3.5);
                     derivador.setAtenuacion_derivacion(10.0);
-                    derivador.setNum_salidas(2);
+                    derivador.setAtenuacion_paso(3.5);
+                    derivador.setDirectividad(20.0);
+                    derivador.setDesacoplo(20.0);
+                    derivador.setPerdidas_retorno(16.0);
                     new DerivadorDAO().insert(derivador);
                     break;
                 case "distribuidor":
                     Distribuidor distribuidor = new Distribuidor();
                     distribuidor.setId_componentes(idComponente);
-                    distribuidor.setNum_salidas(4);
+                    distribuidor.setNumero_salidas(4);
                     distribuidor.setAtenuacion_distribucion(3.5);
+                    distribuidor.setDesacoplo(20.0);
+                    distribuidor.setPerdidas_retorno(16.0);
                     new DistribuidorDAO().insert(distribuidor);
-                    break;
-                case "amplificador":
-                    AmplificadorRuidoBase amplificador = new AmplificadorRuidoBase();
-                    amplificador.setId_componentes(idComponente);
-                    amplificador.setAtenuacion(0.0);
-                    amplificador.setGanancia(20.0);
-                    amplificador.setFigura_ruido(3.0);
-                    new AmplificadorRuidoBaseDAO().insert(amplificador);
                     break;
                 case "toma":
                     Toma toma = new Toma();
                     toma.setId_componentes(idComponente);
-                    toma.setAtenuacion(1);
+                    toma.setAtenuacion(1.0);
+                    toma.setDesacoplo(20.0);
                     new TomaDAO().insert(toma);
                     break;
                 default:

@@ -14,21 +14,21 @@ public class TiposComponenteDAO extends BaseDAO<TipoComponente> {
     
     /**
      * Returns the name of the database table for component types.
-     * @return The table name "TiposComponente"
+     * @return The table name "tipos_componente"
      */
     @Override
     protected String getTableName() {
-        return "TiposComponente";
+        return "tipos_componente";
     }
 
     /**
      * Returns the column names for the TiposComponente table.
-     * @return Array containing "id_tiposcomponente" and "nombre"
+     * @return Array containing "id_tipos_componente", "nombre", and "descripcion"
      */
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_tiposcomponente", "nombre"
+            "id_tipos_componente", "nombre", "descripcion"
         };
     }
 
@@ -41,8 +41,9 @@ public class TiposComponenteDAO extends BaseDAO<TipoComponente> {
     @Override
     protected TipoComponente mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new TipoComponente(
-            rs.getInt("id_tiposcomponente"),
-            rs.getString("nombre")
+            rs.getInt("id_tipos_componente"),
+            rs.getString("nombre"),
+            rs.getString("descripcion")
         );
     }
 
@@ -55,6 +56,7 @@ public class TiposComponenteDAO extends BaseDAO<TipoComponente> {
     @Override
     protected void setPreparedStatementParams(PreparedStatement ps, TipoComponente entity) throws SQLException {
         ps.setString(1, entity.getNombre());
+        ps.setString(2, entity.getDescripcion());
     }
     
     /**
