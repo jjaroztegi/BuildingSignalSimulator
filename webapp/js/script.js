@@ -9,9 +9,15 @@ import {
     runSimulation,
     fetchSignalTypes
 } from "./modules/servlet.js";
-import { displayError } from "./modules/utils.js";
+import { 
+    displayError, 
+    simulationComponentManager, 
+    updateSelectedComponentsDisplay,
+    displaySuccess
+} from "./modules/utils.js";
+import { updateComponentList, updateConfigSelect } from "./modules/ui.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     // Initialize theme
     initTheme();
 
@@ -32,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const componentListType = document.getElementById("component-list-type");
     const simulationComponentListType = document.getElementById("simulation-component-list-type");
     const signalType = document.getElementById("signal-type");
-    const runSimulation = document.getElementById("run-simulation");
+    const runSimulationButton = document.getElementById("run-simulation");
 
     // --- Configuration Select Change Handler ---
     if (configSelect) {
@@ -80,29 +86,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- Simulation Component List Type Selector Logic ---
     if (simulationComponentListType) {
-        const simulationComponentLists = document.querySelectorAll("#simulation-tab-content .component-list");
-
-        // Function to show selected component list and hide others
-        const showSelectedSimulationComponentList = (selectedValue) => {
-            simulationComponentLists.forEach((list) => {
-                if (list.id === `simulation-${selectedValue}-list`) {
-                    list.classList.remove("hidden");
-                } else {
-                    list.classList.add("hidden");
-                }
+        simulationComponentListType.addEventListener("change", async () => {
+            const type = simulationComponentListType.value;
+            // Hide all component lists
+            document.querySelectorAll(".component-list").forEach((list) => {
+                list.classList.add("hidden");
             });
-            
-            // Fetch components for the selected type
-            fetchComponentsByType(selectedValue, null, `simulation-${selectedValue}-list`);
-        };
-
-        // Initialize with the first option
-        showSelectedSimulationComponentList(simulationComponentListType.value);
-
-        // Add change event listener
-        simulationComponentListType.addEventListener("change", (event) => {
-            showSelectedSimulationComponentList(event.target.value);
+            // Show selected type list
+            const selectedList = document.getElementById(`simulation-${type}-list`);
+            if (selectedList) {
+                selectedList.classList.remove("hidden");
+            }
+            // Fetch and update components for the selected type
+            try {
+                const components = await fetchComponentsByType(type);
+                updateComponentList(type, components, `simulation-${type}-list`);
+            } catch (error) {
+                console.error(`Error fetching ${type} components:`, error);
+            }
         });
+
+        // Trigger initial load of components
+        simulationComponentListType.dispatchEvent(new Event("change"));
     }
 
     // --- Form Submission Logic ---
@@ -118,26 +123,14 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
-    if (runSimulation) {
-        runSimulation.addEventListener("click", async () => {
-            const configId = simulationConfig.value;
-            const signalTypeValue = signalType.value;
-            const componentType = simulationComponentListType.value;
-            const componentModel = document.getElementById("simulation-component-model").value;
-
-            if (!configId || !signalTypeValue || !componentType || !componentModel) {
-                errorMessageElement.textContent = "Por favor seleccione una configuración, tipo de señal, tipo de componente y modelo";
-                errorMessageElement.classList.remove("hidden");
-                return;
-            }
-
-            try {
-                // Run the simulation
-                await runSimulation(configId, signalTypeValue);
-                // Switch to results tab
-                switchTab("results-tab");
-            } catch (error) {
-                displayError(`Error en la simulación: ${error.message}`, errorMessageElement, successMessageElement);
+    if (runSimulationButton) {
+        runSimulationButton.addEventListener("click", () => {
+            const selectedComponents = simulationComponentManager.getAllSelectedComponents();
+            displaySuccess("Simulación iniciada", successMessageElement, errorMessageElement);
+            // Switch to results tab
+            const resultsTab = document.getElementById("results-tab");
+            if (resultsTab) {
+                switchTab(resultsTab.id);
             }
         });
     }
@@ -176,5 +169,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 fetchComponentsByType(selectedType);
             }
         });
+    });
+
+    // Handle component selection in simulation tab
+    document.addEventListener('addComponent', (event) => {
+        const { type, model } = event.detail;
+        if (simulationComponentManager.addComponent(type, model)) {
+            updateSelectedComponentsDisplay();
+        }
+    });
+
+    document.addEventListener('removeComponent', (event) => {
+        const { type, model } = event.detail;
+        if (simulationComponentManager.removeComponent(type, model)) {
+            updateSelectedComponentsDisplay();
+        }
     });
 });

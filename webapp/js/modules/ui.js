@@ -95,6 +95,9 @@ export function updateComponentList(type, data, customListId = null) {
     const list = document.createElement("ul");
     list.className = "space-y-2";
 
+    // Check if this is a simulation list by the ID
+    const isSimulationList = customListId?.startsWith('simulation-');
+
     data.forEach((modelo) => {
         const item = document.createElement("li");
         item.className = "p-2 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer";
@@ -108,32 +111,52 @@ export function updateComponentList(type, data, customListId = null) {
         name.textContent = modelo || "Sin nombre";
         
         content.appendChild(name);
+
+        if (isSimulationList) {
+            const addButton = document.createElement("button");
+            addButton.className = "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 px-2 py-1 rounded-md text-sm";
+            addButton.textContent = "Añadir";
+            content.appendChild(addButton);
+
+            // Add click handler for selection in simulation tab
+            addButton.addEventListener("click", (e) => {
+                e.stopPropagation();
+                // Dispatch a custom event for component selection
+                document.dispatchEvent(new CustomEvent('addComponent', {
+                    detail: {
+                        type: type,
+                        model: modelo
+                    }
+                }));
+            });
+        } else {
+            // For the components tab, add the selection behavior
+            item.addEventListener("click", () => {
+                // Remove selected class from all items
+                list.querySelectorAll("li").forEach(li => {
+                    li.classList.remove("bg-blue-50", "dark:bg-blue-900/30", "border", "border-blue-200", "dark:border-blue-800");
+                });
+                
+                // Add selected class to clicked item
+                item.classList.add("bg-blue-50", "dark:bg-blue-900/30", "border", "border-blue-200", "dark:border-blue-800");
+                
+                // Store the selected model in a hidden input or data attribute
+                const container = listElement.closest(".space-y-4");
+                if (container) {
+                    let modelInput = container.querySelector("input[name='selected_model']");
+                    if (!modelInput) {
+                        modelInput = document.createElement("input");
+                        modelInput.type = "hidden";
+                        modelInput.name = "selected_model";
+                        container.appendChild(modelInput);
+                    }
+                    modelInput.value = modelo;
+                }
+            });
+        }
+
         item.appendChild(content);
         list.appendChild(item);
-
-        // Add click handler for selection
-        item.addEventListener("click", () => {
-            // Remove selected class from all items
-            list.querySelectorAll("li").forEach(li => {
-                li.classList.remove("bg-blue-50", "dark:bg-blue-900/30", "border", "border-blue-200", "dark:border-blue-800");
-            });
-            
-            // Add selected class to clicked item
-            item.classList.add("bg-blue-50", "dark:bg-blue-900/30", "border", "border-blue-200", "dark:border-blue-800");
-            
-            // Store the selected model in a hidden input or data attribute
-            const container = listElement.closest(".space-y-4");
-            if (container) {
-                let modelInput = container.querySelector("input[name='selected_model']");
-                if (!modelInput) {
-                    modelInput = document.createElement("input");
-                    modelInput.type = "hidden";
-                    modelInput.name = "selected_model";
-                    container.appendChild(modelInput);
-                }
-                modelInput.value = modelo;
-            }
-        });
     });
 
     listElement.innerHTML = "";

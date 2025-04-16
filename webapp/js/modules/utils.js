@@ -1,35 +1,140 @@
 // Utility functions module
+
+// Loading state management
 export function setLoadingState(button, isLoading) {
     if (!button) return;
+    button.disabled = isLoading;
+    button.innerHTML = isLoading ? "Cargando..." : button.dataset.originalText || button.innerHTML;
+}
 
-    // Save original state if not already saved
-    if (!button.hasAttribute("data-original-text")) {
-        button.setAttribute("data-original-text", button.innerHTML);
+// Message display functions
+export function displayError(message, errorElement, successElement) {
+    if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.classList.remove("hidden");
+    }
+    if (successElement) {
+        successElement.classList.add("hidden");
+    }
+}
+
+export function displaySuccess(message, successElement, errorElement) {
+    if (successElement) {
+        successElement.textContent = message;
+        successElement.classList.remove("hidden");
+    }
+    if (errorElement) {
+        errorElement.classList.add("hidden");
+    }
+}
+
+export function clearMessages(errorElement, successElement) {
+    if (errorElement) {
+        errorElement.classList.add("hidden");
+        errorElement.textContent = "";
+    }
+    if (successElement) {
+        successElement.classList.add("hidden");
+        successElement.textContent = "";
+    }
+}
+
+// Simulation Components Management
+class SimulationComponentManager {
+    constructor() {
+        this.selectedComponents = {
+            coaxial: [],
+            derivador: [],
+            distribuidor: [],
+            toma: []
+        };
     }
 
-    button.disabled = isLoading;
-    button.innerHTML = isLoading
-        ? '<span class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></span>'
-        : button.getAttribute("data-original-text");
+    addComponent(type, model) {
+        if (!this.selectedComponents[type]) return false;
+        if (!this.selectedComponents[type].includes(model)) {
+            this.selectedComponents[type].push(model);
+            return true;
+        }
+        return false;
+    }
+
+    removeComponent(type, model) {
+        if (!this.selectedComponents[type]) return false;
+        const index = this.selectedComponents[type].indexOf(model);
+        if (index > -1) {
+            this.selectedComponents[type].splice(index, 1);
+            return true;
+        }
+        return false;
+    }
+
+    getSelectedComponents(type) {
+        return this.selectedComponents[type] || [];
+    }
+
+    getAllSelectedComponents() {
+        return this.selectedComponents;
+    }
+
+    clearComponents(type) {
+        if (type) {
+            this.selectedComponents[type] = [];
+        } else {
+            Object.keys(this.selectedComponents).forEach(key => {
+                this.selectedComponents[key] = [];
+            });
+        }
+    }
 }
 
-export function displayError(message, errorMessageElement, successMessageElement) {
-    if (!errorMessageElement) return;
-    errorMessageElement.textContent = message;
-    errorMessageElement.classList.remove("hidden");
-    successMessageElement?.classList.add("hidden");
+// Create and export a singleton instance
+export const simulationComponentManager = new SimulationComponentManager();
+
+// Function to update the selected components display
+export function updateSelectedComponentsDisplay() {
+    const selectedComponentsContainer = document.getElementById('selected-components-container');
+    if (!selectedComponentsContainer) return;
+
+    const componentTypes = Object.keys(simulationComponentManager.selectedComponents);
+    
+    let html = '<div class="space-y-4">';
+    componentTypes.forEach(type => {
+        const components = simulationComponentManager.getSelectedComponents(type);
+        if (components.length > 0) {
+            html += `
+                <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
+                    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">${getComponentTypeName(type)}</h4>
+                    <ul class="space-y-1">
+                        ${components.map(model => `
+                            <li class="flex justify-between items-center text-sm">
+                                <span>${model}</span>
+                                <button 
+                                    class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                                    onclick="document.dispatchEvent(new CustomEvent('removeComponent', {detail: {type: '${type}', model: '${model}'}}))"
+                                >
+                                    ×
+                                </button>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+    });
+    html += '</div>';
+
+    selectedComponentsContainer.innerHTML = html;
 }
 
-export function displaySuccess(message, successMessageElement, errorMessageElement) {
-    if (!successMessageElement) return;
-    successMessageElement.textContent = message;
-    successMessageElement.classList.remove("hidden");
-    errorMessageElement?.classList.add("hidden");
-}
-
-export function clearMessages(errorMessageElement, successMessageElement) {
-    errorMessageElement?.classList.add("hidden");
-    successMessageElement?.classList.add("hidden");
+function getComponentTypeName(type) {
+    const typeNames = {
+        coaxial: 'Cables Coaxiales',
+        derivador: 'Derivadores',
+        distribuidor: 'Distribuidores',
+        toma: 'Tomas'
+    };
+    return typeNames[type] || type;
 }
 
 export function formatDate(dateString) {
