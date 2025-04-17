@@ -180,3 +180,62 @@ export function updateConfigSelect(configurations, configSelect) {
         configSelect.value = configurations[0].id_configuraciones || configurations[0].id;
     }
 }
+
+export function updateSimulationResults(results) {
+    const signalLevelsTable = document.getElementById('signal-levels-table');
+    const simulationSummary = document.getElementById('simulation-summary');
+    
+    if (!signalLevelsTable || !simulationSummary || !results) return;
+
+    // Update signal levels table
+    signalLevelsTable.innerHTML = results.signal_levels
+        .sort((a, b) => a.floor - b.floor)
+        .map(floor => `
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                    ${floor.floor}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                    ${floor.level.toFixed(2)} dBm
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        floor.status === 'ok' 
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                            : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                    }">
+                        ${floor.status === 'ok' ? 'OK' : 'Error'}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                    ${floor.floor_cost.toFixed(2)} €
+                </td>
+            </tr>
+        `).join('');
+
+    // Update summary section
+    simulationSummary.classList.remove('hidden');
+    
+    // Get current configuration data
+    const simulationConfig = document.getElementById('simulation-config');
+    const selectedOption = simulationConfig.options[simulationConfig.selectedIndex];
+    const configData = selectedOption ? JSON.parse(selectedOption.dataset.config) : null;
+    
+    // Update headend level from configuration data
+    const headendLevel = document.getElementById('headend-level');
+    if (headendLevel && configData) {
+        headendLevel.textContent = `${configData.nivel_cabecera.toFixed(2)} dBm`;
+    }
+
+    // Update quality margins
+    const qualityMargins = document.getElementById('quality-margins');
+    if (qualityMargins && results.margins) {
+        qualityMargins.textContent = `${results.margins.min} dBm - ${results.margins.max} dBm`;
+    }
+
+    // Update total cost
+    const totalCost = document.getElementById('total-cost');
+    if (totalCost) {
+        totalCost.textContent = `${results.total_cost.toFixed(2)} €`;
+    }
+}

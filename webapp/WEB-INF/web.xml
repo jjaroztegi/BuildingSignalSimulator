@@ -23,6 +23,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>SignalCalculationServlet</servlet-name>
+        <servlet-class>com.signalapp.servlets.SignalCalculationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SignalCalculationServlet</servlet-name>
+        <url-pattern>/calculate</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>SignalTypeServlet</servlet-name>
         <servlet-class>com.signalapp.servlets.SignalTypeServlet</servlet-class>
     </servlet>

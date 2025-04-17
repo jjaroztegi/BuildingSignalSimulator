@@ -11,11 +11,17 @@ import {
 } from "./modules/servlet.js";
 import { 
     displayError, 
+    clearMessages,
     simulationComponentManager, 
     updateSelectedComponentsDisplay,
+    updateFloorSelector,
     displaySuccess
 } from "./modules/utils.js";
-import { updateComponentList, updateConfigSelect } from "./modules/ui.js";
+import { 
+    updateComponentList, 
+    updateConfigSelect,
+    updateSimulationResults 
+} from "./modules/ui.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
     // Initialize theme
@@ -39,6 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const simulationComponentListType = document.getElementById("simulation-component-list-type");
     const signalType = document.getElementById("signal-type");
     const runSimulationButton = document.getElementById("run-simulation");
+    const simulationFloor = document.getElementById("simulation-floor");
 
     // --- Configuration Select Change Handler ---
     if (configSelect) {
@@ -48,6 +55,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                 // Update simulation config select with the same value
                 if (simulationConfig) {
                     simulationConfig.value = idConfiguracion;
+                    
+                    // Get the selected configuration data
+                    const selectedOption = configSelect.options[configSelect.selectedIndex];
+                    if (selectedOption && selectedOption.dataset.config) {
+                        const configData = JSON.parse(selectedOption.dataset.config);
+                        // Update floor selector based on num_pisos
+                        if (configData.num_pisos) {
+                            updateFloorSelector(configData.num_pisos);
+                        }
+                    }
                 }
                 // Only switch tabs if it's not the initial load
                 if (!isInitialLoad) {
@@ -56,6 +73,37 @@ document.addEventListener("DOMContentLoaded", async () => {
                         switchTab(simulationTab.id);
                     }
                 }
+            }
+        });
+    }
+
+    // Add change handler for simulation config select
+    if (simulationConfig) {
+        simulationConfig.addEventListener("change", () => {
+            const selectedOption = simulationConfig.options[simulationConfig.selectedIndex];
+            if (selectedOption && selectedOption.dataset.config) {
+                const configData = JSON.parse(selectedOption.dataset.config);
+                if (configData.num_pisos) {
+                    updateFloorSelector(configData.num_pisos);
+                    // Reset current floor selection
+                    if (simulationFloor) {
+                        simulationFloor.value = "";
+                        simulationComponentManager.setCurrentFloor(null);
+                    }
+                    // Clear existing components as they might be invalid for new floor count
+                    simulationComponentManager.clearAllFloors();
+                    updateSelectedComponentsDisplay();
+                }
+            }
+        });
+    }
+
+    // --- Floor Selection Handler ---
+    if (simulationFloor) {
+        simulationFloor.addEventListener("change", () => {
+            const selectedFloor = simulationFloor.value;
+            if (selectedFloor) {
+                simulationComponentManager.setCurrentFloor(selectedFloor);
             }
         });
     }
@@ -124,13 +172,52 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (runSimulationButton) {
-        runSimulationButton.addEventListener("click", () => {
-            const selectedComponents = simulationComponentManager.getAllSelectedComponents();
-            displaySuccess("Simulación iniciada", successMessageElement, errorMessageElement);
-            // Switch to results tab
-            const resultsTab = document.getElementById("results-tab");
-            if (resultsTab) {
-                switchTab(resultsTab.id);
+        runSimulationButton.addEventListener("click", async () => {
+            try {
+                const selectedConfig = simulationConfig.value;
+                const selectedSignalType = signalType.value;
+                
+                if (!selectedConfig || !selectedSignalType) {
+                    displayError("Por favor, seleccione una configuración y tipo de señal", errorMessageElement);
+                    return;
+                }
+
+                // Clear any previous messages
+                clearMessages(errorMessageElement, successMessageElement);
+
+                const componentsByFloor = simulationComponentManager.getAllComponents();
+                if (Object.keys(componentsByFloor).length === 0) {
+                    displayError("Por favor, añada componentes a la simulación", errorMessageElement);
+                    return;
+                }
+
+                // Get the selected configuration data to validate floor numbers
+                const selectedOption = simulationConfig.options[simulationConfig.selectedIndex];
+                const configData = JSON.parse(selectedOption.dataset.config);
+                
+                // Validate that components are only added to valid floors
+                const invalidFloors = Object.keys(componentsByFloor)
+                    .map(Number)
+                    .filter(floor => floor > configData.num_pisos);
+                
+                if (invalidFloors.length > 0) {
+                    displayError(`Hay componentes en pisos que exceden el número de pisos de la configuración (${configData.num_pisos}). Pisos inválidos: ${invalidFloors.join(', ')}`, errorMessageElement);
+                    return;
+                }
+
+                displaySuccess("Simulación completada", successMessageElement, errorMessageElement);
+                
+                // Run simulation
+                const results = await runSimulation(selectedConfig, selectedSignalType, componentsByFloor);
+                
+                // Update results tab content
+                updateSimulationResults(results);
+                
+                // Switch to results tab
+                switchTab("results-tab");
+            } catch (error) {
+                console.error("Error running simulation:", error);
+                displayError(`Error en la simulación: ${error.message}`, errorMessageElement);
             }
         });
     }
@@ -138,6 +225,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- Initial Data Load ---
     fetchInitialData(configSelect).then(() => {
         if (configSelect && configSelect.value) {
+            // Get the selected configuration data
+            const selectedOption = configSelect.options[configSelect.selectedIndex];
+            if (selectedOption && selectedOption.dataset.config) {
+                const configData = JSON.parse(selectedOption.dataset.config);
+                // Update floor selector based on num_pisos
+                if (configData.num_pisos) {
+                    updateFloorSelector(configData.num_pisos);
+                }
+            }
+
             configSelect.dispatchEvent(new Event("change"));
 
             // Also populate the simulation config select
@@ -174,14 +271,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Handle component selection in simulation tab
     document.addEventListener('addComponent', (event) => {
         const { type, model } = event.detail;
-        if (simulationComponentManager.addComponent(type, model)) {
+        const currentFloor = simulationComponentManager.getCurrentFloor();
+        
+        if (!currentFloor) {
+            displayError("Por favor, seleccione un piso primero");
+            return;
+        }
+        
+        if (simulationComponentManager.addComponent(type, model, currentFloor)) {
             updateSelectedComponentsDisplay();
         }
     });
 
     document.addEventListener('removeComponent', (event) => {
-        const { type, model } = event.detail;
-        if (simulationComponentManager.removeComponent(type, model)) {
+        const { type, model, floor } = event.detail;
+        if (simulationComponentManager.removeComponent(type, model, floor)) {
             updateSelectedComponentsDisplay();
         }
     });

@@ -269,6 +269,14 @@
                         <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
                             <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Selección de Componentes</h3>
                             <div class="space-y-4">
+                                <!-- Floor Selection -->
+                                <div>
+                                    <label for="simulation-floor" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Piso</label>
+                                    <select id="simulation-floor" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <option value="">Seleccionar Piso</option>
+                                    </select>
+                                </div>
+
                                 <!-- Component Type Selection -->
                                 <div>
                                     <label for="simulation-component-list-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de Componente</label>
@@ -290,9 +298,9 @@
 
                                 <!-- Selected Components Container -->
                                 <div class="mt-6 border-t dark:border-gray-700 pt-4">
-                                    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Componentes Seleccionados</h4>
-                                    <div id="selected-components-container" class="space-y-2">
-                                        <!-- Selected components will be displayed here -->
+                                    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Componentes por Piso</h4>
+                                    <div id="components-by-floor" class="space-y-4">
+                                        <!-- Components grouped by floor will be displayed here -->
                                     </div>
                                 </div>
                             </div>
@@ -329,6 +337,9 @@
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                                 Estado
                                             </th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                Costo (€)
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody id="signal-levels-table" class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
@@ -340,7 +351,7 @@
                             <!-- Summary Section -->
                             <div id="simulation-summary" class="p-4 bg-gray-50 dark:bg-gray-700 rounded-md border dark:border-gray-600 hidden">
                                 <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Resumen</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div>
                                         <p class="text-sm text-gray-600 dark:text-gray-400">Nivel de Cabecera:</p>
                                         <p id="headend-level" class="font-medium"></p>
@@ -348,6 +359,10 @@
                                     <div>
                                         <p class="text-sm text-gray-600 dark:text-gray-400">Márgenes de Calidad:</p>
                                         <p id="quality-margins" class="font-medium"></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Costo Total:</p>
+                                        <p id="total-cost" class="font-medium"></p>
                                     </div>
                                 </div>
                             </div>

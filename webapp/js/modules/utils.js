@@ -40,91 +40,143 @@ export function clearMessages(errorElement, successElement) {
 }
 
 // Simulation Components Management
-class SimulationComponentManager {
-    constructor() {
-        this.selectedComponents = {
-            coaxial: [],
-            derivador: [],
-            distribuidor: [],
-            toma: []
-        };
-    }
+export const simulationComponentManager = {
+    components: {},
+    componentsByFloor: {},
+    currentFloor: null,
 
-    addComponent(type, model) {
-        if (!this.selectedComponents[type]) return false;
-        if (!this.selectedComponents[type].includes(model)) {
-            this.selectedComponents[type].push(model);
-            return true;
+    addComponent(type, model, floor) {
+        if (!floor) return false;
+        
+        // Initialize floor if not exists
+        if (!this.componentsByFloor[floor]) {
+            this.componentsByFloor[floor] = {};
         }
-        return false;
-    }
-
-    removeComponent(type, model) {
-        if (!this.selectedComponents[type]) return false;
-        const index = this.selectedComponents[type].indexOf(model);
-        if (index > -1) {
-            this.selectedComponents[type].splice(index, 1);
-            return true;
+        if (!this.componentsByFloor[floor][type]) {
+            this.componentsByFloor[floor][type] = new Set();
         }
-        return false;
-    }
 
-    getSelectedComponents(type) {
-        return this.selectedComponents[type] || [];
-    }
+        // Add component to floor
+        this.componentsByFloor[floor][type].add(model);
+        return true;
+    },
 
-    getAllSelectedComponents() {
-        return this.selectedComponents;
-    }
-
-    clearComponents(type) {
-        if (type) {
-            this.selectedComponents[type] = [];
-        } else {
-            Object.keys(this.selectedComponents).forEach(key => {
-                this.selectedComponents[key] = [];
-            });
+    removeComponent(type, model, floor) {
+        if (!floor || !this.componentsByFloor[floor] || !this.componentsByFloor[floor][type]) {
+            return false;
         }
-    }
-}
 
-// Create and export a singleton instance
-export const simulationComponentManager = new SimulationComponentManager();
+        return this.componentsByFloor[floor][type].delete(model);
+    },
+
+    getComponentsByFloor(floor) {
+        return this.componentsByFloor[floor] || {};
+    },
+
+    getAllComponents() {
+        return this.componentsByFloor;
+    },
+
+    setCurrentFloor(floor) {
+        this.currentFloor = floor;
+    },
+
+    getCurrentFloor() {
+        return this.currentFloor;
+    },
+
+    clearFloor(floor) {
+        if (this.componentsByFloor[floor]) {
+            delete this.componentsByFloor[floor];
+        }
+    },
+
+    clearAllFloors() {
+        this.componentsByFloor = {};
+        this.currentFloor = null;
+    }
+};
 
 // Function to update the selected components display
 export function updateSelectedComponentsDisplay() {
-    const selectedComponentsContainer = document.getElementById('selected-components-container');
-    if (!selectedComponentsContainer) return;
+    const container = document.getElementById('components-by-floor');
+    if (!container) return;
 
-    const componentTypes = Object.keys(simulationComponentManager.selectedComponents);
-    
-    let html = '<div class="space-y-4">';
-    componentTypes.forEach(type => {
-        const components = simulationComponentManager.getSelectedComponents(type);
-        if (components.length > 0) {
-            html += `
-                <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
-                    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">${getComponentTypeName(type)}</h4>
-                    <ul class="space-y-1">
-                        ${components.map(model => `
-                            <li class="flex justify-between items-center text-sm">
-                                <span>${model}</span>
-                                <button 
-                                    class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
-                                    onclick="document.dispatchEvent(new CustomEvent('removeComponent', {detail: {type: '${type}', model: '${model}'}}))"
-                                >
-                                    ×
-                                </button>
-                            </li>
-                        `).join('')}
-                    </ul>
-                </div>
-            `;
-        }
+    container.innerHTML = '';
+
+    // Get all floors and sort them numerically
+    const floors = Object.keys(simulationComponentManager.getAllComponents())
+        .sort((a, b) => parseInt(a) - parseInt(b));
+
+    floors.forEach(floor => {
+        const floorComponents = simulationComponentManager.getComponentsByFloor(floor);
+        
+        // Create floor section
+        const floorSection = document.createElement('div');
+        floorSection.className = 'mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg';
+        
+        // Floor header
+        const floorHeader = document.createElement('h5');
+        floorHeader.className = 'text-sm font-medium text-gray-700 dark:text-gray-300 mb-2';
+        floorHeader.textContent = `Piso ${floor}`;
+        floorSection.appendChild(floorHeader);
+
+        // Components list
+        const componentsList = document.createElement('div');
+        componentsList.className = 'space-y-2';
+
+        Object.entries(floorComponents).forEach(([type, models]) => {
+            if (models.size > 0) {
+                const typeContainer = document.createElement('div');
+                typeContainer.className = 'pl-2';
+                
+                const typeHeader = document.createElement('div');
+                typeHeader.className = 'text-xs font-medium text-gray-600 dark:text-gray-400 mb-1';
+                typeHeader.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                typeContainer.appendChild(typeHeader);
+
+                models.forEach(model => {
+                    const componentItem = document.createElement('div');
+                    componentItem.className = 'flex justify-between items-center text-sm';
+                    
+                    const modelName = document.createElement('span');
+                    modelName.textContent = model;
+                    
+                    const removeButton = document.createElement('button');
+                    removeButton.className = 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300';
+                    removeButton.textContent = '×';
+                    removeButton.onclick = () => {
+                        if (simulationComponentManager.removeComponent(type, model, floor)) {
+                            updateSelectedComponentsDisplay();
+                        }
+                    };
+
+                    componentItem.appendChild(modelName);
+                    componentItem.appendChild(removeButton);
+                    typeContainer.appendChild(componentItem);
+                });
+
+                componentsList.appendChild(typeContainer);
+            }
+        });
+
+        floorSection.appendChild(componentsList);
+        container.appendChild(floorSection);
     });
-    html += '</div>';
+}
 
-    selectedComponentsContainer.innerHTML = html;
+export function updateFloorSelector(numPisos) {
+    const floorSelect = document.getElementById('simulation-floor');
+    if (!floorSelect) return;
+
+    floorSelect.innerHTML = '<option value="">Seleccionar Piso</option>';
+    
+    for (let i = 1; i <= numPisos; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `Piso ${i}`;
+        floorSelect.appendChild(option);
+    }
 }
 
 function getComponentTypeName(type) {

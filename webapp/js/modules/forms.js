@@ -24,7 +24,6 @@ export async function handleFormSubmit(
     const nivelCabecera = formData.get("nivel_cabecera");
     const numPisos = formData.get("num_pisos");
 
-    // Basic client-side validation
     if (
         !configName ||
         !nivelCabecera ||
@@ -51,32 +50,26 @@ export async function handleFormSubmit(
             displaySuccess(data.success, successMessageElement, errorMessageElement);
             initialConfigForm.reset();
             
-            // Fetch updated configurations
             const configurations = await fetchConfigurations();
             
-            // Update both config selects
             updateConfigSelect(configurations, configSelect);
             const simulationConfig = document.getElementById("simulation-config");
             if (simulationConfig) {
                 updateConfigSelect(configurations, simulationConfig);
             }
 
-            // Find the newly created configuration in the select options
             const newConfigOption = Array.from(configSelect.options).find(
                 (option) => option.textContent === configName
             );
 
             if (newConfigOption) {
                 configSelect.value = newConfigOption.value;
-                // Update simulation config value as well
                 if (simulationConfig) {
                     simulationConfig.value = newConfigOption.value;
                 }
-                // Trigger the change event to update the UI
                 configSelect.dispatchEvent(new Event("change"));
             }
 
-            // Switch to the simulation tab
             const simulationTab = document.getElementById("simulation-tab");
             if (simulationTab) {
                 switchTab(simulationTab.id);
@@ -124,7 +117,6 @@ export async function handleComponentSubmit(event, componentForm, errorMessageEl
         if (data.success) {
             displaySuccess(data.success, successMessageElement, errorMessageElement);
             componentForm.reset();
-            // Refresh only the relevant component list
             await fetchComponentsByType(type);
         } else {
             const errorMsg = data?.error || `Error en la solicitud`;
