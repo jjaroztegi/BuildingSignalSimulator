@@ -150,7 +150,6 @@ public class SignalCalculationServlet extends HttpServlet {
             // Count component types
             int derivadores = 0;
             int distribuidores = 0;
-            int tomas = 0;
 
             for (ComponentConfig comp : floorComponents) {
                 switch (comp.type.toLowerCase()) {
@@ -159,9 +158,6 @@ public class SignalCalculationServlet extends HttpServlet {
                         break;
                     case "distribuidor":
                         distribuidores++;
-                        break;
-                    case "toma":
-                        tomas++;
                         break;
                 }
             }
@@ -320,7 +316,7 @@ public class SignalCalculationServlet extends HttpServlet {
         }
     }
 
-    // Helper methods to parse JSON without external libraries
+    // Helper methods to parse JSON
     private int extractIntValue(String json, String key) {
         String value = extractStringValue(json, key);
         return Integer.parseInt(value);

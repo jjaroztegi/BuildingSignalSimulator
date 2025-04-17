@@ -10,7 +10,7 @@ import java.sql.SQLException;
  * Handles database operations for coaxial cable entities
  */
 public class CoaxialDAO extends BaseDAO<Coaxial> {
-    
+
     /**
      * Gets the table name for this DAO
      */
@@ -25,7 +25,7 @@ public class CoaxialDAO extends BaseDAO<Coaxial> {
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_coaxiales", "id_componentes", "atenuacion_470mhz", "atenuacion_694mhz"
+                "id_coaxiales", "id_componentes", "atenuacion_470mhz", "atenuacion_694mhz"
         };
     }
 
@@ -35,11 +35,10 @@ public class CoaxialDAO extends BaseDAO<Coaxial> {
     @Override
     protected Coaxial mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new Coaxial(
-            rs.getInt("id_coaxiales"),
-            rs.getInt("id_componentes"),
-            rs.getDouble("atenuacion_470mhz"),
-            rs.getDouble("atenuacion_694mhz")
-        );
+                rs.getInt("id_coaxiales"),
+                rs.getInt("id_componentes"),
+                rs.getDouble("atenuacion_470mhz"),
+                rs.getDouble("atenuacion_694mhz"));
     }
 
     /**
@@ -54,6 +53,7 @@ public class CoaxialDAO extends BaseDAO<Coaxial> {
 
     /**
      * Finds a coaxial component by its componente ID
+     * 
      * @param componenteId The ID of the associated componente
      * @return The Coaxial object if found, null otherwise
      * @throws SQLException if a database error occurs
@@ -70,4 +70,4 @@ public class CoaxialDAO extends BaseDAO<Coaxial> {
             }
         }
     }
-} 
+}

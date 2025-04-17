@@ -47,7 +47,7 @@ export const simulationComponentManager = {
 
     addComponent(type, model, floor) {
         if (!floor) return false;
-        
+
         // Initialize floor if not exists
         if (!this.componentsByFloor[floor]) {
             this.componentsByFloor[floor] = {};
@@ -94,57 +94,57 @@ export const simulationComponentManager = {
     clearAllFloors() {
         this.componentsByFloor = {};
         this.currentFloor = null;
-    }
+    },
 };
 
 // Function to update the selected components display
 export function updateSelectedComponentsDisplay() {
-    const container = document.getElementById('components-by-floor');
+    const container = document.getElementById("components-by-floor");
     if (!container) return;
 
-    container.innerHTML = '';
+    container.innerHTML = "";
 
     // Get all floors and sort them numerically
-    const floors = Object.keys(simulationComponentManager.getAllComponents())
-        .sort((a, b) => parseInt(a) - parseInt(b));
+    const floors = Object.keys(simulationComponentManager.getAllComponents()).sort((a, b) => parseInt(a) - parseInt(b));
 
-    floors.forEach(floor => {
+    floors.forEach((floor) => {
         const floorComponents = simulationComponentManager.getComponentsByFloor(floor);
-        
+
         // Create floor section
-        const floorSection = document.createElement('div');
-        floorSection.className = 'mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg';
-        
+        const floorSection = document.createElement("div");
+        floorSection.className = "mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg";
+
         // Floor header
-        const floorHeader = document.createElement('h5');
-        floorHeader.className = 'text-sm font-medium text-gray-700 dark:text-gray-300 mb-2';
+        const floorHeader = document.createElement("h5");
+        floorHeader.className = "text-sm font-medium text-gray-700 dark:text-gray-300 mb-2";
         floorHeader.textContent = `Piso ${floor}`;
         floorSection.appendChild(floorHeader);
 
         // Components list
-        const componentsList = document.createElement('div');
-        componentsList.className = 'space-y-2';
+        const componentsList = document.createElement("div");
+        componentsList.className = "space-y-2";
 
         Object.entries(floorComponents).forEach(([type, models]) => {
             if (models.size > 0) {
-                const typeContainer = document.createElement('div');
-                typeContainer.className = 'pl-2';
-                
-                const typeHeader = document.createElement('div');
-                typeHeader.className = 'text-xs font-medium text-gray-600 dark:text-gray-400 mb-1';
+                const typeContainer = document.createElement("div");
+                typeContainer.className = "pl-2";
+
+                const typeHeader = document.createElement("div");
+                typeHeader.className = "text-xs font-medium text-gray-600 dark:text-gray-400 mb-1";
                 typeHeader.textContent = type.charAt(0).toUpperCase() + type.slice(1);
                 typeContainer.appendChild(typeHeader);
 
-                models.forEach(model => {
-                    const componentItem = document.createElement('div');
-                    componentItem.className = 'flex justify-between items-center text-sm';
-                    
-                    const modelName = document.createElement('span');
+                models.forEach((model) => {
+                    const componentItem = document.createElement("div");
+                    componentItem.className = "flex justify-between items-center text-sm";
+
+                    const modelName = document.createElement("span");
                     modelName.textContent = model;
-                    
-                    const removeButton = document.createElement('button');
-                    removeButton.className = 'text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300';
-                    removeButton.textContent = '×';
+
+                    const removeButton = document.createElement("button");
+                    removeButton.className =
+                        "text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300";
+                    removeButton.textContent = "×";
                     removeButton.onclick = () => {
                         if (simulationComponentManager.removeComponent(type, model, floor)) {
                             updateSelectedComponentsDisplay();
@@ -166,13 +166,13 @@ export function updateSelectedComponentsDisplay() {
 }
 
 export function updateFloorSelector(numPisos) {
-    const floorSelect = document.getElementById('simulation-floor');
+    const floorSelect = document.getElementById("simulation-floor");
     if (!floorSelect) return;
 
     floorSelect.innerHTML = '<option value="">Seleccionar Piso</option>';
-    
+
     for (let i = 1; i <= numPisos; i++) {
-        const option = document.createElement('option');
+        const option = document.createElement("option");
         option.value = i;
         option.textContent = `Piso ${i}`;
         floorSelect.appendChild(option);
@@ -181,10 +181,10 @@ export function updateFloorSelector(numPisos) {
 
 function getComponentTypeName(type) {
     const typeNames = {
-        coaxial: 'Cables Coaxiales',
-        derivador: 'Derivadores',
-        distribuidor: 'Distribuidores',
-        toma: 'Tomas'
+        coaxial: "Cables Coaxiales",
+        derivador: "Derivadores",
+        distribuidor: "Distribuidores",
+        toma: "Tomas",
     };
     return typeNames[type] || type;
 }
@@ -192,13 +192,10 @@ function getComponentTypeName(type) {
 export function formatDate(dateString) {
     if (!dateString) return "N/A";
 
-    // Try to parse the date string
     const date = new Date(dateString);
 
     // Check if the date is valid
     if (isNaN(date.getTime())) {
-        // If the date is in a different format, try to parse it manually
-        // The date might be in a format like "2025-03-20 12:17:15"
         const parts = dateString.split(/[- :]/);
         if (parts.length >= 6) {
             const year = parseInt(parts[0]);
@@ -219,4 +216,4 @@ export function formatDate(dateString) {
     }
 
     return date.toLocaleString();
-} 
+}

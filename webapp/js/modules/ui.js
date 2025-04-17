@@ -96,25 +96,27 @@ export function updateComponentList(type, data, customListId = null) {
     list.className = "space-y-2";
 
     // Check if this is a simulation list by the ID
-    const isSimulationList = customListId?.startsWith('simulation-');
+    const isSimulationList = customListId?.startsWith("simulation-");
 
     data.forEach((modelo) => {
         const item = document.createElement("li");
-        item.className = "p-2 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer";
+        item.className =
+            "p-2 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer";
         item.dataset.modelo = modelo;
-        
+
         const content = document.createElement("div");
         content.className = "flex justify-between items-center";
-        
+
         const name = document.createElement("span");
         name.className = "font-medium text-gray-900 dark:text-white";
         name.textContent = modelo || "Sin nombre";
-        
+
         content.appendChild(name);
 
         if (isSimulationList) {
             const addButton = document.createElement("button");
-            addButton.className = "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 px-2 py-1 rounded-md text-sm";
+            addButton.className =
+                "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 px-2 py-1 rounded-md text-sm";
             addButton.textContent = "Añadir";
             content.appendChild(addButton);
 
@@ -122,24 +124,38 @@ export function updateComponentList(type, data, customListId = null) {
             addButton.addEventListener("click", (e) => {
                 e.stopPropagation();
                 // Dispatch a custom event for component selection
-                document.dispatchEvent(new CustomEvent('addComponent', {
-                    detail: {
-                        type: type,
-                        model: modelo
-                    }
-                }));
+                document.dispatchEvent(
+                    new CustomEvent("addComponent", {
+                        detail: {
+                            type: type,
+                            model: modelo,
+                        },
+                    })
+                );
             });
         } else {
             // For the components tab, add the selection behavior
             item.addEventListener("click", () => {
                 // Remove selected class from all items
-                list.querySelectorAll("li").forEach(li => {
-                    li.classList.remove("bg-blue-50", "dark:bg-blue-900/30", "border", "border-blue-200", "dark:border-blue-800");
+                list.querySelectorAll("li").forEach((li) => {
+                    li.classList.remove(
+                        "bg-blue-50",
+                        "dark:bg-blue-900/30",
+                        "border",
+                        "border-blue-200",
+                        "dark:border-blue-800"
+                    );
                 });
-                
+
                 // Add selected class to clicked item
-                item.classList.add("bg-blue-50", "dark:bg-blue-900/30", "border", "border-blue-200", "dark:border-blue-800");
-                
+                item.classList.add(
+                    "bg-blue-50",
+                    "dark:bg-blue-900/30",
+                    "border",
+                    "border-blue-200",
+                    "dark:border-blue-800"
+                );
+
                 // Store the selected model in a hidden input or data attribute
                 const container = listElement.closest(".space-y-4");
                 if (container) {
@@ -182,15 +198,16 @@ export function updateConfigSelect(configurations, configSelect) {
 }
 
 export function updateSimulationResults(results) {
-    const signalLevelsTable = document.getElementById('signal-levels-table');
-    const simulationSummary = document.getElementById('simulation-summary');
-    
+    const signalLevelsTable = document.getElementById("signal-levels-table");
+    const simulationSummary = document.getElementById("simulation-summary");
+
     if (!signalLevelsTable || !simulationSummary || !results) return;
 
     // Update signal levels table
     signalLevelsTable.innerHTML = results.signal_levels
         .sort((a, b) => a.floor - b.floor)
-        .map(floor => `
+        .map(
+            (floor) => `
             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                     ${floor.floor}
@@ -200,41 +217,43 @@ export function updateSimulationResults(results) {
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        floor.status === 'ok' 
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                            : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                        floor.status === "ok"
+                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                            : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
                     }">
-                        ${floor.status === 'ok' ? 'OK' : 'Error'}
+                        ${floor.status === "ok" ? "OK" : "Error"}
                     </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                     ${floor.floor_cost.toFixed(2)} €
                 </td>
             </tr>
-        `).join('');
+        `
+        )
+        .join("");
 
     // Update summary section
-    simulationSummary.classList.remove('hidden');
-    
+    simulationSummary.classList.remove("hidden");
+
     // Get current configuration data
-    const simulationConfig = document.getElementById('simulation-config');
+    const simulationConfig = document.getElementById("simulation-config");
     const selectedOption = simulationConfig.options[simulationConfig.selectedIndex];
     const configData = selectedOption ? JSON.parse(selectedOption.dataset.config) : null;
-    
+
     // Update headend level from configuration data
-    const headendLevel = document.getElementById('headend-level');
+    const headendLevel = document.getElementById("headend-level");
     if (headendLevel && configData) {
         headendLevel.textContent = `${configData.nivel_cabecera.toFixed(2)} dBm`;
     }
 
     // Update quality margins
-    const qualityMargins = document.getElementById('quality-margins');
+    const qualityMargins = document.getElementById("quality-margins");
     if (qualityMargins && results.margins) {
         qualityMargins.textContent = `${results.margins.min} dBm - ${results.margins.max} dBm`;
     }
 
     // Update total cost
-    const totalCost = document.getElementById('total-cost');
+    const totalCost = document.getElementById("total-cost");
     if (totalCost) {
         totalCost.textContent = `${results.total_cost.toFixed(2)} €`;
     }

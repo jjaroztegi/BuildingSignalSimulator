@@ -59,7 +59,7 @@ public class DatabaseInfoServlet extends HttpServlet {
             while (tables.next()) {
                 String tableName = tables.getString("TABLE_NAME");
                 if (tableName != null) {
-                     out.println(tableName + "<br>");
+                    out.println(tableName + "<br>");
                 }
             }
 

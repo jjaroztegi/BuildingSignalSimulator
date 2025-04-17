@@ -49,12 +49,14 @@ Building Signal Simulator is a web-based application that simulates and optimize
 ## Prerequisites
 
 ### Manual Setup
+
 -   Java JDK 1.8.0_131
 -   Apache Tomcat 9.0.89
 -   MS Access database
 -   Web browser with JavaScript enabled
 
 ### Docker Setup
+
 -   Docker
 -   Docker Compose
 -   Web browser with JavaScript enabled

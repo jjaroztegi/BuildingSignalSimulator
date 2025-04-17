@@ -14,6 +14,7 @@ public class DerbyConnection {
 
     /**
      * Constructor that establishes a connection to the Derby database
+     * 
      * @throws SQLException if a database error occurs
      */
     public DerbyConnection() throws SQLException {
@@ -27,6 +28,7 @@ public class DerbyConnection {
 
     /**
      * Gets the database connection
+     * 
      * @return The Connection object to the database
      */
     public Connection getConnection() {
@@ -35,6 +37,7 @@ public class DerbyConnection {
 
     /**
      * Closes the database connection
+     * 
      * @throws SQLException if a database error occurs
      */
     public void close() throws SQLException {

@@ -16,11 +16,11 @@ public class AccessConnection {
         if (os.contains("win")) {
             root = "C:/Temp/Tomcat/webapps/BuildingSignalSimulator/WEB-INF/";
         // Mac os
-        } else if (os.contains("mac")){
+        } else if (os.contains("mac")) {
             root = "/opt/homebrew/opt/tomcat/libexec/webapps/BuildingSignalSimulator/WEB-INF/";
         }
         // Docker
-        else{
+        else {
             root = "/usr/local/tomcat/webapps/BuildingSignalSimulator/WEB-INF/";
         }
     }
@@ -33,6 +33,7 @@ public class AccessConnection {
     /**
      * Private constructor to prevent instantiation
      * Initializes the database connection
+     * 
      * @throws SQLException if a database error occurs
      */
     private AccessConnection() throws SQLException {
@@ -41,6 +42,7 @@ public class AccessConnection {
 
     /**
      * Initializes the database connection using the UCanAccess driver
+     * 
      * @throws SQLException if a database error occurs
      */
     private void initializeConnection() throws SQLException {
@@ -54,7 +56,9 @@ public class AccessConnection {
 
     /**
      * Gets a connection to the database
-     * Creates a new connection if one doesn't exist or if the existing one is closed
+     * Creates a new connection if one doesn't exist or if the existing one is
+     * closed
+     * 
      * @return A Connection object to the database
      * @throws SQLException if a database error occurs
      */
@@ -85,6 +89,7 @@ public class AccessConnection {
 
     /**
      * Closes the database connection
+     * 
      * @throws SQLException if a database error occurs
      */
     public static void close() throws SQLException {

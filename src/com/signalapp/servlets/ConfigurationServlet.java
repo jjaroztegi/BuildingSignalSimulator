@@ -56,7 +56,8 @@ public class ConfigurationServlet extends HttpServlet {
 
     /**
      * Handles POST requests to create new configurations
-     * Creates a new configuration with the specified name, headend level, and number of floors
+     * Creates a new configuration with the specified name, headend level, and
+     * number of floors
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -80,7 +81,7 @@ public class ConfigurationServlet extends HttpServlet {
             configuracion.setNivel_cabecera(Double.parseDouble(nivelCabecera));
             configuracion.setNum_pisos(Integer.parseInt(numPisos));
             configuracion.setCosto_total(0.0);
-            
+
             // Add current date and user information
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String currentDate = sdf.format(new java.util.Date());
@@ -107,7 +108,8 @@ public class ConfigurationServlet extends HttpServlet {
 
     /**
      * Handles PUT requests to update existing configurations
-     * Updates a configuration with the specified ID, name, headend level, and number of floors
+     * Updates a configuration with the specified ID, name, headend level, and
+     * number of floors
      */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
@@ -172,6 +174,7 @@ public class ConfigurationServlet extends HttpServlet {
 
     /**
      * Escapes special characters in a string for JSON formatting
+     * 
      * @param input The string to escape
      * @return The escaped string safe for JSON output
      */

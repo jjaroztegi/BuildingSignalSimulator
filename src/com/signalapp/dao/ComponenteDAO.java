@@ -10,9 +10,10 @@ import java.sql.SQLException;
  * Handles database operations for component entities
  */
 public class ComponenteDAO extends BaseDAO<Componente> {
-    
+
     /**
      * Gets the name of the database table
+     * 
      * @return The table name "componentes"
      */
     @Override
@@ -22,17 +23,19 @@ public class ComponenteDAO extends BaseDAO<Componente> {
 
     /**
      * Gets the column names for the Componentes table
+     * 
      * @return Array of column names
      */
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_componentes", "id_tipos_componente", "modelo", "costo"
+                "id_componentes", "id_tipos_componente", "modelo", "costo"
         };
     }
 
     /**
      * Maps a ResultSet row to a Componente entity
+     * 
      * @param rs The ResultSet containing the database row
      * @return A new Componente object with data from the ResultSet
      * @throws SQLException if a database error occurs
@@ -40,16 +43,16 @@ public class ComponenteDAO extends BaseDAO<Componente> {
     @Override
     protected Componente mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new Componente(
-            rs.getInt("id_componentes"),
-            rs.getInt("id_tipos_componente"),
-            rs.getString("modelo"),
-            rs.getDouble("costo")
-        );
+                rs.getInt("id_componentes"),
+                rs.getInt("id_tipos_componente"),
+                rs.getString("modelo"),
+                rs.getDouble("costo"));
     }
 
     /**
      * Sets the parameters for a PreparedStatement based on Componente properties
-     * @param ps The PreparedStatement to set parameters for
+     * 
+     * @param ps     The PreparedStatement to set parameters for
      * @param entity The Componente entity containing the values to set
      * @throws SQLException if a database error occurs
      */
@@ -62,6 +65,7 @@ public class ComponenteDAO extends BaseDAO<Componente> {
 
     /**
      * Retrieves the ID of a component by its model name
+     * 
      * @param modelo The model name of the component
      * @return The ID of the component, or -1 if not found
      * @throws SQLException if a database error occurs
@@ -81,6 +85,7 @@ public class ComponenteDAO extends BaseDAO<Componente> {
 
     /**
      * Finds a component by its model name
+     * 
      * @param modelo The model name to search for
      * @return The Componente object if found, null otherwise
      * @throws SQLException if a database error occurs
@@ -97,4 +102,4 @@ public class ComponenteDAO extends BaseDAO<Componente> {
             }
         }
     }
-} 
+}

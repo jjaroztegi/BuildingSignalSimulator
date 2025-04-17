@@ -40,7 +40,7 @@ public class ComponentServlet extends HttpServlet {
             if (model != null) {
                 ComponenteDAO componenteDAO = new ComponenteDAO();
                 Componente componente = componenteDAO.findByModelo(model);
-                
+
                 if (componente == null) {
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     out.write("{\"error\":\"Component not found\"}");
@@ -56,7 +56,8 @@ public class ComponentServlet extends HttpServlet {
                         CoaxialDAO coaxialDAO = new CoaxialDAO();
                         Coaxial coaxial = coaxialDAO.findByComponenteId(componente.getId_componentes());
                         if (coaxial != null) {
-                            jsonBuilder.append("\"atenuacion_470mhz\":").append(coaxial.getAtenuacion_470mhz()).append(",");
+                            jsonBuilder.append("\"atenuacion_470mhz\":").append(coaxial.getAtenuacion_470mhz())
+                                    .append(",");
                             jsonBuilder.append("\"atenuacion_694mhz\":").append(coaxial.getAtenuacion_694mhz());
                         }
                         break;
@@ -64,8 +65,10 @@ public class ComponentServlet extends HttpServlet {
                         DerivadorDAO derivadorDAO = new DerivadorDAO();
                         Derivador derivador = derivadorDAO.findByComponenteId(componente.getId_componentes());
                         if (derivador != null) {
-                            jsonBuilder.append("\"atenuacion_derivacion\":").append(derivador.getAtenuacion_derivacion()).append(",");
-                            jsonBuilder.append("\"atenuacion_paso\":").append(derivador.getAtenuacion_paso()).append(",");
+                            jsonBuilder.append("\"atenuacion_derivacion\":")
+                                    .append(derivador.getAtenuacion_derivacion()).append(",");
+                            jsonBuilder.append("\"atenuacion_paso\":").append(derivador.getAtenuacion_paso())
+                                    .append(",");
                             jsonBuilder.append("\"directividad\":").append(derivador.getDirectividad()).append(",");
                             jsonBuilder.append("\"desacoplo\":").append(derivador.getDesacoplo()).append(",");
                             jsonBuilder.append("\"perdidas_retorno\":").append(derivador.getPerdidas_retorno());
@@ -75,8 +78,10 @@ public class ComponentServlet extends HttpServlet {
                         DistribuidorDAO distribuidorDAO = new DistribuidorDAO();
                         Distribuidor distribuidor = distribuidorDAO.findByComponenteId(componente.getId_componentes());
                         if (distribuidor != null) {
-                            jsonBuilder.append("\"numero_salidas\":").append(distribuidor.getNumero_salidas()).append(",");
-                            jsonBuilder.append("\"atenuacion_distribucion\":").append(distribuidor.getAtenuacion_distribucion()).append(",");
+                            jsonBuilder.append("\"numero_salidas\":").append(distribuidor.getNumero_salidas())
+                                    .append(",");
+                            jsonBuilder.append("\"atenuacion_distribucion\":")
+                                    .append(distribuidor.getAtenuacion_distribucion()).append(",");
                             jsonBuilder.append("\"desacoplo\":").append(distribuidor.getDesacoplo()).append(",");
                             jsonBuilder.append("\"perdidas_retorno\":").append(distribuidor.getPerdidas_retorno());
                         }
@@ -99,7 +104,8 @@ public class ComponentServlet extends HttpServlet {
                 return;
             }
 
-            // If no model provided, return list of models for the type (existing functionality)
+            // If no model provided, return list of models for the type (existing
+            // functionality)
             List<String> components = new ArrayList<>();
             ComponenteDAO componenteDAO = new ComponenteDAO();
 
@@ -251,6 +257,7 @@ public class ComponentServlet extends HttpServlet {
 
     /**
      * Retrieves the component type ID based on the type name
+     * 
      * @param tipoNombre The name of the component type
      * @return The ID of the component type
      * @throws SQLException If a database error occurs or the type is invalid
@@ -285,6 +292,7 @@ public class ComponentServlet extends HttpServlet {
 
     /**
      * Retrieves the component ID based on the model name
+     * 
      * @param modelo The model name of the component
      * @return The ID of the component
      * @throws SQLException If a database error occurs or the component is not found
@@ -300,6 +308,7 @@ public class ComponentServlet extends HttpServlet {
 
     /**
      * Escapes special characters in a string for JSON formatting
+     * 
      * @param input The string to escape
      * @return The escaped string safe for JSON output
      */

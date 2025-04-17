@@ -14,7 +14,7 @@ export async function fetchConfigurations() {
         if (!Array.isArray(data)) {
             throw new Error("Invalid response format: expected array of configurations");
         }
-        
+
         return data;
     } catch (error) {
         console.error("Error fetching configurations:", error);
@@ -44,22 +44,25 @@ export async function fetchSignalTypes(signalTypeSelect) {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const signalTypes = await response.json();
         if (!Array.isArray(signalTypes)) {
             throw new Error("Invalid response format: expected array of signal types");
         }
-        
+
         if (signalTypeSelect) {
             signalTypeSelect.innerHTML = signalTypes
-                .map(typeObj => `<option value="${typeObj.type}" data-min="${typeObj.min}" data-max="${typeObj.max}">${typeObj.type} (${typeObj.min}dB - ${typeObj.max}dB)</option>`)
+                .map(
+                    (typeObj) =>
+                        `<option value="${typeObj.type}" data-min="${typeObj.min}" data-max="${typeObj.max}">${typeObj.type} (${typeObj.min}dB - ${typeObj.max}dB)</option>`
+                )
                 .join("");
-                
+
             if (signalTypes.length > 0) {
                 signalTypeSelect.value = signalTypes[0].type;
             }
         }
-        
+
         return signalTypes;
     } catch (error) {
         console.error("Error fetching signal types:", error);
@@ -140,33 +143,34 @@ export async function submitComponent(formData) {
 
 export async function runSimulation(configId, signalType, componentsByFloor) {
     try {
-        const configSelect = document.getElementById('simulation-config');
+        const configSelect = document.getElementById("simulation-config");
         if (!configSelect) {
-            throw new Error('Configuration select element not found');
+            throw new Error("Configuration select element not found");
         }
 
-        const selectedOption = Array.from(configSelect.options)
-            .find(option => option.value === configId);
-            
+        const selectedOption = Array.from(configSelect.options).find((option) => option.value === configId);
+
         if (!selectedOption) {
-            throw new Error('Selected configuration not found');
+            throw new Error("Selected configuration not found");
         }
 
         const configData = JSON.parse(selectedOption.dataset.config);
-        
+
         const components = [];
         Object.entries(componentsByFloor).forEach(([floor, floorComponents]) => {
             const floorNum = parseInt(floor);
             if (floorNum > configData.num_pisos) {
-                throw new Error(`Floor ${floorNum} exceeds the configuration's number of floors (${configData.num_pisos})`);
+                throw new Error(
+                    `Floor ${floorNum} exceeds the configuration's number of floors (${configData.num_pisos})`
+                );
             }
-            
+
             Object.entries(floorComponents).forEach(([type, models]) => {
-                models.forEach(model => {
+                models.forEach((model) => {
                     components.push({
                         type: type,
                         model: model,
-                        floor: floorNum
+                        floor: floorNum,
                     });
                 });
             });
@@ -176,20 +180,20 @@ export async function runSimulation(configId, signalType, componentsByFloor) {
             num_pisos: configData.num_pisos,
             nivel_cabecera: configData.nivel_cabecera,
             tipo_senal: signalType,
-            components: components
+            components: components,
         };
 
-        const simulateResponse = await fetch('calculate', {
-            method: 'POST',
+        const simulateResponse = await fetch("calculate", {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json",
             },
-            body: JSON.stringify(requestBody)
+            body: JSON.stringify(requestBody),
         });
 
         if (!simulateResponse.ok) {
             const errorText = await simulateResponse.text();
-            console.error('Server response:', errorText);
+            console.error("Server response:", errorText);
             throw new Error(`HTTP error! status: ${simulateResponse.status}. ${errorText}`);
         }
 
@@ -198,4 +202,4 @@ export async function runSimulation(configId, signalType, componentsByFloor) {
         console.error("Error during simulation:", error);
         throw error;
     }
-} 
+}

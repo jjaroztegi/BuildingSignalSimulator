@@ -10,9 +10,10 @@ import java.sql.SQLException;
  * Handles database operations for tap/splitter entities
  */
 public class DerivadorDAO extends BaseDAO<Derivador> {
-    
+
     /**
      * Gets the name of the database table
+     * 
      * @return The table name "derivadores"
      */
     @Override
@@ -22,18 +23,20 @@ public class DerivadorDAO extends BaseDAO<Derivador> {
 
     /**
      * Gets the column names for the Derivadores table
+     * 
      * @return Array of column names
      */
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_derivadores", "id_componentes", "atenuacion_derivacion", "atenuacion_paso",
-            "directividad", "desacoplo", "perdidas_retorno"
+                "id_derivadores", "id_componentes", "atenuacion_derivacion", "atenuacion_paso",
+                "directividad", "desacoplo", "perdidas_retorno"
         };
     }
 
     /**
      * Maps a ResultSet row to a Derivador entity
+     * 
      * @param rs The ResultSet containing the database row
      * @return A new Derivador object with data from the ResultSet
      * @throws SQLException if a database error occurs
@@ -41,19 +44,19 @@ public class DerivadorDAO extends BaseDAO<Derivador> {
     @Override
     protected Derivador mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new Derivador(
-            rs.getInt("id_derivadores"),
-            rs.getInt("id_componentes"),
-            rs.getDouble("atenuacion_derivacion"),
-            rs.getDouble("atenuacion_paso"),
-            rs.getDouble("directividad"),
-            rs.getDouble("desacoplo"),
-            rs.getDouble("perdidas_retorno")
-        );
+                rs.getInt("id_derivadores"),
+                rs.getInt("id_componentes"),
+                rs.getDouble("atenuacion_derivacion"),
+                rs.getDouble("atenuacion_paso"),
+                rs.getDouble("directividad"),
+                rs.getDouble("desacoplo"),
+                rs.getDouble("perdidas_retorno"));
     }
 
     /**
      * Sets the parameters for a PreparedStatement based on Derivador properties
-     * @param ps The PreparedStatement to set parameters for
+     * 
+     * @param ps     The PreparedStatement to set parameters for
      * @param entity The Derivador entity containing the values to set
      * @throws SQLException if a database error occurs
      */
@@ -69,6 +72,7 @@ public class DerivadorDAO extends BaseDAO<Derivador> {
 
     /**
      * Finds a derivador component by its componente ID
+     * 
      * @param componenteId The ID of the associated componente
      * @return The Derivador object if found, null otherwise
      * @throws SQLException if a database error occurs
@@ -85,4 +89,4 @@ public class DerivadorDAO extends BaseDAO<Derivador> {
             }
         }
     }
-} 
+}

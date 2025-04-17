@@ -6,7 +6,8 @@ public class Componente {
     private String modelo;
     private double costo;
 
-    public Componente() {}
+    public Componente() {
+    }
 
     public Componente(int id_componentes, int id_tipos_componente, String modelo, double costo) {
         this.id_componentes = id_componentes;
@@ -16,15 +17,35 @@ public class Componente {
     }
 
     // Getters and Setters
-    public int getId_componentes() { return id_componentes; }
-    public void setId_componentes(int id_componentes) { this.id_componentes = id_componentes; }
-    
-    public int getId_tipos_componente() { return id_tipos_componente; }
-    public void setId_tipos_componente(int id_tipos_componente) { this.id_tipos_componente = id_tipos_componente; }
-    
-    public String getModelo() { return modelo; }
-    public void setModelo(String modelo) { this.modelo = modelo; }
-    
-    public double getCosto() { return costo; }
-    public void setCosto(double costo) { this.costo = costo; }
-} 
+    public int getId_componentes() {
+        return id_componentes;
+    }
+
+    public void setId_componentes(int id_componentes) {
+        this.id_componentes = id_componentes;
+    }
+
+    public int getId_tipos_componente() {
+        return id_tipos_componente;
+    }
+
+    public void setId_tipos_componente(int id_tipos_componente) {
+        this.id_tipos_componente = id_tipos_componente;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
+    }
+
+    public double getCosto() {
+        return costo;
+    }
+
+    public void setCosto(double costo) {
+        this.costo = costo;
+    }
+}

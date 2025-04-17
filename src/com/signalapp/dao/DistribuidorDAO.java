@@ -10,9 +10,10 @@ import java.sql.SQLException;
  * Handles database operations for splitter/distributor entities
  */
 public class DistribuidorDAO extends BaseDAO<Distribuidor> {
-    
+
     /**
      * Gets the name of the database table
+     * 
      * @return The table name "distribuidores"
      */
     @Override
@@ -22,18 +23,20 @@ public class DistribuidorDAO extends BaseDAO<Distribuidor> {
 
     /**
      * Gets the column names for the Distribuidores table
+     * 
      * @return Array of column names
      */
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_distribuidores", "id_componentes", "numero_salidas", "atenuacion_distribucion", 
-            "desacoplo", "perdidas_retorno"
+                "id_distribuidores", "id_componentes", "numero_salidas", "atenuacion_distribucion",
+                "desacoplo", "perdidas_retorno"
         };
     }
 
     /**
      * Maps a ResultSet row to a Distribuidor entity
+     * 
      * @param rs The ResultSet containing the database row
      * @return A new Distribuidor object with data from the ResultSet
      * @throws SQLException if a database error occurs
@@ -41,18 +44,18 @@ public class DistribuidorDAO extends BaseDAO<Distribuidor> {
     @Override
     protected Distribuidor mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new Distribuidor(
-            rs.getInt("id_distribuidores"),
-            rs.getInt("id_componentes"),
-            rs.getInt("numero_salidas"),
-            rs.getDouble("atenuacion_distribucion"),
-            rs.getDouble("desacoplo"),
-            rs.getDouble("perdidas_retorno")
-        );
+                rs.getInt("id_distribuidores"),
+                rs.getInt("id_componentes"),
+                rs.getInt("numero_salidas"),
+                rs.getDouble("atenuacion_distribucion"),
+                rs.getDouble("desacoplo"),
+                rs.getDouble("perdidas_retorno"));
     }
 
     /**
      * Sets the parameters for a PreparedStatement based on Distribuidor properties
-     * @param ps The PreparedStatement to set parameters for
+     * 
+     * @param ps     The PreparedStatement to set parameters for
      * @param entity The Distribuidor entity containing the values to set
      * @throws SQLException if a database error occurs
      */
@@ -67,6 +70,7 @@ public class DistribuidorDAO extends BaseDAO<Distribuidor> {
 
     /**
      * Finds a distribuidor component by its componente ID
+     * 
      * @param componenteId The ID of the associated componente
      * @return The Distribuidor object if found, null otherwise
      * @throws SQLException if a database error occurs
@@ -83,4 +87,4 @@ public class DistribuidorDAO extends BaseDAO<Distribuidor> {
             }
         }
     }
-} 
+}

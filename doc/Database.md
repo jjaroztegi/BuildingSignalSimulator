@@ -127,29 +127,33 @@ Define los márgenes de calidad aceptables para la señal.
 
 ### Índices para Mejor Rendimiento
 
-- `idx_componentes_tipo`: Índice en `Componentes(id_tipos_componente)`
-- `idx_coaxiales_componente`: Índice en `Coaxiales(id_componentes)`
-- `idx_derivadores_componente`: Índice en `Derivadores(id_componentes)`
-- `idx_distribuidores_componente`: Índice en `Distribuidores(id_componentes)`
-- `idx_tomas_componente`: Índice en `Tomas(id_componentes)`
+-   `idx_componentes_tipo`: Índice en `Componentes(id_tipos_componente)`
+-   `idx_coaxiales_componente`: Índice en `Coaxiales(id_componentes)`
+-   `idx_derivadores_componente`: Índice en `Derivadores(id_componentes)`
+-   `idx_distribuidores_componente`: Índice en `Distribuidores(id_componentes)`
+-   `idx_tomas_componente`: Índice en `Tomas(id_componentes)`
 
 ### Datos de Ejemplo
 
 #### Tipos de Componentes
-- Cable Coaxial: Cables para conexión de componentes
-- Base de Toma: Dispositivos para derivar señal a diferentes pisos
-- Derivador: Dispositivos para distribuir señal a múltiples salidas
-- Distribuidor: Tomas de acceso para conexión final
+
+-   Cable Coaxial: Cables para conexión de componentes
+-   Base de Toma: Dispositivos para derivar señal a diferentes pisos
+-   Derivador: Dispositivos para distribuir señal a múltiples salidas
+-   Distribuidor: Tomas de acceso para conexión final
 
 #### Componentes
-- Cables: CE-752, CE-740, CE-170, FI-250, CL-200
-- Tomas: BS-100, BS-112, BS-110, BS-111, BS-210, BS-510
-- Derivadores: FP-414, FP-420, FP-426
-- Distribuidores: FI-243, FI-473, FI-253, FI-483
+
+-   Cables: CE-752, CE-740, CE-170, FI-250, CL-200
+-   Tomas: BS-100, BS-112, BS-110, BS-111, BS-210, BS-510
+-   Derivadores: FP-414, FP-420, FP-426
+-   Distribuidores: FI-243, FI-473, FI-253, FI-483
 
 #### Márgenes de Calidad
-- TDT: Nivel mínimo 45.0 dB, Nivel máximo 70.0 dB
+
+-   TDT: Nivel mínimo 45.0 dB, Nivel máximo 70.0 dB
 
 #### Configuraciones
-- Edificio A: 5 pisos, nivel de cabecera 95.0 dB, costo total 580.25
-- Edificio B: 8 pisos, nivel de cabecera 98.0 dB, costo total 920.50
+
+-   Edificio A: 5 pisos, nivel de cabecera 95.0 dB, costo total 580.25
+-   Edificio B: 8 pisos, nivel de cabecera 98.0 dB, costo total 920.50

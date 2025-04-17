@@ -10,9 +10,10 @@ import java.sql.SQLException;
  * Handles database operations for signal quality margin entities
  */
 public class MargenCalidadDAO extends BaseDAO<MargenCalidad> {
-    
+
     /**
      * Gets the name of the database table
+     * 
      * @return The table name "margenes_calidad"
      */
     @Override
@@ -22,17 +23,19 @@ public class MargenCalidadDAO extends BaseDAO<MargenCalidad> {
 
     /**
      * Gets the column names for the MargenesCalidad table
+     * 
      * @return Array of column names
      */
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_margenes_calidad", "tipo_senal", "nivel_minimo", "nivel_maximo"
+                "id_margenes_calidad", "tipo_senal", "nivel_minimo", "nivel_maximo"
         };
     }
 
     /**
      * Maps a ResultSet row to a MargenCalidad entity
+     * 
      * @param rs The ResultSet containing the database row
      * @return A new MargenCalidad object with data from the ResultSet
      * @throws SQLException if a database error occurs
@@ -40,16 +43,16 @@ public class MargenCalidadDAO extends BaseDAO<MargenCalidad> {
     @Override
     protected MargenCalidad mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new MargenCalidad(
-            rs.getInt("id_margenes_calidad"),
-            rs.getString("tipo_senal"),
-            rs.getDouble("nivel_minimo"),
-            rs.getDouble("nivel_maximo")
-        );
+                rs.getInt("id_margenes_calidad"),
+                rs.getString("tipo_senal"),
+                rs.getDouble("nivel_minimo"),
+                rs.getDouble("nivel_maximo"));
     }
 
     /**
      * Sets the parameters for a PreparedStatement based on MargenCalidad properties
-     * @param ps The PreparedStatement to set parameters for
+     * 
+     * @param ps     The PreparedStatement to set parameters for
      * @param entity The MargenCalidad entity containing the values to set
      * @throws SQLException if a database error occurs
      */
@@ -59,4 +62,4 @@ public class MargenCalidadDAO extends BaseDAO<MargenCalidad> {
         ps.setDouble(2, entity.getNivel_minimo());
         ps.setDouble(3, entity.getNivel_maximo());
     }
-} 
+}

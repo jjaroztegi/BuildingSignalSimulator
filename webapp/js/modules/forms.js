@@ -1,12 +1,7 @@
 // Form handling module
 import { setLoadingState, displayError, displaySuccess, clearMessages } from "./utils.js";
 import { switchTab } from "./tabs.js";
-import { 
-    submitConfiguration, 
-    submitComponent, 
-    fetchConfigurations, 
-    fetchComponentsByType 
-} from "./servlet.js";
+import { submitConfiguration, submitComponent, fetchConfigurations, fetchComponentsByType } from "./servlet.js";
 import { updateConfigSelect } from "./ui.js";
 
 export async function handleFormSubmit(
@@ -49,9 +44,9 @@ export async function handleFormSubmit(
         if (data.success) {
             displaySuccess(data.success, successMessageElement, errorMessageElement);
             initialConfigForm.reset();
-            
+
             const configurations = await fetchConfigurations();
-            
+
             updateConfigSelect(configurations, configSelect);
             const simulationConfig = document.getElementById("simulation-config");
             if (simulationConfig) {
@@ -132,4 +127,4 @@ export async function handleComponentSubmit(event, componentForm, errorMessageEl
     } finally {
         setLoadingState(submitButton, false);
     }
-} 
+}

@@ -10,9 +10,10 @@ import java.sql.SQLException;
  * Handles database operations for outlet entities
  */
 public class TomaDAO extends BaseDAO<Toma> {
-    
+
     /**
      * Gets the name of the database table
+     * 
      * @return The table name "tomas"
      */
     @Override
@@ -22,17 +23,19 @@ public class TomaDAO extends BaseDAO<Toma> {
 
     /**
      * Gets the column names for the Tomas table
+     * 
      * @return Array of column names
      */
     @Override
     protected String[] getColumnNames() {
         return new String[] {
-            "id_tomas", "id_componentes", "atenuacion", "desacoplo"
+                "id_tomas", "id_componentes", "atenuacion", "desacoplo"
         };
     }
 
     /**
      * Maps a ResultSet row to a Toma entity
+     * 
      * @param rs The ResultSet containing the database row
      * @return A new Toma object with data from the ResultSet
      * @throws SQLException if a database error occurs
@@ -40,16 +43,16 @@ public class TomaDAO extends BaseDAO<Toma> {
     @Override
     protected Toma mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new Toma(
-            rs.getInt("id_tomas"),
-            rs.getInt("id_componentes"),
-            rs.getDouble("atenuacion"),
-            rs.getDouble("desacoplo")
-        );
+                rs.getInt("id_tomas"),
+                rs.getInt("id_componentes"),
+                rs.getDouble("atenuacion"),
+                rs.getDouble("desacoplo"));
     }
 
     /**
      * Sets the parameters for a PreparedStatement based on Toma properties
-     * @param ps The PreparedStatement to set parameters for
+     * 
+     * @param ps     The PreparedStatement to set parameters for
      * @param entity The Toma entity containing the values to set
      * @throws SQLException if a database error occurs
      */
@@ -62,6 +65,7 @@ public class TomaDAO extends BaseDAO<Toma> {
 
     /**
      * Finds a toma component by its componente ID
+     * 
      * @param componenteId The ID of the associated componente
      * @return The Toma object if found, null otherwise
      * @throws SQLException if a database error occurs
@@ -78,4 +82,4 @@ public class TomaDAO extends BaseDAO<Toma> {
             }
         }
     }
-} 
+}
