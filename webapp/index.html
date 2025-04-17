@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
         <title>Simulador de Distribución de Señales en Edificios</title>
         <!-- Include Tailwind CSS via Play CDN -->
         <script src="https://cdn.tailwindcss.com"></script>
@@ -50,7 +51,9 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <!-- Left Column: New Configuration Form -->
                         <div class="space-y-6">
-                            <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
+                            <h2
+                                class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2"
+                            >
                                 Crear Nueva Configuración
                             </h2>
                             <form
@@ -58,7 +61,9 @@
                                 class="space-y-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-md border dark:border-gray-600"
                             >
                                 <div>
-                                    <label for="config-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                    <label
+                                        for="config-name"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                                         >Nombre de la Configuración</label
                                     >
                                     <input
@@ -87,7 +92,9 @@
                                     />
                                 </div>
                                 <div>
-                                    <label for="num-pisos" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                    <label
+                                        for="num-pisos"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                                         >Número de Pisos</label
                                     >
                                     <input
@@ -104,19 +111,24 @@
                                     type="submit"
                                     class="w-full px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition duration-150 ease-in-out"
                                 >
-                                    Crear
+                                    Crear Configuración
                                 </button>
                             </form>
                         </div>
 
                         <!-- Right Column: Existing Configurations -->
                         <div class="space-y-6">
-                            <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
+                            <h2
+                                class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2"
+                            >
                                 Configuraciones Existentes
                             </h2>
                             <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-md border dark:border-gray-600">
                                 <div class="mb-4">
-                                    <label for="id_configuraciones" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    <label
+                                        for="id_configuraciones"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                                    >
                                         Seleccionar Configuración
                                     </label>
                                     <select
@@ -126,7 +138,7 @@
                                         <option value="">Seleccionar Configuración</option>
                                     </select>
                                 </div>
-                                
+
                                 <!-- Area for general configuration info -->
                                 <div
                                     id="configuration-summary"
@@ -144,7 +156,9 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <!-- Left Column: Add New Component Form -->
                         <div class="space-y-6">
-                            <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
+                            <h2
+                                class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2"
+                            >
                                 Añadir Nuevo Componente
                             </h2>
                             <form
@@ -203,7 +217,7 @@
                                 </div>
                                 <button
                                     type="submit"
-                                    class="w-full px-4 py-2 bg-green-600 dark:bg-green-500 text-white rounded-md hover:bg-green-700 dark:hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 dark:focus:ring-green-400 transition duration-150 ease-in-out"
+                                    class="w-full px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition duration-150 ease-in-out"
                                 >
                                     Añadir Componente
                                 </button>
@@ -212,12 +226,17 @@
 
                         <!-- Right Column: Component Lists -->
                         <div class="space-y-6">
-                            <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
+                            <h2
+                                class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2"
+                            >
                                 Componentes Disponibles
                             </h2>
                             <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-md border dark:border-gray-600">
                                 <div class="mb-4">
-                                    <label for="component-list-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    <label
+                                        for="component-list-type"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                                    >
                                         Tipo de Componente
                                     </label>
                                     <select
@@ -230,7 +249,7 @@
                                         <option value="toma">Tomas</option>
                                     </select>
                                 </div>
-                                
+
                                 <!-- Component Lists Container -->
                                 <div class="space-y-2">
                                     <div id="coaxial-list" class="component-list"></div>
@@ -251,14 +270,30 @@
                             <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Configuración</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="simulation-config" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Seleccionar Configuración</label>
-                                    <select id="simulation-config" name="id_configuraciones" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                    <label
+                                        for="simulation-config"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                        >Seleccionar Configuración</label
+                                    >
+                                    <select
+                                        id="simulation-config"
+                                        name="id_configuraciones"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    >
                                         <option value="">Seleccionar Configuración</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label for="signal-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de Señal</label>
-                                    <select id="signal-type" name="tipo_senal" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                    <label
+                                        for="signal-type"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                        >Tipo de Señal</label
+                                    >
+                                    <select
+                                        id="signal-type"
+                                        name="tipo_senal"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    >
                                         <option value="">Seleccionar Tipo de Señal</option>
                                     </select>
                                 </div>
@@ -267,20 +302,36 @@
 
                         <!-- Component Selection -->
                         <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Selección de Componentes</h3>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                                Selección de Componentes
+                            </h3>
                             <div class="space-y-4">
                                 <!-- Floor Selection -->
                                 <div>
-                                    <label for="simulation-floor" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Piso</label>
-                                    <select id="simulation-floor" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                    <label
+                                        for="simulation-floor"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                        >Piso</label
+                                    >
+                                    <select
+                                        id="simulation-floor"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    >
                                         <option value="">Seleccionar Piso</option>
                                     </select>
                                 </div>
 
                                 <!-- Component Type Selection -->
                                 <div>
-                                    <label for="simulation-component-list-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de Componente</label>
-                                    <select id="simulation-component-list-type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                    <label
+                                        for="simulation-component-list-type"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                        >Tipo de Componente</label
+                                    >
+                                    <select
+                                        id="simulation-component-list-type"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    >
                                         <option value="coaxial">Cable Coaxial</option>
                                         <option value="derivador">Derivador</option>
                                         <option value="distribuidor">Distribuidor</option>
@@ -298,7 +349,9 @@
 
                                 <!-- Selected Components Container -->
                                 <div class="mt-6 border-t dark:border-gray-700 pt-4">
-                                    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Componentes por Piso</h4>
+                                    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Componentes por Piso
+                                    </h4>
                                     <div id="components-by-floor" class="space-y-4">
                                         <!-- Components grouped by floor will be displayed here -->
                                     </div>
@@ -308,7 +361,10 @@
 
                         <!-- Run Simulation Button -->
                         <div class="flex justify-end">
-                            <button id="run-simulation" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                            <button
+                                id="run-simulation"
+                                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                            >
                                 Ejecutar Simulación
                             </button>
                         </div>
@@ -319,37 +375,53 @@
                 <section id="results-tab-content" class="tab-content hidden">
                     <div class="grid grid-cols-1 gap-8">
                         <div class="space-y-6">
-                            <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2">
+                            <h2
+                                class="text-xl font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-2"
+                            >
                                 Resultados de la Simulación
                             </h2>
-                            
+
                             <!-- Signal Levels Table -->
                             <div class="overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                     <thead class="bg-gray-50 dark:bg-gray-800">
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                                            >
                                                 Piso
                                             </th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                                            >
                                                 Nivel de Señal (dB)
                                             </th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                                            >
                                                 Estado
                                             </th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                            <th
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                                            >
                                                 Costo (€)
                                             </th>
                                         </tr>
                                     </thead>
-                                    <tbody id="signal-levels-table" class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                                    <tbody
+                                        id="signal-levels-table"
+                                        class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700"
+                                    >
                                         <!-- Results will be populated here -->
                                     </tbody>
                                 </table>
                             </div>
 
                             <!-- Summary Section -->
-                            <div id="simulation-summary" class="p-4 bg-gray-50 dark:bg-gray-700 rounded-md border dark:border-gray-600 hidden">
+                            <div
+                                id="simulation-summary"
+                                class="p-4 bg-gray-50 dark:bg-gray-700 rounded-md border dark:border-gray-600 hidden"
+                            >
                                 <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Resumen</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div>
