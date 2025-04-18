@@ -12,23 +12,22 @@ Este proyecto desarrolla una aplicación web para calcular y optimizar la distri
 -   **Componentes Integrados:** Considera cables coaxiales, derivadores, distribuidores y tomas, utilizando propiedades técnicas como atenuación y desacoplo.
 -   **Validación de Calidad:** Compara los niveles de señal calculados con los márgenes definidos en la tabla _MargenesCalidad_ (nivel_minimo y nivel_maximo).
 
-### Optimización de Configuración de Red
+### Optimización de Configuración de Red (TODO)
 
 -   **Algoritmo de Optimización:** Identifica la configuración más económica que cumpla los requisitos de calidad, basándose en el costo de cada componente y el costo total almacenado en _Configuraciones.costo_total_.
 -   **Recomendación de Componentes:** Sugiere componentes específicos para cada piso a partir de las tablas _Componentes_ y sus tablas asociadas.
 
 ### Simulación Interactiva
 
--   **Ajuste Dinámico de Parámetros:** Permite modificar valores como la longitud del cable y atenuaciones específicas en tiempo real.
--   **Actualización en Tiempo Real:** Recalcula el nivel de señal conforme se realizan cambios.
--   **Indicadores Visuales:** Utiliza colores para destacar pisos con niveles fuera de los márgenes aceptables.
--   **Modo Oscuro:** Incluye soporte para modo oscuro para mejor visibilidad en condiciones de poca luz.
+-   **Selección de Componentes:** Permite agregar y configurar los componentes necesarios para cada piso.
+-   **Cálculo de Señal:** Procesa y valida los niveles de señal para la configuración seleccionada.
+-   **Visualización de Resultados:** Muestra los niveles de señal por piso en tablas y gráficos, con codificación por colores (verde para niveles aceptables y rojo para niveles fuera de rango).
 
 ### Visualización Gráfica
 
 -   **Representación de Datos:** Muestra los niveles de señal por piso en forma de tablas y gráficos.
 -   **Codificación por Colores:** Emplea colores (verde para niveles aceptables y rojo para niveles fuera de rango).
--   **Interfaz Interactiva:** Permite explorar y ajustar configuraciones visualmente.
+-   **Modo Oscuro:** Incluye soporte para modo oscuro.
 
 ## Arquitectura Técnica
 
@@ -64,15 +63,17 @@ Este proyecto desarrolla una aplicación web para calcular y optimizar la distri
 -   **ConfigurationServlet.java:** Gestiona la creación y modificación de configuraciones.
 -   **ComponentServlet.java:** Maneja operaciones CRUD para componentes.
 -   **SignalTypeServlet.java:** Proporciona información sobre los tipos de señal disponibles.
+-   **SignalCalculationServlet.java:** Gestiona la simulación y validación de los niveles de señal.
 
 ### Frontend
 
 #### Estructura
 
--   **index.html:** Página principal con tres pestañas:
+-   **index.html:** Página principal con cuatro pestañas:
     -   Configuración: Gestión de configuraciones de edificios
     -   Componentes: Administración de componentes de red
-    -   Optimización/Simulación: Cálculo y optimización de señales
+    -   Simulación: Cálculo y simulación de señales
+    -   Resultados: Visualización de resultados
 
 #### JavaScript (Modular)
 
@@ -119,7 +120,6 @@ La base de datos está organizada en tres bloques principales:
 
     - Usuario ingresa nivel_cabecera y num_pisos
     - Se crea registro en Configuraciones
-    - Se inicializan pisos con sus componentes correspondientes
 
 2. **Gestión de Componentes:**
 
@@ -129,18 +129,17 @@ La base de datos está organizada en tres bloques principales:
 
 3. **Cálculo y Simulación:**
 
+    - Usuario selecciona y agrega los componentes deseados para cada piso
     - Servlet calcula nivel_senal por piso
     - Se validan contra MargenesCalidad
-    - Frontend muestra resultados en tiempo real
+    - Frontend muestra resultados
 
-4. **Optimización:**
+4. **Optimización (TODO):**
 
-    - Usuario solicita optimización
-    - Algoritmo evalúa combinaciones
-    - Se sugiere configuración óptima
-    - Se actualiza interfaz con resultados
+    - Algoritmo de optimización pendiente de implementar para identificar la configuración más económica que cumpla los requisitos de calidad
+    - Se deberá basar en el costo de cada componente y el costo total almacenado en _Configuraciones.costo_total_
+    - Pendiente implementar la sugerencia de componentes específicos para cada piso
 
 5. **Análisis de Resultados:**
     - Visualización de niveles por piso
     - Indicadores de calidad
-    - Opciones para ajustes adicionales

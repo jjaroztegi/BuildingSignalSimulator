@@ -18,7 +18,7 @@ Building Signal Simulator is a web-based application that simulates and optimize
 -   **Backend**: Java 1.8 (JDK 1.8.0_131)
 -   **Server**: Apache Tomcat 9.0.89
 -   **Frontend**: HTML, Vanilla JavaScript (ES6 modules), Tailwind CSS
--   **Database**: MS Access/Derby via JDBC
+-   **Database**: MS Access via JDBC
 -   **Build**: Manual compilation via script or Docker containerization
 
 ## Project Structure
@@ -35,15 +35,17 @@ Building Signal Simulator is a web-based application that simulates and optimize
 │   ├── js/                 # JavaScript files
 │   │   ├── script.js       # Main application logic
 │   │   └── modules/        # JavaScript modules
-│   ├── WEB-INF/           # Web configuration
-│   └── index.html         # Main application page
-├── database/              # Database files and SQL scripts
-│   └── signal_distribution.accdb    # MS Access database
-├── doc/                   # Documentation
-├── lib/                   # Required JAR dependencies
-├── Dockerfile            # Docker configuration
-├── docker-compose.yml    # Docker Compose configuration
-└── build.bat             # Build and deployment script
+│   ├── WEB-INF/            # Web configuration
+│   └── index.html          # Main application page
+├── database/               # Database files and SQL scripts
+│   └── DistribucionDeSenal.accdb    # MS Access database
+├── doc/                    # Documentation
+├── lib/                    # Required JAR dependencies
+├── tools/                  # Jakarta migration tool
+├── Dockerfile              # Docker configuration
+├── docker-compose.yml      # Docker Compose configuration
+├── build.sh                # Build and deployment script for Mac/Linux
+└── build_uni.bat           # Build and deployment script for Windows (university environment)
 ```
 
 ## Prerequisites
@@ -65,22 +67,42 @@ Building Signal Simulator is a web-based application that simulates and optimize
 
 ### Option 1: Manual Setup
 
-1. Clone the repository
-2. Ensure Java 1.8.0_131 is installed and JAVA_HOME is set
-3. Install Apache Tomcat 9.0.89
-4. Run the build script:
+#### Windows University Environment
 
-    ```bash
+1. Clone the repository
+2. Run the build script:
+
+    ```batch
     build_uni.bat
     ```
 
     This script handles:
 
+    - Environment variables configuration
     - Java compilation
-    - Database connection testing
     - Deployment to Tomcat
 
-5. Access the application at: http://localhost:8082/BuildingSignalSimulator
+3. Access the application at: http://localhost:8082/BuildingSignalSimulator
+
+#### Linux/Mac Environment
+
+1. Clone the repository
+2. Ensure Java and Tomcat are installed and JAVA_HOME is set
+3. Modify the build.sh script to set the correct TOMCAT_WEBAPPS path
+4. Make the build script executable and run it:
+
+    ```bash
+    chmod +x build.sh
+    ./build.sh
+    ```
+
+    This script handles:
+
+    - Java compilation
+    - Compiling with Java 8 compatibility and migrating to Jakarta EE
+    - Deployment to Tomcat
+
+5. Access the application at: http://localhost:8080/BuildingSignalSimulator
 
 ### Option 2: Docker Setup
 
@@ -89,7 +111,7 @@ Building Signal Simulator is a web-based application that simulates and optimize
 3. Build and start the container:
 
     ```bash
-    docker-compose up -d
+    docker compose up -d
     ```
 
 4. Access the application at: http://localhost:1313/BuildingSignalSimulator
@@ -98,10 +120,9 @@ The Docker setup provides an isolated environment with all dependencies pre-conf
 
 ## Database Configuration
 
-The application supports both MS Access and Derby databases:
+The application supports MS Access database:
 
--   MS Access database file: `database/signal_distribution.accdb`
--   Derby database: `database/signal_distribution/`
+-   MS Access database file: `database/DistribucionDeSenal.accdb`
 -   SQL scripts used for setup: `database/sentencias_sql/`
 
 ## Features in Detail
@@ -123,12 +144,11 @@ The application supports both MS Access and Derby databases:
 
 ### Signal Simulation
 
--   Real-time signal level calculation
+-   Signal level calculation
 -   Quality margin validation
 -   Visual feedback with color-coded indicators
--   Interactive parameter adjustment
 
-### Optimization
+### Optimization (TODO)
 
 -   Cost-effective component selection
 -   Quality margin compliance
