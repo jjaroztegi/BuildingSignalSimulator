@@ -22,7 +22,7 @@ mkdir -p "build/classes"
 
 # Compile Java files dynamically based on the package name
 find "src/$PACKAGE_NAME" -name "*.java" | while read -r file; do
-    echo "Compiling $(basename "$file")..."
+    # echo "Compiling $(basename "$file")..."
     javac --release 8 -Xlint:-options -d build/classes -cp "$CLASSPATH" "$file"
 done
 
@@ -53,15 +53,19 @@ mkdir -p "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/classes/$PACKAGE_NAME"
 cp -R build/classes/* "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/classes/"
 
 # Copy the source .java files
-rsync -av --include='*/' --include='*.java' --exclude='*' "src/$PACKAGE_NAME/" "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/classes/$PACKAGE_NAME/"
+rsync -av --include='*/' --include='*.java' --exclude='*' "src/$PACKAGE_NAME/" "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/classes/$PACKAGE_NAME/" > /dev/null
 
 # Copy lib folder with all JARs
 mkdir -p "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/lib"
 cp lib/*.jar "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/lib/"
 
-# Copy access database
-mkdir -p "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/database"
-cp database/*.accdb "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/database/"
+# # Copy access database
+# mkdir -p "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/database"
+# cp database/*.accdb "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/database/"
+
+# Copy derby database
+mkdir -p "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/database/DistribucionDeSenal"
+cp -R database/DistribucionDeSenal/* "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/database/DistribucionDeSenal/"
 
 # --- Create WAR and Run Migration ---
 echo "Packaging WAR from exploded deployment..."
@@ -71,7 +75,7 @@ jar -cf "$SCRIPT_DIR/$WAR_ORIG" .
 echo "Running Jakarta EE Migration Tool..."
 java -jar "$JAKARTA_MIGRATOR" \
     -profile=EE \
-    "$SCRIPT_DIR/$WAR_ORIG" "$SCRIPT_DIR/$WAR_MIGRATED"
+    "$SCRIPT_DIR/$WAR_ORIG" "$SCRIPT_DIR/$WAR_MIGRATED" > /dev/null 2>&1
 
 echo "Deploying migrated WAR to Tomcat..."
 rm -rf "$TOMCAT_WEBAPPS/$APP_NAME"

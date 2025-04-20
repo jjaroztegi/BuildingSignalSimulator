@@ -8,7 +8,7 @@ public class DerbyTest {
     public static void main(String[] args) {
         System.out.println("Listing tables from Derby database...\n");
 
-        try (Connection connection = new DerbyConnection().getConnection()) {
+        try (Connection connection = DerbyConnection.getConnection()) {
             DatabaseMetaData metadata = connection.getMetaData();
             // In Derby, "APP" is the default schema
             ResultSet tables = metadata.getTables(null, "APP", "%", new String[] { "TABLE" });

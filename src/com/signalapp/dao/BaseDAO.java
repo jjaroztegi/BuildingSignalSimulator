@@ -22,10 +22,11 @@ public abstract class BaseDAO<T> {
      */
     public BaseDAO() {
         try {
-            this.connection = AccessConnection.getConnection();
+            this.connection = DerbyConnection.getConnection();
+            // this.connection = AccessConnection.getConnection();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Database connection error", e); // Rethrow as a runtime exception
+            throw new RuntimeException("Database connection error", e);
         }
     }
 
@@ -101,20 +102,31 @@ public abstract class BaseDAO<T> {
 
     /**
      * Inserts a new record into the database
+     * Note: Derby uses GENERATED ALWAYS AS IDENTITY for auto-incrementing IDs
      * 
      * @param entity The entity to insert
      * @throws SQLException if a database error occurs
      */
     public void insert(T entity) throws SQLException {
-        // Get all column names except the ID column
+        // Get all column names except the ID column (which is GENERATED ALWAYS AS
+        // IDENTITY)
         String[] columns = getColumnNames();
         String[] insertColumns = new String[columns.length - 1];
         for (int i = 1; i < columns.length; i++) {
             insertColumns[i - 1] = columns[i];
         }
-
         String columnsStr = String.join(", ", insertColumns);
-        String placeholders = String.join(", ", insertColumns).replaceAll("[^,]+", "?");
+
+        // Build placeholder string like "?, ?, ?, ?"
+        StringBuilder placeholdersBuilder = new StringBuilder();
+        for (int i = 0; i < insertColumns.length; i++) {
+            if (i > 0) {
+                placeholdersBuilder.append(", ");
+            }
+            placeholdersBuilder.append("?");
+        }
+        String placeholders = placeholdersBuilder.toString();
+
         String sql = "INSERT INTO " + getTableName() + " (" + columnsStr + ") VALUES (" + placeholders + ")";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -131,13 +143,20 @@ public abstract class BaseDAO<T> {
      * @throws SQLException if a database error occurs
      */
     public void update(T entity, int id) throws SQLException {
-        String setClause = String.join(" = ?, ", getColumnNames()) + " = ?";
+        // Get all column names except the ID column
+        String[] columns = getColumnNames();
+        String[] updateColumns = new String[columns.length - 1];
+        for (int i = 1; i < columns.length; i++) {
+            updateColumns[i - 1] = columns[i];
+        }
+
+        String setClause = String.join(" = ?, ", updateColumns) + " = ?";
         String sql = "UPDATE " + getTableName() + " SET " + setClause + " WHERE id_" + getTableName().toLowerCase()
                 + " = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             setPreparedStatementParams(ps, entity);
-            ps.setInt(getColumnNames().length + 1, id);
+            ps.setInt(updateColumns.length + 1, id);
             ps.executeUpdate();
         }
     }

@@ -77,9 +77,13 @@ REM Copy lib folder with all JARs
 echo Copying library files...
 xcopy /Y "lib\*.jar" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\lib\" > NUL
 
-REM Copy access database
+@REM REM Copy access database
+@REM echo Copying database files...
+@REM xcopy /Y "database\*.accdb" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\database\" > NUL
+
+REM Copy derby database
 echo Copying database files...
-xcopy /Y "database\*.accdb" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\database\" > NUL
+xcopy /Y /E /I "database\DistribucionDeSenal\*" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\database\DistribucionDeSenal\" > NUL
 
 echo Deployment complete.
 

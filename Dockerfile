@@ -16,8 +16,11 @@ RUN mkdir -p ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/classes/com/signalapp
 RUN mkdir -p ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/lib
 RUN mkdir -p ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/database
 
-# Copy the MS Access database
-COPY database/DistribucionDeSenal.accdb ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/database/
+# # Copy the MS Access database
+# COPY database/DistribucionDeSenal.accdb ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/database/
+
+# Copy the Derby database
+COPY database/DistribucionDeSenal/ ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/database/DistribucionDeSenal/
 
 # Copy the JAR dependencies
 COPY lib/*.jar ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/lib/
