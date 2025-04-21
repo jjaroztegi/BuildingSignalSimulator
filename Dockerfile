@@ -1,20 +1,15 @@
 FROM tomcat:9.0.104-jdk8-corretto
 
-# Install required dependencies for UCanAccess
-RUN yum update -y && yum install -y \
-    unzip \
-    wget \
-    && yum clean all
-
 # Set environment variables
 ENV CATALINA_HOME=/usr/local/tomcat
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto
 ENV APP_NAME=BuildingSignalSimulator
 
 # Create application directory
-RUN mkdir -p ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/classes/com/signalapp
+RUN mkdir -p ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/classes
 RUN mkdir -p ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/lib
 RUN mkdir -p ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/database
+RUN mkdir -p /tmp/src/com/signalapp
 
 # # Copy the MS Access database
 # COPY database/DistribucionDeSenal.accdb ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/database/
@@ -31,10 +26,25 @@ COPY webapp/WEB-INF/* ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/
 COPY webapp/js ${CATALINA_HOME}/webapps/${APP_NAME}/js/
 COPY webapp/css ${CATALINA_HOME}/webapps/${APP_NAME}/css/
 
-# Copy the compiled Java classes
-COPY build/classes/com/signalapp ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/classes/com/signalapp/
+# Copy Java source files
+COPY src/com/signalapp /tmp/src/com/signalapp/
 
-# Create a WAR file for proper deployment
+# Create classpath for compilation
+RUN echo -n "." > /tmp/classpath.txt && \
+    find ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/lib -name "*.jar" -exec printf ":%s" {} \; >> /tmp/classpath.txt
+
+# List all Java files to compile
+RUN find /tmp/src -name "*.java" > /tmp/sources.txt
+
+# Compile Java classes
+RUN javac -cp $(cat /tmp/classpath.txt) \
+    -d ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/classes \
+    @/tmp/sources.txt
+
+# Clean up
+RUN rm -rf /tmp/src /tmp/classpath.txt /tmp/sources.txt
+
+# Create WAR file
 RUN cd ${CATALINA_HOME}/webapps && \
     jar -cf ${APP_NAME}.war -C ${APP_NAME} . && \
     rm -rf ${APP_NAME}
