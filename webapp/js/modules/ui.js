@@ -1,3 +1,5 @@
+import { fetchComponentsByModel } from "./servlet.js";
+
 // UI management module
 export function updateComponentSection(type, components) {
     const detailsElement = document.getElementById(`${type}-details`);
@@ -107,11 +109,32 @@ export function updateComponentList(type, data, customListId = null) {
         const content = document.createElement("div");
         content.className = "flex justify-between items-center";
 
+        const nameAndCost = document.createElement("div");
+        nameAndCost.className = "flex flex-col";
+
         const name = document.createElement("span");
         name.className = "font-medium text-gray-900 dark:text-white";
         name.textContent = modelo || "Sin nombre";
 
-        content.appendChild(name);
+        const cost = document.createElement("span");
+        cost.className = "text-sm text-gray-500 dark:text-gray-400";
+        cost.textContent = "Cargando...";
+
+        nameAndCost.appendChild(name);
+        nameAndCost.appendChild(cost);
+        content.appendChild(nameAndCost);
+
+        // Fetch and display component cost
+        fetchComponentsByModel(type, modelo)
+            .then((details) => {
+                if (details && details.costo) {
+                    cost.textContent = `Costo: ${details.costo.toFixed(2)}€`;
+                }
+            })
+            .catch((error) => {
+                cost.textContent = "Error al cargar costo";
+                console.error("Error loading component cost:", error);
+            });
 
         if (isSimulationList) {
             const addButton = document.createElement("button");
@@ -132,42 +155,6 @@ export function updateComponentList(type, data, customListId = null) {
                         },
                     })
                 );
-            });
-        } else {
-            // For the components tab, add the selection behavior
-            item.addEventListener("click", () => {
-                // Remove selected class from all items
-                list.querySelectorAll("li").forEach((li) => {
-                    li.classList.remove(
-                        "bg-blue-50",
-                        "dark:bg-blue-900/30",
-                        "border",
-                        "border-blue-200",
-                        "dark:border-blue-800"
-                    );
-                });
-
-                // Add selected class to clicked item
-                item.classList.add(
-                    "bg-blue-50",
-                    "dark:bg-blue-900/30",
-                    "border",
-                    "border-blue-200",
-                    "dark:border-blue-800"
-                );
-
-                // Store the selected model in a hidden input or data attribute
-                const container = listElement.closest(".space-y-4");
-                if (container) {
-                    let modelInput = container.querySelector("input[name='selected_model']");
-                    if (!modelInput) {
-                        modelInput = document.createElement("input");
-                        modelInput.type = "hidden";
-                        modelInput.name = "selected_model";
-                        container.appendChild(modelInput);
-                    }
-                    modelInput.value = modelo;
-                }
             });
         }
 

@@ -107,44 +107,70 @@ export function updateSelectedComponentsDisplay() {
     // Get all floors and sort them numerically
     const floors = Object.keys(simulationComponentManager.getAllComponents()).sort((a, b) => parseInt(a) - parseInt(b));
 
+    if (floors.length === 0) {
+        const emptyState = document.createElement("div");
+        emptyState.className = "text-center py-4 text-gray-500 dark:text-gray-400";
+        emptyState.textContent = "No hay componentes seleccionados";
+        container.appendChild(emptyState);
+        return;
+    }
+
     floors.forEach((floor) => {
         const floorComponents = simulationComponentManager.getComponentsByFloor(floor);
 
         // Create floor section
         const floorSection = document.createElement("div");
-        floorSection.className = "mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg";
+        floorSection.className = "py-4 first:pt-0 last:pb-0";
 
-        // Floor header
-        const floorHeader = document.createElement("h5");
-        floorHeader.className = "text-sm font-medium text-gray-700 dark:text-gray-300 mb-2";
-        floorHeader.textContent = `Piso ${floor}`;
+        // Floor header with badge
+        const floorHeader = document.createElement("div");
+        floorHeader.className = "flex items-center justify-between mb-3";
+
+        const floorTitle = document.createElement("h5");
+        floorTitle.className = "text-sm font-medium text-gray-900 dark:text-gray-100";
+        floorTitle.textContent = `Piso ${floor}`;
+
+        const floorBadge = document.createElement("span");
+        const componentCount = Object.values(floorComponents).reduce((sum, models) => sum + models.size, 0);
+        floorBadge.className =
+            "text-xs px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300";
+        floorBadge.textContent = `${componentCount} componente${componentCount !== 1 ? "s" : ""}`;
+
+        floorHeader.appendChild(floorTitle);
+        floorHeader.appendChild(floorBadge);
         floorSection.appendChild(floorHeader);
 
         // Components list
         const componentsList = document.createElement("div");
-        componentsList.className = "space-y-2";
+        componentsList.className = "space-y-3";
 
         Object.entries(floorComponents).forEach(([type, models]) => {
             if (models.size > 0) {
                 const typeContainer = document.createElement("div");
-                typeContainer.className = "pl-2";
+                typeContainer.className = "pl-3 border-l-2 border-gray-200 dark:border-gray-600";
 
                 const typeHeader = document.createElement("div");
                 typeHeader.className = "text-xs font-medium text-gray-600 dark:text-gray-400 mb-1";
-                typeHeader.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                typeHeader.textContent = getComponentTypeName(type);
                 typeContainer.appendChild(typeHeader);
 
                 models.forEach((model) => {
                     const componentItem = document.createElement("div");
-                    componentItem.className = "flex justify-between items-center text-sm";
+                    componentItem.className = "flex justify-between items-center text-sm py-1";
 
                     const modelName = document.createElement("span");
+                    modelName.className = "text-gray-700 dark:text-gray-300";
                     modelName.textContent = model;
 
                     const removeButton = document.createElement("button");
                     removeButton.className =
-                        "text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300";
-                    removeButton.textContent = "×";
+                        "p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors";
+                    removeButton.innerHTML = `
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    `;
+                    removeButton.title = "Eliminar componente";
                     removeButton.onclick = () => {
                         if (simulationComponentManager.removeComponent(type, model, floor)) {
                             updateSelectedComponentsDisplay();

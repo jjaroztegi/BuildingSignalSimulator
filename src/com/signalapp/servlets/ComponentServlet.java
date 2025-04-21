@@ -172,7 +172,7 @@ public class ComponentServlet extends HttpServlet {
 
     /**
      * Handles POST requests to add new components
-     * Creates a new component record with the specified type, model, and cost
+     * Creates a new component record with the specified type, model, and properties
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -183,8 +183,9 @@ public class ComponentServlet extends HttpServlet {
         String type = request.getParameter("type");
         String modelo = request.getParameter("modelo");
         String costo = request.getParameter("costo");
+        String propertiesJson = request.getParameter("properties");
 
-        if (type == null || modelo == null || costo == null) {
+        if (type == null || modelo == null || costo == null || propertiesJson == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error\":\"Missing required parameters\"}");
             return;
@@ -207,39 +208,57 @@ public class ComponentServlet extends HttpServlet {
             // Get the generated component ID
             int idComponente = getComponenteIdByModelo(modelo);
 
-            // Insert specific component
+            // Parse properties
+            propertiesJson = propertiesJson.trim();
+
+            // Remove curly braces and split into key-value pairs
+            String[] pairs = propertiesJson.substring(1, propertiesJson.length() - 1).split(",");
+            java.util.Map<String, String> properties = new java.util.HashMap<>();
+
+            for (String pair : pairs) {
+                String[] keyValue = pair.split(":");
+                if (keyValue.length != 2)
+                    continue;
+
+                String key = keyValue[0].trim().replace("\"", "");
+                String value = keyValue[1].trim().replace("\"", "");
+                properties.put(key, value);
+            }
+
+            // Insert specific component with properties from request
             switch (type.toLowerCase()) {
                 case "coaxial":
                     Coaxial coaxial = new Coaxial();
                     coaxial.setId_componentes(idComponente);
-                    coaxial.setAtenuacion_470mhz(0.0);
-                    coaxial.setAtenuacion_694mhz(0.0);
+                    coaxial.setAtenuacion_470mhz(Double.parseDouble(properties.get("atenuacion_470mhz")));
+                    coaxial.setAtenuacion_694mhz(Double.parseDouble(properties.get("atenuacion_694mhz")));
                     new CoaxialDAO().insert(coaxial);
                     break;
                 case "derivador":
                     Derivador derivador = new Derivador();
                     derivador.setId_componentes(idComponente);
-                    derivador.setAtenuacion_derivacion(10.0);
-                    derivador.setAtenuacion_paso(3.5);
-                    derivador.setDirectividad(20.0);
-                    derivador.setDesacoplo(20.0);
-                    derivador.setPerdidas_retorno(16.0);
+                    derivador.setAtenuacion_derivacion(Double.parseDouble(properties.get("atenuacion_derivacion")));
+                    derivador.setAtenuacion_paso(Double.parseDouble(properties.get("atenuacion_paso")));
+                    derivador.setDirectividad(Double.parseDouble(properties.get("directividad")));
+                    derivador.setDesacoplo(Double.parseDouble(properties.get("desacoplo")));
+                    derivador.setPerdidas_retorno(Double.parseDouble(properties.get("perdidas_retorno")));
                     new DerivadorDAO().insert(derivador);
                     break;
                 case "distribuidor":
                     Distribuidor distribuidor = new Distribuidor();
                     distribuidor.setId_componentes(idComponente);
-                    distribuidor.setNumero_salidas(4);
-                    distribuidor.setAtenuacion_distribucion(3.5);
-                    distribuidor.setDesacoplo(20.0);
-                    distribuidor.setPerdidas_retorno(16.0);
+                    distribuidor.setNumero_salidas(Integer.parseInt(properties.get("numero_salidas")));
+                    distribuidor
+                            .setAtenuacion_distribucion(Double.parseDouble(properties.get("atenuacion_distribucion")));
+                    distribuidor.setDesacoplo(Double.parseDouble(properties.get("desacoplo")));
+                    distribuidor.setPerdidas_retorno(Double.parseDouble(properties.get("perdidas_retorno")));
                     new DistribuidorDAO().insert(distribuidor);
                     break;
                 case "toma":
                     Toma toma = new Toma();
                     toma.setId_componentes(idComponente);
-                    toma.setAtenuacion(1.0);
-                    toma.setDesacoplo(20.0);
+                    toma.setAtenuacion(Double.parseDouble(properties.get("atenuacion")));
+                    toma.setDesacoplo(Double.parseDouble(properties.get("desacoplo")));
                     new TomaDAO().insert(toma);
                     break;
                 default:

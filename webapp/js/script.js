@@ -8,6 +8,9 @@ import {
     fetchComponentsByType,
     runSimulation,
     fetchSignalTypes,
+    fetchConfigurations,
+    submitConfiguration,
+    submitComponent,
 } from "./modules/servlet.js";
 import {
     displayError,
@@ -18,6 +21,7 @@ import {
     displaySuccess,
 } from "./modules/utils.js";
 import { updateComponentList, updateConfigSelect, updateSimulationResults } from "./modules/ui.js";
+import { updateComponentForm, validateComponentForm } from "./modules/forms.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
     initTheme();
@@ -157,9 +161,34 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     if (componentForm) {
-        componentForm.addEventListener("submit", (event) =>
-            handleComponentSubmit(event, componentForm, errorMessageElement, successMessageElement)
-        );
+        componentForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            clearMessages(errorMessageElement, successMessageElement);
+
+            const formData = new FormData(e.target);
+
+            // Validate form including dynamic fields
+            if (!validateComponentForm(formData)) {
+                displayError("Por favor, complete todos los campos correctamente", errorMessageElement);
+                return;
+            }
+
+            try {
+                const result = await submitComponent(formData);
+                if (result.success) {
+                    displaySuccess(result.success, successMessageElement);
+                    e.target.reset();
+                    // Clear dynamic fields
+                    document.getElementById("dynamic-fields").innerHTML = "";
+                    // Refresh component lists
+                    await fetchComponents();
+                } else {
+                    displayError(result.error || "Error al añadir el componente", errorMessageElement);
+                }
+            } catch (error) {
+                displayError("Error al añadir el componente: " + error.message, errorMessageElement);
+            }
+        });
     }
 
     if (runSimulationButton) {
@@ -277,5 +306,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (simulationComponentManager.removeComponent(type, model, floor)) {
             updateSelectedComponentsDisplay();
         }
+    });
+
+    // Add event listener for component type selection
+    document.getElementById("component-type")?.addEventListener("change", (e) => {
+        const selectedType = e.target.value;
+        updateComponentForm(selectedType);
     });
 });

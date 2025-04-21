@@ -133,10 +133,49 @@ export async function submitConfiguration(formData) {
 }
 
 export async function submitComponent(formData) {
+    // Convert form data to an object
+    const data = {};
+    formData.forEach((value, key) => {
+        // Convert numeric strings to numbers
+        data[key] = !isNaN(value) && value !== "" ? Number(value) : value;
+    });
+
+    // Add component-specific properties
+    const properties = {};
+    switch (data.type) {
+        case "coaxial":
+            properties.atenuacion_470mhz = data.atenuacion_470mhz;
+            properties.atenuacion_694mhz = data.atenuacion_694mhz;
+            break;
+        case "derivador":
+            properties.atenuacion_derivacion = data.atenuacion_derivacion;
+            properties.atenuacion_paso = data.atenuacion_paso;
+            properties.directividad = data.directividad;
+            properties.desacoplo = data.desacoplo;
+            properties.perdidas_retorno = data.perdidas_retorno;
+            break;
+        case "distribuidor":
+            properties.numero_salidas = data.numero_salidas;
+            properties.atenuacion_distribucion = data.atenuacion_distribucion;
+            properties.desacoplo = data.desacoplo;
+            properties.perdidas_retorno = data.perdidas_retorno;
+            break;
+        case "toma":
+            properties.atenuacion = data.atenuacion;
+            properties.desacoplo = data.desacoplo;
+            break;
+    }
+
+    // Create the request body
+    const requestBody = new URLSearchParams({
+        ...data,
+        properties: JSON.stringify(properties),
+    });
+
     const response = await fetch("components", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(formData).toString(),
+        body: requestBody.toString(),
     });
     return await response.json();
 }
@@ -200,6 +239,24 @@ export async function runSimulation(configId, signalType, componentsByFloor) {
         return await simulateResponse.json();
     } catch (error) {
         console.error("Error during simulation:", error);
+        throw error;
+    }
+}
+
+export async function fetchComponentsByModel(type, model) {
+    try {
+        const url = new URL("components", window.location.href);
+        url.searchParams.append("type", type);
+        url.searchParams.append("model", model);
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching details for ${type} model ${model}:`, error);
         throw error;
     }
 }
