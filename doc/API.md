@@ -107,6 +107,50 @@ Add a new component to the system.
 -   `type` (required): One of `coaxial`, `derivador`, `distribuidor`, or `toma`
 -   `modelo` (required): Model name/identifier
 -   `costo` (required): Cost of the component
+-   `properties` (required): JSON object containing component-specific properties
+
+**Component-Specific Properties:**
+
+#### Coaxial Cable
+
+```json
+{
+    "atenuacion_470mhz": "12.30",
+    "atenuacion_694mhz": "15.57"
+}
+```
+
+#### Derivador (Tap)
+
+```json
+{
+    "atenuacion_derivacion": "14.0",
+    "atenuacion_paso": "4.5",
+    "directividad": "13.0",
+    "desacoplo": "16.0",
+    "perdidas_retorno": "12.0"
+}
+```
+
+#### Distribuidor (Splitter)
+
+```json
+{
+    "numero_salidas": "2",
+    "atenuacion_distribucion": "4.0",
+    "desacoplo": "19.0",
+    "perdidas_retorno": "16.0"
+}
+```
+
+#### Toma (Outlet)
+
+```json
+{
+    "atenuacion": "1.0",
+    "desacoplo": "14.0"
+}
+```
 
 **Response:**
 
