@@ -183,8 +183,15 @@ export async function submitComponent(formData) {
 export async function runSimulation(configId, signalType, componentsByFloor) {
     try {
         const configSelect = document.getElementById("simulation-config");
-        if (!configSelect) {
-            throw new Error("Configuration select element not found");
+        const frequencyInput = document.getElementById("signal-frequency");
+
+        if (!configSelect || !frequencyInput) {
+            throw new Error("Required elements not found");
+        }
+
+        const frequency = parseInt(frequencyInput.value);
+        if (isNaN(frequency) || frequency < 470 || frequency > 694) {
+            throw new Error("Frecuencia debe ser un valor entero entre 470 y 694 MHz");
         }
 
         const selectedOption = Array.from(configSelect.options).find((option) => option.value === configId);
@@ -219,6 +226,7 @@ export async function runSimulation(configId, signalType, componentsByFloor) {
             num_pisos: configData.num_pisos,
             nivel_cabecera: configData.nivel_cabecera,
             tipo_senal: signalType,
+            frequency: frequency,
             components: components,
         };
 

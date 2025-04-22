@@ -25,10 +25,12 @@ export async function handleFormSubmit(
         !numPisos ||
         isNaN(nivelCabecera) ||
         isNaN(numPisos) ||
-        parseInt(numPisos) <= 0
+        parseInt(numPisos) <= 0 ||
+        parseFloat(nivelCabecera) < 70 ||
+        parseFloat(nivelCabecera) > 120
     ) {
         displayError(
-            "Por favor complete todos los campos con valores válidos (Pisos > 0).",
+            "Por favor complete todos los campos con valores válidos (Pisos > 0, Nivel de Cabecera entre 70 y 120 dBμV).",
             errorMessageElement,
             successMessageElement,
         );

@@ -43,7 +43,7 @@ public class ComponentServlet extends HttpServlet {
 
                 if (componente == null) {
                     response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    out.write("{\"error\":\"Component not found\"}");
+                    out.write("{\"error\":\"Componente no encontrado\"}");
                     return;
                 }
 
@@ -96,7 +96,7 @@ public class ComponentServlet extends HttpServlet {
                         break;
                     default:
                         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        out.write("{\"error\":\"Invalid component type\"}");
+                        out.write("{\"error\":\"Tipo de componente no válido\"}");
                         return;
                 }
                 jsonBuilder.append("}");
@@ -148,7 +148,7 @@ public class ComponentServlet extends HttpServlet {
                     break;
                 default:
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    out.write("{\"error\":\"Invalid component type\"}");
+                    out.write("{\"error\":\"Tipo de componente no válido\"}");
                     return;
             }
 
@@ -187,7 +187,7 @@ public class ComponentServlet extends HttpServlet {
 
         if (type == null || modelo == null || costo == null || propertiesJson == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.write("{\"error\":\"Missing required parameters\"}");
+            out.write("{\"error\":\"Faltan parámetros requeridos\"}");
             return;
         }
 
@@ -263,7 +263,7 @@ public class ComponentServlet extends HttpServlet {
                     break;
                 default:
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    out.write("{\"error\":\"Invalid component type\"}");
+                    out.write("{\"error\":\"Tipo de componente no válido\"}");
                     return;
             }
 
@@ -298,13 +298,13 @@ public class ComponentServlet extends HttpServlet {
                 dbTipoNombre = "Distribuidor";
                 break;
             default:
-                throw new SQLException("Invalid component type");
+                throw new SQLException("Tipo de componente no válido");
         }
 
         TiposComponenteDAO tiposComponenteDAO = new TiposComponenteDAO();
         int idTipo = tiposComponenteDAO.getIdByNombre(dbTipoNombre);
         if (idTipo == -1) {
-            throw new SQLException("Invalid component type");
+            throw new SQLException("Tipo de componente no válido");
         }
         return idTipo;
     }
@@ -320,7 +320,7 @@ public class ComponentServlet extends HttpServlet {
         ComponenteDAO componenteDAO = new ComponenteDAO();
         int idComponente = componenteDAO.getIdByModelo(modelo);
         if (idComponente == -1) {
-            throw new SQLException("Could not retrieve component ID");
+            throw new SQLException("No se pudo obtener el ID del componente");
         }
         return idComponente;
     }

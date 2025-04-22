@@ -71,7 +71,7 @@ public class ConfigurationServlet extends HttpServlet {
 
         if (nombre == null || nivelCabecera == null || numPisos == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.write("{\"error\":\"Missing required parameters\"}");
+            out.write("{\"error\":\"Faltan parámetros requeridos\"}");
             return;
         }
 
@@ -96,7 +96,7 @@ public class ConfigurationServlet extends HttpServlet {
             // Get the generated ID
             int idConfiguracion = configuracionDAO.getIdByNombre(nombre);
             if (idConfiguracion == -1) {
-                throw new SQLException("Could not retrieve configuration ID");
+                throw new SQLException("No se pudo obtener el ID de la configuración");
             }
 
             out.write("{\"success\":\"Configuration created successfully\",\"id\":" + idConfiguracion + "}");
@@ -124,7 +124,7 @@ public class ConfigurationServlet extends HttpServlet {
 
         if (idConfiguracion == null || nombre == null || nivelCabecera == null || numPisos == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.write("{\"error\":\"Missing required parameters\"}");
+            out.write("{\"error\":\"Faltan parámetros requeridos\"}");
             return;
         }
 
@@ -158,7 +158,7 @@ public class ConfigurationServlet extends HttpServlet {
         String idConfiguracion = request.getParameter("id_configuraciones");
         if (idConfiguracion == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.write("{\"error\":\"Missing configuration ID\"}");
+            out.write("{\"error\":\"Falta el ID de la configuración\"}");
             return;
         }
 

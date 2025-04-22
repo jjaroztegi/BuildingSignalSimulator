@@ -200,7 +200,7 @@ export function updateSimulationResults(results) {
                     ${floor.floor}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                    ${floor.level.toFixed(2)} dBm
+                    ${floor.level.toFixed(2)} dBμV
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
@@ -230,13 +230,13 @@ export function updateSimulationResults(results) {
     // Update headend level from configuration data
     const headendLevel = document.getElementById("headend-level");
     if (headendLevel && configData) {
-        headendLevel.textContent = `${configData.nivel_cabecera.toFixed(2)} dBm`;
+        headendLevel.textContent = `${configData.nivel_cabecera.toFixed(2)} dBμV`;
     }
 
     // Update quality margins
     const qualityMargins = document.getElementById("quality-margins");
     if (qualityMargins && results.margins) {
-        qualityMargins.textContent = `${results.margins.min} dBm - ${results.margins.max} dBm`;
+        qualityMargins.textContent = `${results.margins.min} dBμV - ${results.margins.max} dBμV`;
     }
 
     // Update total cost
