@@ -1,7 +1,6 @@
 // Tab management module
 export function initTabs() {
     const tabButtons = document.querySelectorAll(".tab-button");
-    const tabContents = document.querySelectorAll(".tab-content");
 
     // Add click event listeners to tab buttons
     tabButtons.forEach((button) => {

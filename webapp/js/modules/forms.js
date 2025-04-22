@@ -1,137 +1,10 @@
 // Form handling module
 import { setLoadingState, displayError, displaySuccess, clearMessages } from "./utils.js";
 import { switchTab } from "./tabs.js";
-import { submitConfiguration, submitComponent, fetchConfigurations, fetchComponentsByType } from "./servlet.js";
+import { submitConfiguration, fetchConfigurations } from "./servlet.js";
 import { updateConfigSelect } from "./ui.js";
 
-export async function handleFormSubmit(
-    event,
-    initialConfigForm,
-    errorMessageElement,
-    successMessageElement,
-    configSelect,
-) {
-    event.preventDefault();
-    clearMessages(errorMessageElement, successMessageElement);
-
-    const formData = new FormData(initialConfigForm);
-    const configName = formData.get("nombre");
-    const nivelCabecera = formData.get("nivel_cabecera");
-    const numPisos = formData.get("num_pisos");
-
-    if (
-        !configName ||
-        !nivelCabecera ||
-        !numPisos ||
-        isNaN(nivelCabecera) ||
-        isNaN(numPisos) ||
-        parseInt(numPisos) <= 0 ||
-        parseFloat(nivelCabecera) < 70 ||
-        parseFloat(nivelCabecera) > 120
-    ) {
-        displayError(
-            "Por favor complete todos los campos con valores válidos (Pisos > 0, Nivel de Cabecera entre 70 y 120 dBμV).",
-            errorMessageElement,
-            successMessageElement,
-        );
-        return;
-    }
-
-    const submitButton = initialConfigForm.querySelector('button[type="submit"]');
-    setLoadingState(submitButton, true);
-
-    try {
-        const data = await submitConfiguration(formData);
-
-        if (data.success) {
-            displaySuccess(data.success, successMessageElement, errorMessageElement);
-            initialConfigForm.reset();
-
-            const configurations = await fetchConfigurations();
-
-            updateConfigSelect(configurations, configSelect);
-            const simulationConfig = document.getElementById("simulation-config");
-            if (simulationConfig) {
-                updateConfigSelect(configurations, simulationConfig);
-            }
-
-            const newConfigOption = Array.from(configSelect.options).find(
-                (option) => option.textContent === configName,
-            );
-
-            if (newConfigOption) {
-                configSelect.value = newConfigOption.value;
-                if (simulationConfig) {
-                    simulationConfig.value = newConfigOption.value;
-                }
-                configSelect.dispatchEvent(new Event("change"));
-            }
-
-            const simulationTab = document.getElementById("simulation-tab");
-            if (simulationTab) {
-                switchTab(simulationTab.id);
-            }
-        } else {
-            const errorMsg = data?.error || `Error en la solicitud`;
-            displayError(`Error de Configuración: ${errorMsg}`, errorMessageElement, successMessageElement);
-        }
-    } catch (error) {
-        console.error("Error submitting configuration:", error);
-        displayError(
-            `Ocurrió un error de red o inesperado: ${error.message}`,
-            errorMessageElement,
-            successMessageElement,
-        );
-    } finally {
-        setLoadingState(submitButton, false);
-    }
-}
-
-export async function handleComponentSubmit(event, componentForm, errorMessageElement, successMessageElement) {
-    event.preventDefault();
-    clearMessages(errorMessageElement, successMessageElement);
-
-    const formData = new FormData(componentForm);
-    const type = formData.get("type");
-    const modelo = formData.get("modelo");
-    const costo = formData.get("costo");
-
-    if (!type || !modelo || !costo || isNaN(costo)) {
-        displayError(
-            "Por favor complete todos los campos con valores válidos.",
-            errorMessageElement,
-            successMessageElement,
-        );
-        return;
-    }
-
-    const submitButton = componentForm.querySelector('button[type="submit"]');
-    setLoadingState(submitButton, true);
-
-    try {
-        const data = await submitComponent(formData);
-
-        if (data.success) {
-            displaySuccess(data.success, successMessageElement, errorMessageElement);
-            componentForm.reset();
-            await fetchComponentsByType(type);
-        } else {
-            const errorMsg = data?.error || `Error en la solicitud`;
-            displayError(`Error de Componente: ${errorMsg}`, errorMessageElement, successMessageElement);
-        }
-    } catch (error) {
-        console.error("Error adding component:", error);
-        displayError(
-            `A network or unexpected error occurred: ${error.message}`,
-            errorMessageElement,
-            successMessageElement,
-        );
-    } finally {
-        setLoadingState(submitButton, false);
-    }
-}
-
-// Component type specific fields configuration
+// --- Component Field Definitions ---
 const componentFields = {
     coaxial: [
         {
@@ -234,7 +107,19 @@ const componentFields = {
     ],
 };
 
-// Function to update form fields based on component type
+// --- Form Validation ---
+export function validateComponentForm(formData) {
+    const type = formData.get("type");
+    if (!type || !componentFields[type]) return false;
+
+    // Check if all required fields are present and valid
+    return componentFields[type].every((field) => {
+        const value = formData.get(field.name);
+        return value !== null && value !== "" && !isNaN(value);
+    });
+}
+
+// --- Form Update ---
 export function updateComponentForm(type) {
     const dynamicFieldsContainer = document.getElementById("dynamic-fields");
     if (!dynamicFieldsContainer) return;
@@ -257,7 +142,7 @@ export function updateComponentForm(type) {
 
         const input = document.createElement("input");
         input.className =
-            "mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-xs focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400";
+            "mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-2xs focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400";
         input.type = field.type;
         input.id = field.name;
         input.name = field.name;
@@ -271,14 +156,135 @@ export function updateComponentForm(type) {
     });
 }
 
-// Function to validate component form
-export function validateComponentForm(formData) {
-    const type = formData.get("type");
-    if (!type || !componentFields[type]) return false;
+// --- Form Data Preparation ---
+export function prepareSimulationData(configId, signalType, componentsByFloor) {
+    const configSelect = document.getElementById("simulation-config");
+    const frequencyInput = document.getElementById("signal-frequency");
 
-    // Check if all required fields are present and valid
-    return componentFields[type].every((field) => {
-        const value = formData.get(field.name);
-        return value !== null && value !== "" && !isNaN(value);
+    if (!configSelect || !frequencyInput) {
+        throw new Error("Required elements not found");
+    }
+
+    const frequency = parseInt(frequencyInput.value);
+    if (isNaN(frequency) || frequency < 470 || frequency > 694) {
+        throw new Error("Frecuencia debe ser un valor entero entre 470 y 694 MHz");
+    }
+
+    const selectedOption = Array.from(configSelect.options).find((option) => option.value === configId);
+
+    if (!selectedOption) {
+        throw new Error("Selected configuration not found");
+    }
+
+    const configData = JSON.parse(selectedOption.dataset.config);
+
+    const components = [];
+    Object.entries(componentsByFloor).forEach(([floor, floorComponents]) => {
+        const floorNum = parseInt(floor);
+        if (floorNum > configData.num_pisos) {
+            throw new Error(`Floor ${floorNum} exceeds the configuration's number of floors (${configData.num_pisos})`);
+        }
+
+        Object.entries(floorComponents).forEach(([type, models]) => {
+            models.forEach((model) => {
+                components.push({
+                    type: type,
+                    model: model,
+                    floor: floorNum,
+                });
+            });
+        });
     });
+
+    return {
+        num_pisos: configData.num_pisos,
+        nivel_cabecera: configData.nivel_cabecera,
+        tipo_senal: signalType,
+        frequency: frequency,
+        components: components,
+    };
+}
+
+// --- Form Submission Handlers ---
+export async function handleFormSubmit(
+    event,
+    initialConfigForm,
+    errorMessageElement,
+    successMessageElement,
+    configSelect,
+) {
+    event.preventDefault();
+    clearMessages(errorMessageElement, successMessageElement);
+
+    const formData = new FormData(initialConfigForm);
+    const configName = formData.get("nombre");
+    const nivelCabecera = formData.get("nivel_cabecera");
+    const numPisos = formData.get("num_pisos");
+
+    if (
+        !configName ||
+        !nivelCabecera ||
+        !numPisos ||
+        isNaN(nivelCabecera) ||
+        isNaN(numPisos) ||
+        parseInt(numPisos) <= 0 ||
+        parseFloat(nivelCabecera) < 70 ||
+        parseFloat(nivelCabecera) > 120
+    ) {
+        displayError(
+            "Por favor complete todos los campos con valores válidos (Pisos > 0, Nivel de Cabecera entre 70 y 120 dBμV).",
+            errorMessageElement,
+            successMessageElement,
+        );
+        return;
+    }
+
+    const submitButton = initialConfigForm.querySelector('button[type="submit"]');
+    setLoadingState(submitButton, true);
+
+    try {
+        const data = await submitConfiguration(formData);
+
+        if (data.success) {
+            displaySuccess(data.success, successMessageElement, errorMessageElement);
+            initialConfigForm.reset();
+
+            const configurations = await fetchConfigurations();
+
+            updateConfigSelect(configurations, configSelect);
+            const simulationConfig = document.getElementById("simulation-config");
+            if (simulationConfig) {
+                updateConfigSelect(configurations, simulationConfig);
+            }
+
+            const newConfigOption = Array.from(configSelect.options).find(
+                (option) => option.textContent === configName,
+            );
+
+            if (newConfigOption) {
+                configSelect.value = newConfigOption.value;
+                if (simulationConfig) {
+                    simulationConfig.value = newConfigOption.value;
+                }
+                configSelect.dispatchEvent(new Event("change"));
+            }
+
+            const simulationTab = document.getElementById("simulation-tab");
+            if (simulationTab) {
+                switchTab(simulationTab.id);
+            }
+        } else {
+            const errorMsg = data?.error || `Error en la solicitud`;
+            displayError(`Error de Configuración: ${errorMsg}`, errorMessageElement, successMessageElement);
+        }
+    } catch (error) {
+        console.error("Error submitting configuration:", error);
+        displayError(
+            `Ocurrió un error de red o inesperado: ${error.message}`,
+            errorMessageElement,
+            successMessageElement,
+        );
+    } finally {
+        setLoadingState(submitButton, false);
+    }
 }

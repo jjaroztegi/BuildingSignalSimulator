@@ -5,8 +5,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" type="image/x-icon" href="favicon.ico" />
         <title>Simulador de Distribución de Señales en Edificios</title>
-        <!-- Tailwind CSS -->
-        <link rel="stylesheet" href="css/tailwind.css" />
+        <!-- Include Tailwind CSS via Play CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            // Add dark mode configuration
+            tailwind.config = {
+                darkMode: "class",
+            };
+        </script>
         <!-- Js file -->
         <script type="module" src="js/script.js"></script>
     </head>
@@ -65,7 +71,7 @@
                                         id="config-name"
                                         name="nombre"
                                         placeholder="ej., Edificio A"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-2xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
                                         required
                                     />
                                 </div>
@@ -81,7 +87,7 @@
                                         id="nivel-cabecera"
                                         name="nivel_cabecera"
                                         placeholder="ej., 95.0"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-2xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
                                         required
                                     />
                                 </div>
@@ -97,7 +103,7 @@
                                         name="num_pisos"
                                         min="1"
                                         placeholder="ej., 5"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-2xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
                                         required
                                     />
                                 </div>
@@ -127,15 +133,11 @@
                                     </label>
                                     <select
                                         id="id_configuraciones"
-                                        class="w-full rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+                                        class="w-full rounded-md border-gray-300 shadow-2xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
                                     >
                                         <option value="">Seleccionar Configuración</option>
                                     </select>
                                 </div>
-                                <div
-                                    id="configuration-summary"
-                                    class="hidden rounded-md border border-blue-200 bg-blue-50 p-3 dark:border-blue-800 dark:bg-blue-900/30"
-                                ></div>
                             </div>
                         </div>
                     </div>
@@ -164,7 +166,7 @@
                                     <select
                                         id="component-type"
                                         name="type"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-2xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
                                         required
                                     >
                                         <option value="">Seleccionar tipo</option>
@@ -185,7 +187,7 @@
                                         id="component-model"
                                         name="modelo"
                                         placeholder="ej., RG-6"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-2xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
                                         required
                                     />
                                 </div>
@@ -201,7 +203,7 @@
                                         id="component-cost"
                                         name="costo"
                                         placeholder="ej., 10.50"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-2xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
                                         required
                                     />
                                 </div>
@@ -235,7 +237,7 @@
                                     </label>
                                     <select
                                         id="component-list-type"
-                                        class="w-full rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+                                        class="w-full rounded-md border-gray-300 shadow-2xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
                                     >
                                         <option value="coaxial">Cables Coaxiales</option>
                                         <option value="derivador">Derivadores</option>
@@ -266,7 +268,7 @@
                             >
                                 Configuración de Simulación
                             </h2>
-                            <div class="grid grid-cols-2 gap-8">
+                            <div class="grid grid-cols-3 gap-8">
                                 <div class="rounded-md border bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700">
                                     <label
                                         for="simulation-config"
@@ -277,49 +279,47 @@
                                     <select
                                         id="simulation-config"
                                         name="id_configuraciones"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-2xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
                                     >
                                         <option value="">Seleccionar Configuración</option>
                                     </select>
                                 </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="rounded-md border bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700">
-                                        <label
-                                            for="signal-type"
-                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >
-                                            Tipo de Señal
-                                        </label>
-                                        <select
-                                            id="signal-type"
-                                            name="tipo_senal"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
-                                        >
-                                            <option value="">Seleccionar Tipo de Señal</option>
-                                        </select>
-                                    </div>
-                                    <div class="rounded-md border bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700">
-                                        <label
-                                            for="signal-frequency"
-                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                                        >
-                                            Frecuencia (MHz)
-                                        </label>
-                                        <input
-                                            type="number"
-                                            id="signal-frequency"
-                                            name="frecuencia"
-                                            min="470"
-                                            max="694"
-                                            step="1"
-                                            value="470"
-                                            placeholder="ej., 470"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
-                                        />
-                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                            Valor entero entre 470 y 694 MHz
-                                        </p>
-                                    </div>
+                                <div class="rounded-md border bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700">
+                                    <label
+                                        for="signal-type"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                    >
+                                        Tipo de Señal
+                                    </label>
+                                    <select
+                                        id="signal-type"
+                                        name="tipo_senal"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-2xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+                                    >
+                                        <option value="">Seleccionar Tipo de Señal</option>
+                                    </select>
+                                </div>
+                                <div class="rounded-md border bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700">
+                                    <label
+                                        for="signal-frequency"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                    >
+                                        Frecuencia (MHz)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="signal-frequency"
+                                        name="frecuencia"
+                                        min="470"
+                                        max="694"
+                                        step="1"
+                                        value="470"
+                                        placeholder="ej., 470"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-2xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+                                    />
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                        Valor entero entre 470 y 694 MHz
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -346,7 +346,7 @@
                                         </label>
                                         <select
                                             id="simulation-floor"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-2xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
                                         >
                                             <option value="">Seleccionar Piso</option>
                                         </select>
@@ -362,7 +362,7 @@
                                         </label>
                                         <select
                                             id="simulation-component-list-type"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-2xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-400 dark:focus:ring-blue-400"
                                         >
                                             <option value="coaxial">Cable Coaxial</option>
                                             <option value="derivador">Derivador</option>
