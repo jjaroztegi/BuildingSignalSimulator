@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (initialConfigForm) {
         initialConfigForm.addEventListener("submit", (event) =>
-            handleFormSubmit(event, initialConfigForm, errorMessageElement, successMessageElement, configSelect)
+            handleFormSubmit(event, initialConfigForm, errorMessageElement, successMessageElement, configSelect),
         );
     }
 
@@ -225,7 +225,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         `Hay componentes en pisos que exceden el número de pisos de la configuración (${
                             configData.num_pisos
                         }). Pisos inválidos: ${invalidFloors.join(", ")}`,
-                        errorMessageElement
+                        errorMessageElement,
                     );
                     return;
                 }

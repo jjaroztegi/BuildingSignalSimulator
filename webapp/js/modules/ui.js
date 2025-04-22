@@ -103,7 +103,7 @@ export function updateComponentList(type, data, customListId = null) {
     data.forEach((modelo) => {
         const item = document.createElement("li");
         item.className =
-            "p-2 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer";
+            "p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer";
         item.dataset.modelo = modelo;
 
         const content = document.createElement("div");
@@ -153,7 +153,7 @@ export function updateComponentList(type, data, customListId = null) {
                             type: type,
                             model: modelo,
                         },
-                    })
+                    }),
                 );
             });
         }
@@ -215,7 +215,7 @@ export function updateSimulationResults(results) {
                     ${floor.floor_cost.toFixed(2)} €
                 </td>
             </tr>
-        `
+        `,
         )
         .join("");
 

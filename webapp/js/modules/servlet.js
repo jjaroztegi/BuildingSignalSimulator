@@ -54,7 +54,7 @@ export async function fetchSignalTypes(signalTypeSelect) {
             signalTypeSelect.innerHTML = signalTypes
                 .map(
                     (typeObj) =>
-                        `<option value="${typeObj.type}" data-min="${typeObj.min}" data-max="${typeObj.max}">${typeObj.type} (${typeObj.min}dB - ${typeObj.max}dB)</option>`
+                        `<option value="${typeObj.type}" data-min="${typeObj.min}" data-max="${typeObj.max}">${typeObj.type} (${typeObj.min}dB - ${typeObj.max}dB)</option>`,
                 )
                 .join("");
 
@@ -200,7 +200,7 @@ export async function runSimulation(configId, signalType, componentsByFloor) {
             const floorNum = parseInt(floor);
             if (floorNum > configData.num_pisos) {
                 throw new Error(
-                    `Floor ${floorNum} exceeds the configuration's number of floors (${configData.num_pisos})`
+                    `Floor ${floorNum} exceeds the configuration's number of floors (${configData.num_pisos})`,
                 );
             }
 

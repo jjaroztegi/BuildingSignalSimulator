@@ -9,7 +9,7 @@ export async function handleFormSubmit(
     initialConfigForm,
     errorMessageElement,
     successMessageElement,
-    configSelect
+    configSelect,
 ) {
     event.preventDefault();
     clearMessages(errorMessageElement, successMessageElement);
@@ -30,7 +30,7 @@ export async function handleFormSubmit(
         displayError(
             "Por favor complete todos los campos con valores válidos (Pisos > 0).",
             errorMessageElement,
-            successMessageElement
+            successMessageElement,
         );
         return;
     }
@@ -54,7 +54,7 @@ export async function handleFormSubmit(
             }
 
             const newConfigOption = Array.from(configSelect.options).find(
-                (option) => option.textContent === configName
+                (option) => option.textContent === configName,
             );
 
             if (newConfigOption) {
@@ -78,7 +78,7 @@ export async function handleFormSubmit(
         displayError(
             `Ocurrió un error de red o inesperado: ${error.message}`,
             errorMessageElement,
-            successMessageElement
+            successMessageElement,
         );
     } finally {
         setLoadingState(submitButton, false);
@@ -98,7 +98,7 @@ export async function handleComponentSubmit(event, componentForm, errorMessageEl
         displayError(
             "Por favor complete todos los campos con valores válidos.",
             errorMessageElement,
-            successMessageElement
+            successMessageElement,
         );
         return;
     }
@@ -122,7 +122,7 @@ export async function handleComponentSubmit(event, componentForm, errorMessageEl
         displayError(
             `A network or unexpected error occurred: ${error.message}`,
             errorMessageElement,
-            successMessageElement
+            successMessageElement,
         );
     } finally {
         setLoadingState(submitButton, false);
@@ -162,8 +162,20 @@ const componentFields = {
             step: "0.1",
             placeholder: "ej., 4.5",
         },
-        { name: "directividad", label: "Directividad (dB)", type: "number", step: "0.1", placeholder: "ej., 13.0" },
-        { name: "desacoplo", label: "Desacoplo (dB)", type: "number", step: "0.1", placeholder: "ej., 16.0" },
+        {
+            name: "directividad",
+            label: "Directividad (dB)",
+            type: "number",
+            step: "0.1",
+            placeholder: "ej., 13.0",
+        },
+        {
+            name: "desacoplo",
+            label: "Desacoplo (dB)",
+            type: "number",
+            step: "0.1",
+            placeholder: "ej., 16.0",
+        },
         {
             name: "perdidas_retorno",
             label: "Pérdidas de Retorno (dB)",
@@ -173,7 +185,13 @@ const componentFields = {
         },
     ],
     distribuidor: [
-        { name: "numero_salidas", label: "Número de Salidas", type: "number", step: "1", placeholder: "ej., 2" },
+        {
+            name: "numero_salidas",
+            label: "Número de Salidas",
+            type: "number",
+            step: "1",
+            placeholder: "ej., 2",
+        },
         {
             name: "atenuacion_distribucion",
             label: "Atenuación de Distribución (dB)",
@@ -181,7 +199,13 @@ const componentFields = {
             step: "0.1",
             placeholder: "ej., 4.0",
         },
-        { name: "desacoplo", label: "Desacoplo (dB)", type: "number", step: "0.1", placeholder: "ej., 19.0" },
+        {
+            name: "desacoplo",
+            label: "Desacoplo (dB)",
+            type: "number",
+            step: "0.1",
+            placeholder: "ej., 19.0",
+        },
         {
             name: "perdidas_retorno",
             label: "Pérdidas de Retorno (dB)",
@@ -191,8 +215,20 @@ const componentFields = {
         },
     ],
     toma: [
-        { name: "atenuacion", label: "Atenuación (dB)", type: "number", step: "0.1", placeholder: "ej., 1.0" },
-        { name: "desacoplo", label: "Desacoplo (dB)", type: "number", step: "0.1", placeholder: "ej., 14.0" },
+        {
+            name: "atenuacion",
+            label: "Atenuación (dB)",
+            type: "number",
+            step: "0.1",
+            placeholder: "ej., 1.0",
+        },
+        {
+            name: "desacoplo",
+            label: "Desacoplo (dB)",
+            type: "number",
+            step: "0.1",
+            placeholder: "ej., 14.0",
+        },
     ],
 };
 
@@ -219,7 +255,7 @@ export function updateComponentForm(type) {
 
         const input = document.createElement("input");
         input.className =
-            "mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400";
+            "mt-1 block w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-xs focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400";
         input.type = field.type;
         input.id = field.name;
         input.name = field.name;
