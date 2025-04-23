@@ -25,6 +25,7 @@ COPY webapp/* ${CATALINA_HOME}/webapps/${APP_NAME}/
 COPY webapp/WEB-INF/* ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/
 COPY webapp/js ${CATALINA_HOME}/webapps/${APP_NAME}/js/
 COPY webapp/css ${CATALINA_HOME}/webapps/${APP_NAME}/css/
+COPY webapp/img ${CATALINA_HOME}/webapps/${APP_NAME}/img/
 
 # Copy Java source files
 COPY src/com/signalapp /tmp/src/com/signalapp/
