@@ -27,6 +27,7 @@ public class SignalCalculationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
         try {
@@ -109,17 +110,24 @@ public class SignalCalculationServlet extends HttpServlet {
             String status = (info.finalLevel >= margen.getNivel_minimo() &&
                     info.finalLevel <= margen.getNivel_maximo()) ? "ok" : "error";
 
-            jsonBuilder.append(String.format(
-                    "{\"floor\":%d,\"level\":%.2f,\"status\":\"%s\",\"floor_cost\":%.2f,\"components\":[",
-                    entry.getKey(), info.finalLevel, status, info.floorCost));
-
+            // Build JSON object with proper escaping
+            jsonBuilder.append("{");
+            jsonBuilder.append("\"floor\":").append(entry.getKey()).append(",");
+            jsonBuilder.append("\"level\":").append(info.finalLevel).append(",");
+            jsonBuilder.append("\"status\":\"").append(status).append("\",");
+            jsonBuilder.append("\"floor_cost\":").append(info.floorCost).append(",");
+            jsonBuilder.append("\"components\":[");
+            
             appendComponentEffects(jsonBuilder, info.componentEffects);
+            
             jsonBuilder.append("]}");
         }
 
-        jsonBuilder.append(String.format(
-                "],\"margins\":{\"min\":%.2f,\"max\":%.2f},\"total_cost\":%.2f}",
-                margen.getNivel_minimo(), margen.getNivel_maximo(), totalCost));
+        jsonBuilder.append("],\"margins\":{");
+        jsonBuilder.append("\"min\":").append(margen.getNivel_minimo()).append(",");
+        jsonBuilder.append("\"max\":").append(margen.getNivel_maximo());
+        jsonBuilder.append("},\"total_cost\":").append(totalCost);
+        jsonBuilder.append("}");
 
         return jsonBuilder.toString();
     }
@@ -134,9 +142,13 @@ public class SignalCalculationServlet extends HttpServlet {
                 jsonBuilder.append(",");
             first = false;
 
-            jsonBuilder.append(String.format(
-                    "{\"type\":\"%s\",\"model\":\"%s\",\"attenuation\":%.2f,\"cost\":%.2f}",
-                    effect.type, effect.model, effect.attenuation, effect.cost));
+            // Build JSON object with proper escaping
+            jsonBuilder.append("{");
+            jsonBuilder.append("\"type\":\"").append(escapeJson(effect.type)).append("\",");
+            jsonBuilder.append("\"model\":\"").append(escapeJson(effect.model)).append("\",");
+            jsonBuilder.append("\"attenuation\":").append(effect.attenuation).append(",");
+            jsonBuilder.append("\"cost\":").append(effect.cost);
+            jsonBuilder.append("}");
         }
     }
 

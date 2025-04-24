@@ -24,6 +24,7 @@ public class ConfigurationServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
         try {
@@ -37,20 +38,22 @@ public class ConfigurationServlet extends HttpServlet {
                     jsonBuilder.append(",");
                 }
                 first = false;
-                jsonBuilder.append(String.format(
-                        "{\"id_configuraciones\":%d,\"nombre\":\"%s\",\"nivel_cabecera\":%.2f,\"num_pisos\":%d,\"costo_total\":%.2f,\"fecha_creacion\":\"%s\"}",
-                        config.getId_configuraciones(),
-                        escapeJson(config.getNombre()),
-                        config.getNivel_cabecera(),
-                        config.getNum_pisos(),
-                        config.getCosto_total(),
-                        escapeJson(config.getFecha_creacion())));
+                
+                // Build JSON object with proper escaping
+                jsonBuilder.append("{");
+                jsonBuilder.append("\"id_configuraciones\":").append(config.getId_configuraciones()).append(",");
+                jsonBuilder.append("\"nombre\":\"").append(escapeJson(config.getNombre())).append("\",");
+                jsonBuilder.append("\"nivel_cabecera\":").append(config.getNivel_cabecera()).append(",");
+                jsonBuilder.append("\"num_pisos\":").append(config.getNum_pisos()).append(",");
+                jsonBuilder.append("\"costo_total\":").append(config.getCosto_total()).append(",");
+                jsonBuilder.append("\"fecha_creacion\":\"").append(escapeJson(config.getFecha_creacion())).append("\"");
+                jsonBuilder.append("}");
             }
             jsonBuilder.append("]");
             out.write(jsonBuilder.toString());
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.write("{\"error\":\"" + e.getMessage() + "\"}");
+            out.write("{\"error\":\"" + escapeJson(e.getMessage()) + "\"}");
         }
     }
 
@@ -63,6 +66,7 @@ public class ConfigurationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
         String nombre = request.getParameter("nombre");
@@ -102,7 +106,7 @@ public class ConfigurationServlet extends HttpServlet {
             out.write("{\"success\":\"Configuration created successfully\",\"id\":" + idConfiguracion + "}");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.write("{\"error\":\"" + e.getMessage() + "\"}");
+            out.write("{\"error\":\"" + escapeJson(e.getMessage()) + "\"}");
         }
     }
 
@@ -115,6 +119,7 @@ public class ConfigurationServlet extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
         String idConfiguracion = request.getParameter("id_configuraciones");
@@ -141,7 +146,7 @@ public class ConfigurationServlet extends HttpServlet {
             out.write("{\"success\":\"Configuration updated successfully\"}");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.write("{\"error\":\"" + e.getMessage() + "\"}");
+            out.write("{\"error\":\"" + escapeJson(e.getMessage()) + "\"}");
         }
     }
 
@@ -153,6 +158,7 @@ public class ConfigurationServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
         String idConfiguracion = request.getParameter("id_configuraciones");
@@ -168,7 +174,7 @@ public class ConfigurationServlet extends HttpServlet {
             out.write("{\"success\":\"Configuration deleted successfully\"}");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            out.write("{\"error\":\"" + e.getMessage() + "\"}");
+            out.write("{\"error\":\"" + escapeJson(e.getMessage()) + "\"}");
         }
     }
 
