@@ -20,6 +20,14 @@ Get all available signal types and their quality margins.
 ]
 ```
 
+**Error Response:**
+
+```json
+{
+    "error": "Error description"
+}
+```
+
 ## Components
 
 ### List Components by Type
@@ -96,6 +104,26 @@ Get detailed information about a specific component.
 }
 ```
 
+**Error Responses:**
+
+```json
+{
+    "error": "Missing component type parameter"
+}
+```
+
+```json
+{
+    "error": "Componente no encontrado"
+}
+```
+
+```json
+{
+    "error": "Tipo de componente no válido"
+}
+```
+
 ### Add New Component
 
 Add a new component to the system.
@@ -160,6 +188,14 @@ Add a new component to the system.
 }
 ```
 
+**Error Response:**
+
+```json
+{
+    "error": "Faltan parámetros requeridos"
+}
+```
+
 ## Configurations
 
 ### List Configurations
@@ -178,10 +214,7 @@ Get all available configurations.
         "nivel_cabecera": 95.0,
         "num_pisos": 5,
         "costo_total": 0.0,
-        "fecha_creacion": "2024-03-20 12:00:00",
-        "usuario_creacion": "admin",
-        "fecha_modificacion": "2024-03-20 12:00:00",
-        "usuario_modificacion": "admin"
+        "fecha_creacion": "2024-03-20 12:00:00"
     }
 ]
 ```
@@ -195,15 +228,23 @@ Create a new configuration.
 **Parameters:**
 
 -   `nombre` (required): Name of the configuration
--   `nivel_cabecera` (required): Head-end level in dBm
+-   `nivel_cabecera` (required): Head-end level in dBμV
 -   `num_pisos` (required): Number of floors
 
 **Response:**
 
 ```json
 {
-  "success": "Configuration added successfully",
+  "success": "Configuration created successfully",
   "id": configuration_id
+}
+```
+
+**Error Response:**
+
+```json
+{
+    "error": "Faltan parámetros requeridos"
 }
 ```
 
@@ -217,7 +258,7 @@ Update an existing configuration.
 
 -   `id_configuraciones` (required): Configuration ID
 -   `nombre` (required): Name of the configuration
--   `nivel_cabecera` (required): Head-end level in dBm
+-   `nivel_cabecera` (required): Head-end level in dBμV
 -   `num_pisos` (required): Number of floors
 
 **Response:**
@@ -225,6 +266,14 @@ Update an existing configuration.
 ```json
 {
     "success": "Configuration updated successfully"
+}
+```
+
+**Error Response:**
+
+```json
+{
+    "error": "Faltan parámetros requeridos"
 }
 ```
 
@@ -246,6 +295,14 @@ Delete an existing configuration.
 }
 ```
 
+**Error Response:**
+
+```json
+{
+    "error": "Falta el ID de la configuración"
+}
+```
+
 ## Signal Calculation
 
 ### Calculate Signal Levels
@@ -261,6 +318,8 @@ Calculate and validate signal levels for each floor based on components and conf
     "num_pisos": 5,
     "nivel_cabecera": 95.0,
     "tipo_senal": "signal_type",
+    "frequency": 470,
+    "selected_cable_model": "RG-6",
     "components": [
         {
             "type": "derivador",
@@ -284,8 +343,10 @@ Calculate and validate signal levels for each floor based on components and conf
 **Parameters:**
 
 -   `num_pisos` (required): Number of floors in the building
--   `nivel_cabecera` (required): Initial signal level at the head-end (dBm)
+-   `nivel_cabecera` (required): Initial signal level at the head-end (dBμV)
 -   `tipo_senal` (required): Type of signal to validate against quality margins
+-   `frequency` (required): Signal frequency in MHz (e.g., 470 or 694)
+-   `selected_cable_model` (required): Model of coaxial cable to use for calculations
 -   `components` (required): Array of components with their placement
     -   `type`: Component type (`coaxial`, `derivador`, `distribuidor`, or `toma`)
     -   `model`: Model name of the component
@@ -294,7 +355,7 @@ Calculate and validate signal levels for each floor based on components and conf
 **Component Processing Order:**
 
 1. Derivador/Distribuidor (signal splitting components)
-2. Coaxial cables
+2. Coaxial cables (15m per floor)
 3. Tomas (outlets)
 
 **Component Placement Rules:**
@@ -303,9 +364,9 @@ Calculate and validate signal levels for each floor based on components and conf
 -   Components are processed in the order specified above
 -   Restrictions per floor:
     -   Maximum one derivador
-    -   Maximum one distribuidor
+    -   Maximum two distribuidores
     -   Cannot have both derivador and distribuidor on the same floor
-    -   Can have multiple coaxial cables and tomas
+    -   Must have 2, 4, 6, or 8 tomas per floor
 
 **Response:**
 
@@ -319,13 +380,13 @@ Calculate and validate signal levels for each floor based on components and conf
             "floor_cost": 125.5,
             "components": [
                 {
-                    "type": "derivador",
+                    "type": "derivacion",
                     "model": "DER-2",
                     "attenuation": 3.5,
                     "cost": 45.0
                 },
                 {
-                    "type": "coaxial",
+                    "type": "coaxial_en_planta_15m",
                     "model": "RG-6",
                     "attenuation": 2.8,
                     "cost": 35.5
@@ -347,37 +408,40 @@ Calculate and validate signal levels for each floor based on components and conf
 }
 ```
 
-**Response Fields:**
-
--   `signal_levels`: Array of signal levels for each floor
-    -   `floor`: Floor number
-    -   `level`: Final signal level in dBm after all component attenuations
-    -   `status`: "ok" if within margins, "error" if outside margins
-    -   `floor_cost`: Total cost of all components on this floor
-    -   `components`: Array of components on this floor and their individual effects
-        -   `type`: Component type
-        -   `model`: Component model
-        -   `attenuation`: Individual attenuation contribution in dB
-        -   `cost`: Individual component cost
--   `margins`: Quality margins for the specified signal type
-    -   `min`: Minimum acceptable signal level
-    -   `max`: Maximum acceptable signal level
--   `total_cost`: Total cost of all components in the configuration
-
-**Error Response:**
+**Error Responses:**
 
 ```json
 {
-    "error": "Error description"
+    "error": "No se permite más de un derivador en el piso X"
 }
 ```
 
-Common error cases:
+```json
+{
+    "error": "No se permite más de un distribuidor en el piso X"
+}
+```
 
--   Missing or invalid parameters
--   Component not found
--   Invalid component type
--   Invalid signal type
--   Multiple derivadores on same floor
--   Multiple distribuidores on same floor
--   Both derivador and distribuidor on same floor
+```json
+{
+    "error": "El piso X debe tener 2 o 4 tomas por cada lado"
+}
+```
+
+```json
+{
+    "error": "No se encontraron márgenes de calidad para el tipo de señal: X"
+}
+```
+
+```json
+{
+    "error": "No se encontró el componente: X"
+}
+```
+
+```json
+{
+    "error": "Tipo de componente no válido: X"
+}
+```

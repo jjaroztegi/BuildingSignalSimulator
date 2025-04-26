@@ -39,6 +39,7 @@ public class SignalCalculationServlet extends HttpServlet {
             double nivelCabecera = extractDoubleValue(json, "nivel_cabecera");
             String tipoSenal = extractStringValue(json, "tipo_senal");
             int frequency = extractIntValue(json, "frequency");
+            String selectedCableModel = extractStringValue(json, "selected_cable_model");
             List<ComponentConfig> components = extractComponents(json);
 
             // Validate configuration
@@ -46,7 +47,7 @@ public class SignalCalculationServlet extends HttpServlet {
 
             // Calculate signal levels and validate against margins
             Map<Integer, FloorSignalInfo> signalLevels = calculateSignalLevels(numPisos, nivelCabecera, components,
-                    frequency);
+                    frequency, selectedCableModel);
             MargenCalidad margen = getMargenCalidad(tipoSenal);
 
             // Build and send response
@@ -80,7 +81,8 @@ public class SignalCalculationServlet extends HttpServlet {
         return margenes.stream()
                 .filter(m -> m.getTipo_senal().equals(tipoSenal))
                 .findFirst()
-                .orElseThrow(() -> new SQLException("No se encontraron márgenes de calidad para el tipo de señal: " + tipoSenal));
+                .orElseThrow(() -> new SQLException(
+                        "No se encontraron márgenes de calidad para el tipo de señal: " + tipoSenal));
     }
 
     /**
@@ -117,9 +119,9 @@ public class SignalCalculationServlet extends HttpServlet {
             jsonBuilder.append("\"status\":\"").append(status).append("\",");
             jsonBuilder.append("\"floor_cost\":").append(info.floorCost).append(",");
             jsonBuilder.append("\"components\":[");
-            
+
             appendComponentEffects(jsonBuilder, info.componentEffects);
-            
+
             jsonBuilder.append("]}");
         }
 
@@ -169,12 +171,18 @@ public class SignalCalculationServlet extends HttpServlet {
             long distribuidores = floorComponents.stream()
                     .filter(c -> c.type.equalsIgnoreCase("distribuidor"))
                     .count();
+            long tomas = floorComponents.stream()
+                    .filter(c -> c.type.equalsIgnoreCase("toma"))
+                    .count();
 
             if (derivadores > 1) {
                 throw new SQLException("No se permite más de un derivador en el piso " + entry.getKey());
             }
-            if (distribuidores > 1) {
+            if (distribuidores > 2) {
                 throw new SQLException("No se permite más de un distribuidor en el piso " + entry.getKey());
+            }
+            if (tomas != 2 && tomas != 4 && tomas != 6 && tomas != 8) {
+                throw new SQLException("El piso " + entry.getKey() + " debe tener 2 o 4 tomas por cada lado");
             }
         }
     }
@@ -183,7 +191,7 @@ public class SignalCalculationServlet extends HttpServlet {
      * Calculates signal levels for each floor based on components and initial level
      */
     private Map<Integer, FloorSignalInfo> calculateSignalLevels(int numPisos, double nivelCabecera,
-            List<ComponentConfig> components, int frequency) throws SQLException {
+            List<ComponentConfig> components, int frequency, String selectedCableModel) throws SQLException {
         Map<Integer, FloorSignalInfo> levels = new HashMap<>();
         ComponenteDAO componenteDAO = new ComponenteDAO();
 
@@ -219,18 +227,16 @@ public class SignalCalculationServlet extends HttpServlet {
                         derivacionInfo.cost));
             }
 
-            // Apply 15m coaxial attenuation within floor
-            Optional<ComponentConfig> coaxialOpt = floorComponents.stream()
-                    .filter(c -> c.type.equalsIgnoreCase("coaxial"))
-                    .findFirst();
-            if (coaxialOpt.isPresent()) {
-                ComponentInfo coaxInfo = getCoaxialInfoByFrequency(coaxialOpt.get(), frequency);
+            // Apply 15m coaxial attenuation within floor using the selected cable model
+            if (selectedCableModel != null && !selectedCableModel.isEmpty()) {
+                ComponentConfig cableConfig = new ComponentConfig("coaxial", selectedCableModel, floor);
+                ComponentInfo coaxInfo = getCoaxialInfoByFrequency(cableConfig, frequency);
                 double atenuacion15m = (coaxInfo.attenuation / 100.0) * 15.0; // 15m of cable
                 signalToStay -= atenuacion15m;
                 floorCost += coaxInfo.cost;
                 info.componentEffects.add(new ComponentEffect(
                         "coaxial_en_planta_15m",
-                        coaxialOpt.get().model,
+                        selectedCableModel,
                         atenuacion15m,
                         coaxInfo.cost));
             }
@@ -267,9 +273,10 @@ public class SignalCalculationServlet extends HttpServlet {
                     nextSignal -= derivador.getAtenuacion_paso();
                 }
 
-                // Apply 3m coaxial attenuation between floors
-                if (coaxialOpt.isPresent()) {
-                    ComponentInfo coaxInfo = getCoaxialInfoByFrequency(coaxialOpt.get(), frequency);
+                // Apply 3m coaxial attenuation between floors using the selected cable model
+                if (selectedCableModel != null && !selectedCableModel.isEmpty()) {
+                    ComponentConfig cableConfig = new ComponentConfig("coaxial", selectedCableModel, floor);
+                    ComponentInfo coaxInfo = getCoaxialInfoByFrequency(cableConfig, frequency);
                     double atenuacion3m = (coaxInfo.attenuation / 100.0) * 3.0; // 3m between floors
                     nextSignal -= atenuacion3m;
                 }
@@ -412,8 +419,10 @@ public class SignalCalculationServlet extends HttpServlet {
 
     private String extractStringValue(String json, String key) {
         int start = json.indexOf("\"" + key + "\"");
-        if (start == -1)
-            throw new IllegalArgumentException("Missing key: " + key);
+        if (start == -1) {
+            // Return empty string if key not found
+            return "";
+        }
 
         start = json.indexOf(":", start) + 1;
         while (start < json.length() && Character.isWhitespace(json.charAt(start)))
