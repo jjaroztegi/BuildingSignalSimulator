@@ -18,6 +18,17 @@ export function initTabs() {
 }
 
 export function switchTab(tabId) {
+    // Map mobile tab IDs to desktop tab IDs
+    const mobileToDesktopMap = {
+        'config-tab-mobile': 'config-tab',
+        'components-tab-mobile': 'components-tab',
+        'simulation-tab-mobile': 'simulation-tab',
+        'results-tab-mobile': 'results-tab'
+    };
+    
+    // Get the corresponding desktop tab ID if this is a mobile tab
+    const desktopTabId = mobileToDesktopMap[tabId] || tabId;
+    
     // Hide all tab contents
     const tabContents = document.querySelectorAll(".tab-content");
     tabContents.forEach((content) => {
@@ -38,12 +49,12 @@ export function switchTab(tabId) {
     });
 
     // Show the selected tab content
-    const selectedContent = document.getElementById(`${tabId}-content`);
+    const selectedContent = document.getElementById(`${desktopTabId}-content`);
     if (selectedContent) {
         selectedContent.classList.remove("hidden");
     }
 
-    // Add active class to the selected tab button
+    // Add active class to the selected tab button and its mobile/desktop counterpart
     const selectedButton = document.getElementById(tabId);
     if (selectedButton) {
         selectedButton.classList.add("active-tab", "border-blue-500", "text-blue-600", "dark:text-blue-400");
@@ -55,14 +66,30 @@ export function switchTab(tabId) {
             "dark:hover:text-gray-300",
         );
     }
+    
+    // Also activate the corresponding desktop/mobile button
+    const counterpartId = tabId.includes('-mobile') 
+        ? tabId.replace('-mobile', '') 
+        : tabId + '-mobile';
+    const counterpartButton = document.getElementById(counterpartId);
+    if (counterpartButton) {
+        counterpartButton.classList.add("active-tab", "border-blue-500", "text-blue-600", "dark:text-blue-400");
+        counterpartButton.classList.remove(
+            "border-transparent",
+            "text-gray-500",
+            "dark:text-gray-400",
+            "hover:text-gray-700",
+            "dark:hover:text-gray-300",
+        );
+    }
 
     // Trigger component list update
-    if (tabId === "simulation-tab") {
+    if (desktopTabId === "simulation-tab") {
         const simulationComponentListType = document.getElementById("simulation-component-list-type");
         if (simulationComponentListType) {
             simulationComponentListType.dispatchEvent(new Event("change"));
         }
-    } else if (tabId === "components-tab") {
+    } else if (desktopTabId === "components-tab") {
         const componentListType = document.getElementById("component-list-type");
         if (componentListType) {
             componentListType.dispatchEvent(new Event("change"));
