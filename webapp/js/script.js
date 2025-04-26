@@ -1,338 +1,472 @@
-// Main script file
 import { initTheme } from "./modules/theme.js";
 import { initTabs, switchTab } from "./modules/tabs.js";
+import { handleFormSubmit as handleInitialConfigFormSubmit } from "./modules/forms.js";
+import { updateComponentForm, validateComponentForm, prepareSimulationData } from "./modules/forms.js";
 import {
-    handleFormSubmit,
-    updateComponentForm,
-    validateComponentForm,
-    prepareSimulationData,
-} from "./modules/forms.js";
-import {
-    fetchComponents,
-    fetchInitialData,
-    fetchComponentsByType,
-    runSimulation,
+    fetchConfigurations,
     fetchSignalTypes,
+    fetchComponentsByType,
     submitComponent,
+    runSimulation,
+    fetchComponentDetails,
 } from "./modules/servlet.js";
-import { displayError, clearMessages, displaySuccess } from "./modules/utils.js";
+import { displayError, displaySuccess, clearMessages, formatDate } from "./modules/utils.js";
 import {
-    updateSimpleComponentList,
+    updateConfigSelect,
+    updateSignalTypeSelect,
+    updateFloorSelector,
     updateDetailedComponentList,
     updateSimulationResults,
-    simulationComponentManager,
-    updateSelectedComponentsDisplay,
-    updateFloorSelector,
-    updateSignalTypeSelect,
 } from "./modules/ui.js";
+import { SchematicEditor } from "./modules/schematic.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
+    // --- Core Initializations ---
     initTheme();
     initTabs();
 
-    let isInitialLoad = true;
-
     // --- DOM Element References ---
-    const errorMessageElement = document.getElementById("error-message"); // Error Message Display
-    const successMessageElement = document.getElementById("success-message"); // Success Message Display
+    const errorMessageElement = document.getElementById("error-message");
+    const successMessageElement = document.getElementById("success-message");
 
-    const initialConfigForm = document.getElementById("initial-config-form"); // New Configuration Form
-    const configSelect = document.getElementById("id_configuraciones"); // Existing Configurations Select
-    const componentForm = document.getElementById("component-form"); // Add New Component Form
-    const componentListType = document.getElementById("component-list-type"); // Available Components Type Selector
-    const simulationConfig = document.getElementById("simulation-config"); // Simulation Config Select
-    const simulationComponentListType = document.getElementById("simulation-component-list-type"); // Simulation Component Type Selector
-    const signalType = document.getElementById("signal-type"); // Simulation Signal Type Select
+    // Configuration Tab Elements
+    const initialConfigForm = document.getElementById("initial-config-form");
+    const configSelect = document.getElementById("id_configuraciones");
+    const configDetailsDiv = document.getElementById("config-details");
+    const configNameDisplay = document.getElementById("config-name-display");
+    const configHeadendDisplay = document.getElementById("config-headend-display");
+    const configFloorsDisplay = document.getElementById("config-floors-display");
+    const configDateDisplay = document.getElementById("config-date-display");
 
-    const simulationFloor = document.getElementById("simulation-floor"); // Simulation Floor Select
-    const runSimulationButton = document.getElementById("run-simulation"); // Run Simulation Button
+    // Components Tab Elements
+    const componentForm = document.getElementById("component-form");
+    const componentTypeSelect = document.getElementById("component-type");
+    const dynamicFieldsContainer = document.getElementById("dynamic-fields");
+    const componentListTypeSelect = document.getElementById("component-list-type");
+    const componentListsContainer = {
+        // Map IDs to list elements
+        coaxial: document.getElementById("coaxial-list"),
+        derivador: document.getElementById("derivador-list"),
+        distribuidor: document.getElementById("distribuidor-list"),
+        toma: document.getElementById("toma-list"),
+    };
 
-    // --- Initial Configuration Form Submit Handler ---
-    if (initialConfigForm) {
-        initialConfigForm.addEventListener("submit", (event) =>
-            handleFormSubmit(event, initialConfigForm, errorMessageElement, successMessageElement, configSelect),
-        );
+    // Simulation Tab Elements
+    const simulationConfigSelect = document.getElementById("simulation-config");
+    const signalTypeSelect = document.getElementById("signal-type");
+    const signalFrequencyInput = document.getElementById("signal-frequency"); // Needed for prepareSimulationData
+    const simulationFloorSelect = document.getElementById("simulation-floor");
+    const cableSelect = document.getElementById("cable-select");
+    const runSimulationButton = document.getElementById("run-simulation");
+    const schematicCanvas = document.getElementById("schematic-canvas");
+
+    // Results Tab Elements
+
+    // --- Global State ---
+    let currentConfigurations = []; // Store fetched configurations
+    let schematicEditor;
+    let componentModels = {
+        coaxial: [],
+        derivador: [],
+        distribuidor: [],
+        toma: [],
+    };
+
+    // --- Helper Functions ---
+
+    /** Fetches component models needed for schematic and UI */
+    async function loadComponentModels() {
+        try {
+            const types = ["coaxial", "derivador", "distribuidor", "toma"];
+            const results = await Promise.all(types.map(fetchComponentsByType));
+            componentModels.coaxial = results[0] || [];
+            componentModels.derivador = results[1] || [];
+            componentModels.distribuidor = results[2] || [];
+            componentModels.toma = results[3] || [];
+
+            // Update cable selector in Simulation tab
+            if (cableSelect) {
+                cableSelect.innerHTML = componentModels.coaxial
+                    .map((model) => `<option value="${model}">${model}</option>`)
+                    .join("");
+            }
+        } catch (error) {
+            console.error("Error fetching component models:", error);
+            displayError("Error al cargar modelos de componentes.", errorMessageElement, successMessageElement);
+        }
     }
 
-    // --- Configuration Select Change Handler ---
-    if (configSelect) {
-        configSelect.addEventListener("change", () => {
-            const idConfiguracion = configSelect.value;
-            if (idConfiguracion) {
-                // Update simulation config select with the same value
-                if (simulationConfig) {
-                    simulationConfig.value = idConfiguracion;
+    /** Updates UI elements based on the selected configuration */
+    function handleConfigurationChange(selectedId) {
+        const selectedConfig = currentConfigurations.find((c) => (c.id_configuraciones || c.id) == selectedId);
 
-                    // Get the selected configuration data
-                    const selectedOption = configSelect.options[configSelect.selectedIndex];
-                    if (selectedOption && selectedOption.dataset.config) {
-                        const configData = JSON.parse(selectedOption.dataset.config);
-                        // Update floor selector based on num_pisos
-                        if (configData.num_pisos) {
-                            updateFloorSelector(configData.num_pisos);
-                        }
-                    }
-                }
-                // Only switch tabs if it's not the initial load
-                if (!isInitialLoad) {
-                    const simulationTab = document.getElementById("simulation-tab");
-                    if (simulationTab) {
-                        switchTab(simulationTab.id);
-                    }
-                }
+        if (selectedConfig) {
+            // Update Config Tab Details Display
+            if (configDetailsDiv) {
+                configNameDisplay.textContent = selectedConfig.nombre || "-";
+                configHeadendDisplay.textContent = selectedConfig.nivel_cabecera
+                    ? `${selectedConfig.nivel_cabecera.toFixed(1)} dBμV`
+                    : "-";
+                configFloorsDisplay.textContent = selectedConfig.num_pisos || "-";
+                configDateDisplay.textContent = selectedConfig.fecha_creacion
+                    ? formatDate(selectedConfig.fecha_creacion)
+                    : "-";
+                configDetailsDiv.classList.remove("hidden");
+            }
+
+            // Update Simulation Tab Selectors
+            if (simulationConfigSelect) {
+                simulationConfigSelect.value = selectedId; // Sync selection
+            }
+            if (simulationFloorSelect && selectedConfig.num_pisos) {
+                updateFloorSelector(selectedConfig.num_pisos);
+                simulationFloorSelect.value = "";
+                schematicEditor?.setCurrentFloor(null);
+            }
+
+            // Clear schematic if new config is selected
+            schematicEditor?.clearSchematic();
+        } else {
+            // Hide details if no config is selected
+            if (configDetailsDiv) configDetailsDiv.classList.add("hidden");
+            if (simulationFloorSelect)
+                simulationFloorSelect.innerHTML = '<option value="">Seleccione Configuración</option>';
+        }
+    }
+
+    /** Fetches and displays the detailed list for the selected component type */
+    async function updateDetailedComponentView(type) {
+        const listElement = componentListsContainer[type];
+        if (!listElement) return;
+
+        // Show the correct list, hide others
+        Object.values(componentListsContainer).forEach((list) => list.classList.add("hidden"));
+        listElement.classList.remove("hidden");
+
+        // Fetch component models (simple list) and then details for each
+        try {
+            const models = await fetchComponentsByType(type); // Gets ["model1", "model2"]
+            // Pass models and fetch details function to UI updater
+            updateDetailedComponentList(type, models, listElement.id); // ui.js handles fetching details now
+        } catch (error) {
+            console.error(`Error fetching or displaying ${type} components:`, error);
+            displayError(`Error al cargar ${type}: ${error.message}`, errorMessageElement, successMessageElement);
+            listElement.innerHTML = `<div class="text-gray-500 dark:text-gray-400">Error al cargar componentes.</div>`;
+        }
+    }
+
+    // --- Initial Data Loading & Setup ---
+    try {
+        clearMessages(errorMessageElement, successMessageElement);
+        // Fetch configs and signal types first
+        const [configurations, signalTypes] = await Promise.all([fetchConfigurations(), fetchSignalTypes()]);
+
+        currentConfigurations = configurations; // Store fetched configurations
+
+        updateConfigSelect(currentConfigurations, configSelect);
+        updateConfigSelect(currentConfigurations, simulationConfigSelect); // Keep them in sync
+
+        updateSignalTypeSelect(signalTypes, signalTypeSelect);
+
+        await loadComponentModels();
+
+        // Initialize Schematic Editor *after* models are loaded
+        schematicEditor = new SchematicEditor("schematic-canvas", {
+            cables: componentModels.coaxial,
+            derivadores: componentModels.derivador,
+            distribuidores: componentModels.distribuidor,
+            tomas: componentModels.toma,
+        });
+        // Set default cable type in schematic editor
+        if (componentModels.coaxial.length > 0 && cableSelect) {
+            schematicEditor.setCableType(cableSelect.value);
+        }
+
+        if (configSelect && configSelect.value) {
+            handleConfigurationChange(configSelect.value);
+        }
+
+        if (componentListTypeSelect) {
+            updateDetailedComponentView(componentListTypeSelect.value);
+        }
+    } catch (error) {
+        console.error("Error during initial data load:", error);
+        displayError(
+            "Error crítico al inicializar la aplicación. Por favor, recargue.",
+            errorMessageElement,
+            successMessageElement,
+        );
+        // Disable parts of the UI if initialization failed?
+        runSimulationButton?.setAttribute("disabled", "true");
+        initialConfigForm?.querySelector('button[type="submit"]')?.setAttribute("disabled", "true");
+        componentForm?.querySelector('button[type="submit"]')?.setAttribute("disabled", "true");
+    }
+
+    // --- Event Listeners ---
+
+    // **Configuration Tab**
+    if (initialConfigForm) {
+        initialConfigForm.addEventListener("submit", async (event) => {
+            await handleInitialConfigFormSubmit(
+                event,
+                initialConfigForm,
+                errorMessageElement,
+                successMessageElement,
+                configSelect,
+            );
+            // After successful submission, re-fetch configurations and update UI
+            try {
+                currentConfigurations = await fetchConfigurations();
+                updateConfigSelect(currentConfigurations, configSelect);
+                updateConfigSelect(currentConfigurations, simulationConfigSelect);
+            } catch (error) {
+                console.error("Error refetching configurations after submit:", error);
             }
         });
     }
 
-    // --- Component Form Submit Handler ---
+    if (configSelect) {
+        configSelect.addEventListener("change", () => {
+            handleConfigurationChange(configSelect.value);
+        });
+    }
+
+    // **Components Tab**
+    if (componentTypeSelect) {
+        componentTypeSelect.addEventListener("change", (e) => {
+            updateComponentForm(e.target.value);
+        });
+    }
+
     if (componentForm) {
         componentForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             clearMessages(errorMessageElement, successMessageElement);
-
             const formData = new FormData(e.target);
 
-            // Validate form including dynamic fields
-            if (!validateComponentForm(formData)) {
-                displayError("Por favor, complete todos los campos correctamente", errorMessageElement);
+            // Basic validation (assuming your module function handles details)
+            if (!formData.get("type") || !formData.get("modelo") || !formData.get("costo")) {
+                displayError(
+                    "Por favor complete los campos básicos (Tipo, Modelo, Costo).",
+                    errorMessageElement,
+                    successMessageElement,
+                );
                 return;
             }
 
             try {
-                const result = await submitComponent(formData);
+                const result = await submitComponent(formData); // servlet.js handles formatting
                 if (result.success) {
-                    displaySuccess(result.success, successMessageElement);
+                    displaySuccess(result.success, successMessageElement, errorMessageElement);
                     e.target.reset();
-                    // Clear dynamic fields
-                    document.getElementById("dynamic-fields").innerHTML = "";
-                    // Refresh component lists
-                    componentListType.dispatchEvent(new Event("change"));
-                } else {
-                    displayError(result.error || "Error al añadir el componente", errorMessageElement);
-                }
-            } catch (error) {
-                displayError("Error al añadir el componente: " + error.message, errorMessageElement);
-            }
-        });
-    }
-
-    // --- Component List Type Selector Logic ---
-    if (componentListType) {
-        const componentLists = document.querySelectorAll(".component-list");
-
-        const showSelectedComponentList = (selectedValue) => {
-            componentLists.forEach((list) => {
-                if (list.id === `${selectedValue}-list`) {
-                    list.classList.remove("hidden");
-                } else {
-                    list.classList.add("hidden");
-                }
-            });
-        };
-
-        // Initialize with the first option
-        showSelectedComponentList(componentListType.value);
-
-        // Add change event listener
-        componentListType.addEventListener("change", async (event) => {
-            const type = event.target.value;
-            showSelectedComponentList(type);
-            // Fetch and update components for the selected type with detailed view
-            try {
-                const components = await fetchComponentsByType(type);
-                updateDetailedComponentList(type, components, `${type}-list`);
-            } catch (error) {
-                console.error(`Error fetching ${type} components:`, error);
-                displayError(`Error al cargar ${type}: ${error.message}`, errorMessageElement);
-            }
-        });
-
-        // Trigger initial load
-        componentListType.dispatchEvent(new Event("change"));
-    }
-
-    // --- Simulation Config Select Change Handler ---
-    if (simulationConfig) {
-        simulationConfig.addEventListener("change", () => {
-            const selectedOption = simulationConfig.options[simulationConfig.selectedIndex];
-            if (selectedOption && selectedOption.dataset.config) {
-                const configData = JSON.parse(selectedOption.dataset.config);
-                if (configData.num_pisos) {
-                    updateFloorSelector(configData.num_pisos);
-                    // Reset current floor selection
-                    if (simulationFloor) {
-                        simulationFloor.value = "";
-                        simulationComponentManager.setCurrentFloor(null);
+                    dynamicFieldsContainer.innerHTML = ""; // Clear dynamic fields
+                    // Refresh component models and the current list view
+                    await loadComponentModels(); // Reload all models
+                    if (componentListTypeSelect) {
+                        updateDetailedComponentView(componentListTypeSelect.value); // Refresh the view
                     }
-                    // Clear existing components as they might be invalid for new floor count
-                    simulationComponentManager.clearAllFloors();
-                    updateSelectedComponentsDisplay();
+                    // Update schematic editor models if needed
+                    schematicEditor?.updateModels({
+                        cables: componentModels.coaxial,
+                        derivadores: componentModels.derivador,
+                        distribuidores: componentModels.distribuidor,
+                        tomas: componentModels.toma,
+                    });
+                } else {
+                    displayError(
+                        result.error || "Error al añadir el componente",
+                        errorMessageElement,
+                        successMessageElement,
+                    );
                 }
-            }
-        });
-    }
-
-    // --- Simulation Component List Type Selector Logic ---
-    if (simulationComponentListType) {
-        simulationComponentListType.addEventListener("change", async () => {
-            const type = simulationComponentListType.value;
-            // Hide all component lists
-            document.querySelectorAll(".component-list").forEach((list) => {
-                list.classList.add("hidden");
-            });
-            // Show selected type list
-            const selectedList = document.getElementById(`simulation-${type}-list`);
-            if (selectedList) {
-                selectedList.classList.remove("hidden");
-            }
-            // Fetch and update components for the selected type with simple view
-            try {
-                const components = await fetchComponentsByType(type);
-                updateSimpleComponentList(type, components, `simulation-${type}-list`);
             } catch (error) {
-                console.error(`Error fetching ${type} components:`, error);
-                displayError(`Error al cargar ${type}: ${error.message}`, errorMessageElement);
-            }
-        });
-
-        // Trigger initial load of components
-        simulationComponentListType.dispatchEvent(new Event("change"));
-    }
-
-    // --- Signal Types Load Handler ---
-    if (signalType) {
-        try {
-            const signalTypes = await fetchSignalTypes();
-            updateSignalTypeSelect(signalTypes, signalType);
-        } catch (error) {
-            console.error("Error loading signal types:", error);
-            displayError("Error al cargar tipos de señal", errorMessageElement);
-        }
-    }
-
-    // --- Floor Selection Handler ---
-    if (simulationFloor) {
-        simulationFloor.addEventListener("change", () => {
-            const selectedFloor = simulationFloor.value;
-            if (selectedFloor) {
-                simulationComponentManager.setCurrentFloor(selectedFloor);
+                console.error("Error submitting component:", error);
+                displayError(
+                    `Error al añadir el componente: ${error.message || "Error desconocido"}`,
+                    errorMessageElement,
+                    successMessageElement,
+                );
             }
         });
     }
 
-    // --- Run Simulation Button Click Handler ---
+    if (componentListTypeSelect) {
+        componentListTypeSelect.addEventListener("change", (event) => {
+            updateDetailedComponentView(event.target.value);
+        });
+    }
+
+    // **Simulation Tab**
+    if (simulationConfigSelect) {
+        // When simulation config select changes, sync with main configSelect and update UI
+        simulationConfigSelect.addEventListener("change", () => {
+            const newConfigId = simulationConfigSelect.value;
+            if (configSelect.value !== newConfigId) {
+                configSelect.value = newConfigId; // Keep selects in sync
+            }
+            handleConfigurationChange(newConfigId); // Update UI based on selection
+        });
+    }
+
+    if (cableSelect) {
+        cableSelect.addEventListener("change", (e) => {
+            schematicEditor?.setCableType(e.target.value);
+        });
+    }
+
+    if (simulationFloorSelect) {
+        simulationFloorSelect.addEventListener("change", () => {
+            const selectedFloor = simulationFloorSelect.value;
+            schematicEditor?.setCurrentFloor(selectedFloor ? parseInt(selectedFloor) : null);
+        });
+    }
+
+    if (schematicCanvas) {
+        // schematicCanvas.addEventListener('click', (e) => {
+        //     schematicEditor?.handleClick(e); // Delegate click handling to the editor
+        // });
+        // Add listeners for schematic controls (zoom, pan, reset) if they exist
+        document.getElementById("zoom-in")?.addEventListener("click", () => schematicEditor?.zoom(1.2));
+        document.getElementById("zoom-out")?.addEventListener("click", () => schematicEditor?.zoom(1 / 1.2));
+        document.getElementById("reset-view")?.addEventListener("click", () => schematicEditor?.resetView());
+    }
+
     if (runSimulationButton) {
         runSimulationButton.addEventListener("click", async () => {
+            clearMessages(errorMessageElement, successMessageElement);
+            if (!schematicEditor) {
+                displayError(
+                    "El editor de esquemático no está inicializado.",
+                    errorMessageElement,
+                    successMessageElement,
+                );
+                return;
+            }
+
+            const selectedConfigId = simulationConfigSelect.value;
+            const selectedSignalType = signalTypeSelect.value;
+            const frequency = parseInt(signalFrequencyInput.value);
+
+            if (!selectedConfigId || !selectedSignalType) {
+                displayError(
+                    "Por favor, seleccione una configuración y tipo de señal.",
+                    errorMessageElement,
+                    successMessageElement,
+                );
+                return;
+            }
+            if (isNaN(frequency) || frequency < 470 || frequency > 694) {
+                displayError(
+                    "Frecuencia inválida (debe ser entre 470 y 694 MHz).",
+                    errorMessageElement,
+                    successMessageElement,
+                );
+                return;
+            }
+
+            const componentsData = schematicEditor.getAllComponents(); // Get { cable: 'RG-6', floors: { '1': { derivador: '...', ... } } }
+
+            // Check if any components were actually placed
+            if (Object.keys(componentsData.floors).length === 0) {
+                displayError(
+                    "No se han añadido componentes al diseño en el esquemático.",
+                    errorMessageElement,
+                    successMessageElement,
+                );
+                return;
+            }
+
+            // Prepare data structure for the API
             try {
-                const selectedConfig = simulationConfig.value;
-                const selectedSignalType = signalType.value;
-
-                if (!selectedConfig || !selectedSignalType) {
-                    displayError("Por favor, seleccione una configuración y tipo de señal", errorMessageElement);
-                    return;
+                // Find the full config data locally first
+                const selectedConfigData = currentConfigurations.find(
+                    (c) => (c.id_configuraciones || c.id) == selectedConfigId,
+                );
+                if (!selectedConfigData) {
+                    throw new Error("Configuración seleccionada no encontrada localmente.");
                 }
 
-                // Clear any previous messages
-                clearMessages(errorMessageElement, successMessageElement);
+                // Flatten component data for the API request
+                const apiComponents = [];
+                Object.entries(componentsData.floors).forEach(([floorStr, floorComps]) => {
+                    const floorNum = parseInt(floorStr);
 
-                const componentsByFloor = simulationComponentManager.getAllComponents();
-                if (Object.keys(componentsByFloor).length === 0) {
-                    displayError("Por favor, añada componentes a la simulación", errorMessageElement);
-                    return;
-                }
+                    // Add derivador if present
+                    if (floorComps.derivador) {
+                        apiComponents.push({ type: "derivador", model: floorComps.derivador, floor: floorNum });
+                    }
+                    // Add distribuidores if present
+                    if (Array.isArray(floorComps.distribuidores)) {
+                        floorComps.distribuidores.forEach((model) => {
+                            if (model) apiComponents.push({ type: "distribuidor", model: model, floor: floorNum });
+                        });
+                    }
+                    // Add tomas (left and right) if present
+                    if (Array.isArray(floorComps.tomasLeft)) {
+                        floorComps.tomasLeft.forEach((model) => {
+                            if (model) apiComponents.push({ type: "toma", model: model, floor: floorNum });
+                        });
+                    }
+                    if (Array.isArray(floorComps.tomasRight)) {
+                        floorComps.tomasRight.forEach((model) => {
+                            if (model) apiComponents.push({ type: "toma", model: model, floor: floorNum });
+                        });
+                    }
+                    // Add Coaxial Cable information (implicit based on schematic and API calculation logic)
+                    // The API.md suggests the backend calculates cable based on fixed lengths per floor/connection.
+                    // We might need to pass the selected *cable model* though.
+                    // Let's assume the backend primarily needs the *type* of cable used universally.
+                    // If specific lengths/models per connection are needed, the schematic/API interaction needs adjustment.
+                    // For now, ensure the selected cable model is available if needed, but don't add explicit 'coaxial' entries per floor here.
+                });
 
-                // Prepare simulation data
-                const simulationData = prepareSimulationData(selectedConfig, selectedSignalType, componentsByFloor);
+                const simulationPayload = {
+                    num_pisos: selectedConfigData.num_pisos,
+                    nivel_cabecera: selectedConfigData.nivel_cabecera,
+                    tipo_senal: selectedSignalType,
+                    frequency: frequency,
+                    selected_cable_model: cableSelect.value, // Add the selected cable model
+                    components: apiComponents,
+                };
 
-                displaySuccess("Simulación completada", successMessageElement);
+                // Run simulation API call
+                const results = await runSimulation(simulationPayload); // Pass the prepared data
 
-                // Run simulation
-                const results = await runSimulation(simulationData);
+                results.nivel_cabecera = selectedConfigData.nivel_cabecera;
 
-                updateSimulationResults(results);
                 switchTab("results-tab");
+                updateSimulationResults(results);
+                displaySuccess("Simulación completada con éxito.", successMessageElement, errorMessageElement);
             } catch (error) {
-                console.error("Error running simulation:", error);
-                displayError(`Error en la simulación: ${error.message}`, errorMessageElement);
+                console.error("Error preparing or running simulation:", error);
+                displayError(
+                    `Error en simulación: ${error.message || "Error desconocido"}`,
+                    errorMessageElement,
+                    successMessageElement,
+                );
             }
         });
     }
 
-    // --- Initial Data Load ---
-    fetchInitialData(configSelect).then(() => {
-        if (configSelect && configSelect.value) {
-            // Get the selected configuration data
-            const selectedOption = configSelect.options[configSelect.selectedIndex];
-            if (selectedOption && selectedOption.dataset.config) {
-                const configData = JSON.parse(selectedOption.dataset.config);
-                // Update floor selector based on num_pisos
-                if (configData.num_pisos) {
-                    updateFloorSelector(configData.num_pisos);
+    // **Tab Switching Logic**
+    document.querySelectorAll(".tab-button").forEach((button) => {
+        button.addEventListener("click", () => {
+            const tabIdBase = button.id.replace("-mobile", ""); // Handle mobile buttons too
+
+            // Specific actions on tab switch
+            if (tabIdBase === "simulation-tab") {
+                // Ensure canvas is sized correctly when switching *to* simulation tab
+                // Use requestAnimationFrame to allow layout adjustments before resizing
+                requestAnimationFrame(() => schematicEditor?.initializeCanvas());
+            } else if (tabIdBase === "components-tab") {
+                // Refresh the component list *if needed* (optional, could rely on explicit user action)
+                // updateDetailedComponentView(componentListTypeSelect.value);
+            } else if (tabIdBase === "config-tab") {
+                // Ensure the displayed config details match the selection
+                if (configSelect.value) {
+                    handleConfigurationChange(configSelect.value);
                 }
-            }
-
-            configSelect.dispatchEvent(new Event("change"));
-
-            // Also populate the simulation config select
-            if (simulationConfig) {
-                // Copy options from configSelect to simulationConfig
-                simulationConfig.innerHTML = configSelect.innerHTML;
-                simulationConfig.value = configSelect.value;
-            }
-
-            isInitialLoad = false;
-        }
-    });
-
-    // --- Initial Component Load ---
-    fetchComponents().catch((error) => {
-        console.error("Error loading components:", error);
-        displayError("Error al cargar componentes", errorMessageElement);
-    });
-
-    // --- Component Type Selection Event Listener ---
-    document.getElementById("component-type")?.addEventListener("change", (e) => {
-        const selectedType = e.target.value;
-        updateComponentForm(selectedType);
-    });
-
-    // --- Tab Switching Event Listener ---
-    document.querySelectorAll(".tab-button").forEach((tab) => {
-        tab.addEventListener("click", () => {
-            if (tab.id === "simulation-tab") {
-                const selectedType = simulationComponentListType.value;
-                fetchComponentsByType(selectedType).then((components) => {
-                    updateSimpleComponentList(selectedType, components, `simulation-${selectedType}-list`);
-                });
-            } else if (tab.id === "components-tab") {
-                const selectedType = componentListType.value;
-                fetchComponentsByType(selectedType).then((components) => {
-                    updateDetailedComponentList(selectedType, components, `${selectedType}-list`);
-                });
             }
         });
     });
-
-    // --- Add Component Event Listener ---
-    document.addEventListener("addComponent", (event) => {
-        const { type, model } = event.detail;
-        const currentFloor = simulationComponentManager.getCurrentFloor();
-
-        if (!currentFloor) {
-            displayError("Por favor, seleccione un piso primero", errorMessageElement);
-            return;
-        }
-
-        if (simulationComponentManager.addComponent(type, model, currentFloor)) {
-            updateSelectedComponentsDisplay();
-        }
-    });
-
-    // --- Remove Component Event Listener ---
-    document.addEventListener("removeComponent", (event) => {
-        const { type, model, floor } = event.detail;
-        if (simulationComponentManager.removeComponent(type, model, floor)) {
-            updateSelectedComponentsDisplay();
-        }
-    });
-});
+}); // End DOMContentLoaded

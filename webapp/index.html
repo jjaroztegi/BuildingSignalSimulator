@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es" class="scroll-smooth dark">
+<html lang="es" class="dark scroll-smooth">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,81 +13,103 @@
                     extend: {
                         colors: {
                             primary: {
-                                50: '#f0f9ff',
-                                100: '#e0f2fe',
-                                200: '#bae6fd',
-                                300: '#7dd3fc',
-                                400: '#38bdf8',
-                                500: '#0ea5e9',
-                                600: '#0284c7',
-                                700: '#0369a1',
-                                800: '#075985',
-                                900: '#0c4a6e',
-                                950: '#082f49',
-                            }
-                        }
-                    }
-                }
+                                50: "#f0f9ff",
+                                100: "#e0f2fe",
+                                200: "#bae6fd",
+                                300: "#7dd3fc",
+                                400: "#38bdf8",
+                                500: "#0ea5e9",
+                                600: "#0284c7",
+                                700: "#0369a1",
+                                800: "#075985",
+                                900: "#0c4a6e",
+                                950: "#082f49",
+                            },
+                        },
+                    },
+                },
             };
         </script>
         <!-- Theme toggle functionality -->
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const themeToggleBtn = document.getElementById('theme-toggle');
-                
-                // Check initial theme
-                if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-
-                // Toggle theme
-                themeToggleBtn.addEventListener('click', () => {
-                    document.documentElement.classList.toggle('dark');
-                    localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-                });
-            });
+        <script type="module">
+            import { initTheme } from "./js/modules/theme.js";
+            initTheme();
         </script>
     </head>
-    <body class="bg-gray-50 font-sans text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100">
+    <body class="bg-gray-100 font-sans text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-200">
         <!-- Hero Section -->
-        <div class="relative bg-[#f3f2ef] dark:bg-gray-950 overflow-hidden">
-            <!-- Imagen del edificio desplazada hacia la derecha -->
-            <div class="absolute inset-y-0 right-0 w-4/5 ml-[60px] bg-[url('img/building.png')] bg-cover bg-right bg-no-repeat z-10"></div>
+        <div
+            class="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-950 dark:to-gray-900"
+        >
+            <!-- Background Image -->
+            <div class="absolute inset-y-0 right-0 z-0 w-full md:w-3/5 lg:w-1/2">
+                <img
+                    src="img/building.png"
+                    alt="Modern building schematic"
+                    class="h-full w-full object-cover object-right opacity-80 dark:opacity-60"
+                />
+                <div
+                    class="absolute inset-0 bg-gradient-to-l from-transparent via-gray-100/30 to-gray-100 dark:via-gray-950/30 dark:to-gray-950"
+                ></div>
+            </div>
 
-            <!-- Texto principal -->
-            <div class="relative z-20 pl-10 pr-4 pt-10 pb-24 sm:pb-28 lg:flex lg:pl-24 lg:pr-[calc(40%+80px)] lg:py-32">
-                <!-- Botón de tema -->
-                <div class="absolute right-6 top-6 z-30">
-                    <button id="theme-toggle" type="button" class="rounded-lg bg-gray-100 p-2.5 text-gray-500 hover:bg-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
-                        <span class="sr-only">Toggle theme</span>
-                        <!-- Iconos -->
-                        <svg class="h-5 w-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                        </svg>
-                        <svg class="h-5 w-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                    </button>
-                </div>
+            <!-- Content -->
+            <div
+                class="relative z-10 mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:flex lg:items-center lg:gap-x-10 lg:px-8 lg:py-40"
+            >
+                <div class="mx-auto max-w-2xl lg:mx-0 lg:flex-auto">
+                    <!-- Theme Toggle Button - Positioned Top Right -->
+                    <div class="fixed right-6 top-6 z-50">
+                        <button
+                            id="theme-toggle"
+                            type="button"
+                            class="rounded-lg p-2.5 text-gray-500 transition duration-150 hover:bg-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+                        >
+                            <span class="sr-only">Toggle theme</span>
+                            <!-- Moon Icon -->
+                            <svg
+                                class="block h-5 w-5 dark:hidden"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                            </svg>
+                            <!-- Sun Icon -->
+                            <svg
+                                class="hidden h-5 w-5 dark:block"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                ></path>
+                            </svg>
+                        </button>
+                    </div>
 
-                <!-- Contenido de texto -->
-                <div class="mx-auto max-w-2xl lg:mx-0 lg:max-w-xl lg:flex-shrink-0 lg:pt-8">
-                    <h1 class="mt-10 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
-                        Simulador de Distribución de Señales en Edificios
+                    <!-- Text Content -->
+                    <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
+                        Simulador de Señales en Edificios
                     </h1>
-                    <p class="mt-4 text-base leading-7 text-gray-600 dark:text-gray-300">
-                        Diseña y simula redes de tipo árbol-rama para distribución de señales en edificios de múltiples plantas. Calcula y optimiza los niveles de señal asegurando márgenes de calidad para televisión digital terrestre.
+                    <p class="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
+                        Diseñe y simule redes de distribución de señales tipo árbol-rama para edificios. Optimice
+                        niveles y asegure calidad TDT.
                     </p>
                     <div class="mt-10 flex items-center gap-x-6">
                         <a
                             href="simulator.html"
-                            class="rounded-lg bg-primary-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 dark:bg-primary-500 dark:hover:bg-primary-400"
+                            class="bg-primary-600 hover:bg-primary-500 focus-visible:outline-primary-600 dark:bg-primary-500 dark:hover:bg-primary-400 rounded-lg px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         >
                             Iniciar Simulador
                         </a>
-                        <a href="#learn-more" class="text-sm font-semibold leading-6 text-gray-900 transition hover:text-primary-600 dark:text-gray-100 dark:hover:text-primary-400">
+                        <a
+                            href="#learn-more"
+                            class="hover:text-primary-600 dark:hover:text-primary-400 text-sm font-semibold leading-6 text-gray-900 transition dark:text-gray-100"
+                        >
                             Más información <span aria-hidden="true">→</span>
                         </a>
                     </div>
@@ -96,72 +118,128 @@
         </div>
 
         <!-- Project Description -->
-        <div id="learn-more" class="bg-white py-24 dark:bg-gray-900 sm:py-32">
+        <div id="learn-more" class="bg-white py-24 sm:py-32 dark:bg-gray-900">
             <div class="mx-auto max-w-7xl px-6 lg:px-8">
-                <div class="mx-auto max-w-2xl lg:text-center">
-                    <h2 class="text-base font-semibold leading-7 text-primary-600 dark:text-primary-400">Descripción del Ejercicio</h2>
-                    <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
-                        Distribución de Señales de TDT
+                <div class="mx-auto max-w-3xl lg:text-center">
+                    <h2 class="text-primary-600 dark:text-primary-400 text-base font-semibold leading-7">
+                        Descripción del Ejercicio
+                    </h2>
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
+                        Optimización de Redes TDT en Edificios
                     </p>
                     <p class="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
-                        Diseña y optimiza redes de distribución de señales para edificios de múltiples plantas, asegurando niveles de señal adecuados en todas las tomas mientras mantienes los niveles de cabecera por debajo de 120 dBμV.
+                        Diseñe redes eficientes para distribución de TDT, asegurando niveles de señal óptimos en cada
+                        toma y cumpliendo las normativas (nivel cabecera &lt; 120 dBμV).
                     </p>
                 </div>
                 <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-                    <!-- NUEVO BLOQUE: Estructura del Edificio + Imagen -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-                        <!-- Columna izquierda: Bloques de texto -->
-                        <div class="space-y-12">
-                            <!-- Estructura del Edificio -->
-                            <div>
-                                <h3 class="flex items-center gap-x-3 text-lg font-semibold text-gray-900 dark:text-white">
-                                    <!-- ícono -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                            d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25a2.25 2.25 0 01-2.25-2.25v-2.25z" />
-                                    </svg>
-                                    Estructura del Edificio
-                                </h3>
-                                <p class="mt-4 text-base leading-7 text-gray-600 dark:text-gray-300">
-                                    Soporte para edificios de múltiples plantas, con espaciado de 3 metros entre plantas. Los edificios contienen una estructura básica con un derivador, distribuidor y 2/4 tomas por planta. Los derivadores de distintas plantas se interconectan mediante cable coaxial de 3m de longitud. En la propia planta, el derivador se conecta al distribuidor mediante un cable coaxial de 10m y el distribuidor se conecta a las distintas tomas mediante un coaxial de 5m.
-                                </p>
+                    <div class="grid grid-cols-1 items-center gap-x-16 gap-y-10 lg:grid-cols-2">
+                        <!-- Text Blocks Column -->
+                        <div class="space-y-10">
+                            <!-- Feature 1 -->
+                            <div class="flex gap-x-4">
+                                <div class="flex-shrink-0">
+                                    <div
+                                        class="bg-primary-600 dark:bg-primary-500 flex h-10 w-10 items-center justify-center rounded-lg"
+                                    >
+                                        <svg
+                                            class="h-6 w-6 text-white"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M8.25 21h7.5M12 3v18"
+                                            />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-semibold leading-7 text-gray-900 dark:text-white">
+                                        Estructura del Edificio
+                                    </h3>
+                                    <p class="mt-2 text-justify text-base leading-7 text-gray-600 dark:text-gray-300">
+                                        Modelo flexible para edificios multi-planta (3m/planta). Incluye estructura
+                                        estándar: derivador, distribuidor, y 2/4 tomas por planta con cables coaxiales
+                                        de longitudes predefinidas (3m inter-planta, 10m DE-DI, 5m DI-BT).
+                                    </p>
+                                </div>
                             </div>
-
-                            <!-- Componentes de Red -->
-                            <div>
-                                <h3 class="flex items-center gap-x-3 text-lg font-semibold text-gray-900 dark:text-white">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                            d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3" />
-                                    </svg>
-                                    Componentes de Red
-                                </h3>
-                                <p class="mt-4 text-base leading-7 text-gray-600 dark:text-gray-300">
-                                    Biblioteca completa de componentes incluyendo cables coaxiales, derivadores, distribuidores y tomas con especificaciones y datos de atenuación detallados.
-                                </p>
+                            <!-- Feature 2 -->
+                            <div class="flex gap-x-4">
+                                <div class="flex-shrink-0">
+                                    <div
+                                        class="bg-primary-600 dark:bg-primary-500 flex h-10 w-10 items-center justify-center rounded-lg"
+                                    >
+                                        <svg
+                                            class="h-6 w-6 text-white"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0l5.571 3-5.571 3m0 0l-5.571-3 5.571-3"
+                                            />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-semibold leading-7 text-gray-900 dark:text-white">
+                                        Componentes de Red
+                                    </h3>
+                                    <p class="mt-2 text-justify text-base leading-7 text-gray-600 dark:text-gray-300">
+                                        Amplia biblioteca: cables coaxiales, derivadores, distribuidores, tomas. Datos
+                                        precisos de atenuación y características técnicas.
+                                    </p>
+                                </div>
                             </div>
-
-                            <!-- Análisis de Señal -->
-                            <div>
-                                <h3 class="flex items-center gap-x-3 text-lg font-semibold text-gray-900 dark:text-white">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                            d="M9.348 14.651a3.75 3.75 0 010-5.303m5.304 0a3.75 3.75 0 010 5.303m-7.425 2.122a6.75 6.75 0 010-9.546m9.546 0a6.75 6.75 0 010 9.546M5.106 18.894c-3.808-3.808-3.808-9.98 0-13.789m13.788 0c3.808 3.808 3.808 9.981 0 13.79M12 12h.008v.007H12V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                                    </svg>
-                                    Análisis de Señal
-                                </h3>
-                                <p class="mt-4 text-base leading-7 text-gray-600 dark:text-gray-300">
-                                    Analiza niveles de señal en el rango de frecuencias TDT (470-694 MHz), valida contra márgenes de calidad y optimiza la selección de componentes para soluciones rentables.
-                                </p>
+                            <!-- Feature 3 -->
+                            <div class="flex gap-x-4">
+                                <div class="flex-shrink-0">
+                                    <div
+                                        class="bg-primary-600 dark:bg-primary-500 flex h-10 w-10 items-center justify-center rounded-lg"
+                                    >
+                                        <svg
+                                            class="h-6 w-6 text-white"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            aria-hidden="true"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.125 1.125 0 010 2.25H5.625a1.125 1.125 0 010-2.25z"
+                                            />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-semibold leading-7 text-gray-900 dark:text-white">
+                                        Análisis de Señal
+                                    </h3>
+                                    <p class="mt-2 text-justify text-base leading-7 text-gray-600 dark:text-gray-300">
+                                        Cálculo de niveles en el espectro TDT (470-694 MHz). Validación automática
+                                        contra márgenes de calidad y optimización de costes.
+                                    </p>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- Columna derecha: Imagen -->
-                        <div class="w-full max-w-md mx-auto">
+                        <!-- Image Column -->
+                        <div class="flex justify-center lg:justify-end">
                             <img
                                 src="img/NetworkDiagram.png"
-                                alt="Diagrama de red mostrando una distribución árbol-rama"
-                                class="w-full rounded-xl bg-gray-50 shadow-xl ring-1 ring-gray-900/5 dark:bg-gray-800/50 dark:ring-white/10"
+                                alt="Diagrama de red árbol-rama en un edificio"
+                                class="w-full max-w-md rounded-xl bg-gray-50 shadow-xl ring-1 ring-gray-900/5 dark:bg-gray-800/50 dark:ring-white/10"
                             />
                         </div>
                     </div>
@@ -169,46 +247,107 @@
             </div>
         </div>
 
-        <!-- Features -->
-        <div class="bg-gray-900 py-24 sm:py-32">
+        <!-- Features Section -->
+        <div class="bg-gray-900 py-24 sm:py-32 dark:bg-gray-950">
             <div class="mx-auto max-w-7xl px-6 lg:px-8">
                 <div class="mx-auto max-w-2xl lg:text-center">
-                    <h2 class="text-base font-semibold leading-7 text-primary-400">Características de Simulación</h2>
+                    <h2 class="text-primary-400 text-base font-semibold leading-7">Características Avanzadas</h2>
                     <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                        Herramientas Avanzadas de Diseño
+                        Diseño y Simulación Potentes
                     </p>
                 </div>
                 <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
                     <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-2">
-                        <div class="flex flex-col">
-                            <dt class="text-base font-semibold leading-7 text-white">Análisis de Frecuencias</dt>
+                        <div class="flex flex-col rounded-lg bg-white/5 p-6 ring-1 ring-white/10">
+                            <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
+                                <svg
+                                    class="text-primary-400 h-5 w-5 flex-none"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M11.09 4.845c-.18.313-.047.719.266.898l.11.063c.106.06.184.157.226.273.042.116.034.243-.022.355l-.12.238c-.11.219-.05.488.14.638l.11.086c.147.115.338.13.504.035l.11-.063c.18-.1.396-.106.591-.02l.11.05c.195.088.426.044.57-.127l.11-.13c.124-.147.33-.206.505-.163l.11.027c.191.046.377-.041.483-.211l.11-.176c.09-.146.249-.244.425-.261l.11-.01c.206-.02.385-.17.44-.377l.11-.41c.052-.192-.018-.399-.17-.53l-.11-.095c-.134-.115-.22-.278-.24-.454l-.09-.81c-.02-.179-.11-.34-.25-.45l-.11-.085c-.166-.13-.22-.35-.14-.523l.11-.24c.076-.165.046-.36-.07-.501l-.11-.13c-.13-.153-.34-.21-.53-.15l-.11.034c-.19.06-.398.03-.57-.08l-.11-.063c-.18-.1-.396-.106-.59-.02l-.11.05c-.196.088-.427.044-.572-.127l-.11-.13c-.124-.147-.33-.206-.504-.163l-.11.027c-.191.046-.377-.041-.484-.211l-.11-.176c-.09-.146-.249-.244-.424-.261l-.11-.01c-.206-.02-.385-.17-.44-.377l-.11-.41c-.052-.192.018-.399.17-.53l.11-.095c.134-.115.22-.278.24-.454l.09-.81c.02-.179.11-.34.25-.45l.11-.085c.166.13.22.35.14.523l-.11.24c-.076.165-.046.36.07.501l.11.13c.13.153.34.21.53.15l.11-.034c.19-.06.398-.03.57.08zM8.91 4.845c.18.313.047.719-.266.898l-.11.063c-.106.06-.184.157-.226.273-.042.116-.034.243.022.355l.12.238c.11.219.05.488-.14.638l-.11.086c-.147.115-.338.13-.504.035l-.11-.063c-.18-.1-.396-.106-.591-.02l-.11.05c-.195.088-.426.044-.57.127l-.11.13c-.124.147-.33.206-.505.163l-.11-.027c-.191-.046-.377.041-.483.211l-.11.176c-.09.146-.249.244-.425.261l-.11.01c-.206.02-.385.17-.44.377l-.11.41c-.052.192.018.399.17.53l.11.095c.134.115.22.278.24.454l.09.81c.02.179.11.34.25.45l.11.085c.166.13.22.35.14.523l-.11.24c-.076.165-.046.36.07.501l.11.13c.13.153.34.21.53.15l.11-.034c.19-.06.398-.03.57.08l.11.063c.18.1.396.106.59.02l.11-.05c.196-.088.427-.044.572.127l.11.13c.124.147.33.206.504.163l.11-.027c.191-.046.377.041.484.211l.11.176c.09.146.249.244.424.261l.11.01c.206.02.385.17.44.377l.11.41c.052.192-.018.399-.17.53l-.11.095c-.134.115-.22.278-.24.454l-.09.81c-.02.179-.11.34-.25.45l-.11.085c.11.086.26.11.41.07l1.16-.39c.18-.06.31-.205.35-.386l.11-.41c.05-.192-.02-.4-.17-.53l-.11-.095c-.13-.115-.22-.278-.24-.454l-.09-.81c-.02-.179-.11-.34-.25-.45l-.11-.085c-.166-.13-.22-.35-.14-.523l.11-.24c.076-.165.046-.36-.07-.501l-.11-.13c-.13-.153-.34-.21-.53-.15l-.11.034c-.19.06-.398.03-.57-.08z"
+                                        clip-rule="evenodd"
+                                    />
+                                </svg>
+                                Análisis de Frecuencias
+                            </dt>
                             <dd class="mt-1 flex flex-auto flex-col text-base leading-7 text-gray-300">
                                 <p class="flex-auto">
-                                    Simula la distribución de señal en diferentes frecuencias dentro del rango TDT (470-694 MHz) para asegurar un rendimiento consistente en todos los canales.
+                                    Simule la distribución en todo el rango TDT (470-694 MHz) para garantizar
+                                    rendimiento óptimo en todos los canales.
                                 </p>
                             </dd>
                         </div>
-                        <div class="flex flex-col">
-                            <dt class="text-base font-semibold leading-7 text-white">Selección de Componentes</dt>
+                        <div class="flex flex-col rounded-lg bg-white/5 p-6 ring-1 ring-white/10">
+                            <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
+                                <svg
+                                    class="text-primary-400 h-5 w-5 flex-none"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M3.105 2.289a.75.75 0 00-.826.95l1.414 4.95-1.414 4.949a.75.75 0 101.504.428L5.82 13.01a.75.75 0 001.22-.596l-.5-3.504a.75.75 0 00-1.22-.596L3.105 2.29zm13.79 0a.75.75 0 00-.826-.95l-1.414 4.95 1.414 4.949a.75.75 0 101.504-.428L14.18 13.01a.75.75 0 00-1.22-.596l.5-3.504a.75.75 0 001.22-.596l2.175 5.555a.75.75 0 101.504-.428L16.895 2.29z"
+                                    />
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M8.132 7.815a.75.75 0 01.208.99l-.912 1.706a.75.75 0 11-1.344-.72l.912-1.706a.75.75 0 011.136-.27zm3.736 0a.75.75 0 011.136.27l.912 1.706a.75.75 0 11-1.344.72l-.912-1.706a.75.75 0 01.208-.99z"
+                                        clip-rule="evenodd"
+                                    />
+                                </svg>
+                                Selección Inteligente
+                            </dt>
                             <dd class="mt-1 flex flex-auto flex-col text-base leading-7 text-gray-300">
                                 <p class="flex-auto">
-                                    Elige entre una variedad de componentes preconfigurados incluyendo derivadores serie FP, cables coaxiales y distribuidores con especificaciones validadas.
+                                    Elija componentes de una base de datos validada (derivadores FP, coaxiales,
+                                    distribuidores) con especificaciones claras.
                                 </p>
                             </dd>
                         </div>
-                        <div class="flex flex-col">
-                            <dt class="text-base font-semibold leading-7 text-white">Validación de Calidad</dt>
+                        <div class="flex flex-col rounded-lg bg-white/5 p-6 ring-1 ring-white/10">
+                            <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
+                                <svg
+                                    class="text-primary-400 h-5 w-5 flex-none"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"
+                                    />
+                                </svg>
+                                Validación de Calidad
+                            </dt>
                             <dd class="mt-1 flex flex-auto flex-col text-base leading-7 text-gray-300">
                                 <p class="flex-auto">
-                                    Validación automática de niveles de señal contra márgenes de calidad, asegurando una recepción óptima en todas las tomas mientras se mantienen los niveles de cabecera por debajo de 120 dBμV.
+                                    Compruebe automáticamente los niveles contra los márgenes de calidad. Asegure
+                                    recepción óptima y cumpla normativas (cabecera &lt; 120 dBμV).
                                 </p>
                             </dd>
                         </div>
-                        <div class="flex flex-col">
-                            <dt class="text-base font-semibold leading-7 text-white">Optimización de Costes</dt>
+                        <div class="flex flex-col rounded-lg bg-white/5 p-6 ring-1 ring-white/10">
+                            <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
+                                <svg
+                                    class="text-primary-400 h-5 w-5 flex-none"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M2.5 4A1.5 1.5 0 001 5.5V6h18v-.5A1.5 1.5 0 0017.5 4h-15zM19 7.5H1v7.043a1.5 1.5 0 001.315 1.497h15.37a1.5 1.5 0 001.315-1.497V7.5zM8.5 10a.5.5 0 00-1 0v2a.5.5 0 001 0v-2zm3 0a.5.5 0 00-1 0v2a.5.5 0 001 0v-2zm3 0a.5.5 0 00-1 0v2a.5.5 0 001 0v-2z"
+                                    />
+                                </svg>
+                                Optimización de Costes
+                            </dt>
                             <dd class="mt-1 flex flex-auto flex-col text-base leading-7 text-gray-300">
                                 <p class="flex-auto">
-                                    Seguimiento de costes de componentes y optimización del diseño de red para el mejor equilibrio entre rendimiento y restricciones presupuestarias.
+                                    Realice seguimiento del coste total. Encuentre el equilibrio perfecto entre
+                                    rendimiento técnico y presupuesto disponible.
                                 </p>
                             </dd>
                         </div>
@@ -218,27 +357,29 @@
         </div>
 
         <!-- Footer -->
-        <footer class="bg-gray-50 dark:bg-gray-950">
-            <div class="mx-auto max-w-7xl px-6 py-8">
-                <div class="flex items-center justify-center space-x-4">
-                    <p class="text-center text-sm leading-5 text-gray-500 dark:text-gray-400">
-                        Simulador de Señales en Edificios © 2025
-                    </p>
+        <footer class="border-t border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-950">
+            <div class="mx-auto max-w-7xl px-6 py-8 md:flex md:items-center md:justify-between lg:px-8">
+                <div class="flex justify-center space-x-6 md:order-2">
                     <a
                         href="https://github.com/jjaroztegi/BuildingSignalSimulator"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="inline-flex text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                        title="Ver en GitHub"
+                        class="text-gray-400 transition hover:text-gray-500 dark:hover:text-gray-300"
                     >
-                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <span class="sr-only">GitHub</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path
                                 fill-rule="evenodd"
                                 d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
                                 clip-rule="evenodd"
-                            ></path>
+                            />
                         </svg>
                     </a>
+                </div>
+                <div class="mt-8 md:order-1 md:mt-0">
+                    <p class="text-center text-xs leading-5 text-gray-500 dark:text-gray-400">
+                        &copy; 2025 Simulador de Señales en Edificios. Todos los derechos reservados.
+                    </p>
                 </div>
             </div>
         </footer>

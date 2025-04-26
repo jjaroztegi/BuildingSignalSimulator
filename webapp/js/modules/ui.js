@@ -1,5 +1,5 @@
 import { fetchComponentsByModel } from "./servlet.js";
-import { displayError } from "./utils.js";
+import { displayError, formatDate } from "./utils.js";
 
 // UI management module
 export function updateComponentSection(type, components) {
@@ -86,104 +86,138 @@ export function updateSignalQualitySummary(data) {
     summaryElement.appendChild(summary);
 }
 
-export function updateDetailedComponentList(type, data, listId) {
+export function updateDetailedComponentList(type, models, listId) {
     const listElement = document.getElementById(listId);
     if (!listElement) return;
 
-    if (!Array.isArray(data) || data.length === 0) {
-        listElement.innerHTML = `<div class="text-gray-500 dark:text-gray-400">No hay ${type} disponibles</div>`;
+    listElement.innerHTML = ""; // Clear previous content
+
+    if (!Array.isArray(models) || models.length === 0) {
+        listElement.innerHTML = `<div class="text-center text-sm text-gray-500 dark:text-gray-400 italic py-4">No hay ${type} disponibles.</div>`;
         return;
     }
 
-    const list = document.createElement("ul");
-    list.className = "space-y-4";
+    // Add overflow handling to the list container with adjusted max height
+    listElement.className = "space-y-2 pb-4";
 
-    data.forEach((modelo) => {
+    // Use a document fragment for efficiency
+    const fragment = document.createDocumentFragment();
+
+    models.forEach((modelo) => {
         const item = document.createElement("li");
-        item.className = "p-4 bg-white dark:bg-gray-800 rounded-lg shadow-2xs hover:shadow-md transition-shadow";
+        // Apply card styling to each list item
+        item.className =
+            "bg-white dark:bg-gray-800/50 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-4";
         item.dataset.modelo = modelo;
 
         const content = document.createElement("div");
-        content.className = "space-y-3";
+        content.className = "space-y-2"; // Spacing inside the card
 
-        // Create header with model name
-        const header = document.createElement("div");
-        header.className = "flex justify-between items-center";
-
+        // Header: Model Name
         const modelName = document.createElement("h3");
-        modelName.className = "text-lg font-semibold text-gray-900 dark:text-white";
+        modelName.className = "text-base font-semibold text-primary-700 dark:text-primary-400";
         modelName.textContent = modelo;
-        header.appendChild(modelName);
-        content.appendChild(header);
+        content.appendChild(modelName);
 
-        // Create details section
+        // Details Section (populated asynchronously)
         const details = document.createElement("div");
-        details.className = "text-sm space-y-2";
-        details.innerHTML = '<p class="text-gray-500 dark:text-gray-400">Cargando detalles...</p>';
+        details.className = "text-xs space-y-1 border-t border-gray-200 dark:border-gray-700 pt-2 mt-2";
+        details.innerHTML = '<p class="text-gray-400 dark:text-gray-500 italic">Cargando detalles...</p>';
+        content.appendChild(details);
+
+        item.appendChild(content);
+        fragment.appendChild(item); // Add item to fragment
 
         // Fetch and display component details
         fetchComponentsByModel(type, modelo)
             .then((componentData) => {
-                if (!componentData) {
-                    console.error("Error loading component details: No data received");
-                    details.innerHTML =
-                        '<p class="text-red-500 dark:text-red-400">Error al cargar los detalles del componente</p>';
+                if (!componentData || typeof componentData.costo === "undefined") {
+                    // Basic check for valid data
+                    console.error(`Error loading details for ${modelo}: Invalid data received`, componentData);
+                    details.innerHTML = '<p class="text-red-500 dark:text-red-400">Error al cargar detalles.</p>';
                     return;
                 }
 
-                let detailsHTML = `<p class="text-gray-900 dark:text-gray-100">Costo: <span class="font-medium">${componentData.costo.toFixed(2)}€</span></p>`;
+                let detailsHTML = `<div class="flex justify-between items-center">
+                                    <span class="text-gray-600 dark:text-gray-400">Costo:</span>
+                                    <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.costo.toFixed(2)} €</span>
+                                  </div>`;
 
+                // Add component-specific properties using flex layout
                 switch (type) {
                     case "coaxial":
-                        detailsHTML += `
-                            <div class="grid grid-cols-2 gap-2">
-                                <p class="text-gray-600 dark:text-gray-400">Atenuación (470MHz): <span class="font-medium text-gray-900 dark:text-gray-100">${componentData.atenuacion_470mhz.toFixed(2)} dB</span></p>
-                                <p class="text-gray-600 dark:text-gray-400">Atenuación (694MHz): <span class="font-medium text-gray-900 dark:text-gray-100">${componentData.atenuacion_694mhz.toFixed(2)} dB</span></p>
-                            </div>`;
+                        detailsHTML += `<div class="flex justify-between items-center">
+                                            <span class="text-gray-600 dark:text-gray-400">Aten. 470MHz:</span>
+                                            <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.atenuacion_470mhz?.toFixed(2) ?? "-"} dB/100m</span>
+                                        </div>`;
+                        detailsHTML += `<div class="flex justify-between items-center">
+                                            <span class="text-gray-600 dark:text-gray-400">Aten. 694MHz:</span>
+                                            <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.atenuacion_694mhz?.toFixed(2) ?? "-"} dB/100m</span>
+                                        </div>`;
                         break;
                     case "derivador":
-                        detailsHTML += `
-                            <div class="grid grid-cols-2 gap-2">
-                                <p class="text-gray-600 dark:text-gray-400">Atenuación Derivación: <span class="font-medium text-gray-900 dark:text-gray-100">${componentData.atenuacion_derivacion.toFixed(2)} dB</span></p>
-                                <p class="text-gray-600 dark:text-gray-400">Atenuación Paso: <span class="font-medium text-gray-900 dark:text-gray-100">${componentData.atenuacion_paso.toFixed(2)} dB</span></p>
-                                <p class="text-gray-600 dark:text-gray-400">Directividad: <span class="font-medium text-gray-900 dark:text-gray-100">${componentData.directividad.toFixed(2)} dB</span></p>
-                                <p class="text-gray-600 dark:text-gray-400">Desacoplo: <span class="font-medium text-gray-900 dark:text-gray-100">${componentData.desacoplo.toFixed(2)} dB</span></p>
-                                <p class="text-gray-600 dark:text-gray-400">Pérdidas Retorno: <span class="font-medium text-gray-900 dark:text-gray-100">${componentData.perdidas_retorno.toFixed(2)} dB</span></p>
-                            </div>`;
+                        detailsHTML += `<div class="flex justify-between items-center">
+                                            <span class="text-gray-600 dark:text-gray-400">Aten. Deriv.:</span>
+                                            <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.atenuacion_derivacion?.toFixed(1) ?? "-"} dB</span>
+                                        </div>`;
+                        detailsHTML += `<div class="flex justify-between items-center">
+                                            <span class="text-gray-600 dark:text-gray-400">Aten. Paso:</span>
+                                            <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.atenuacion_paso?.toFixed(1) ?? "-"} dB</span>
+                                        </div>`;
+                        detailsHTML += `<div class="flex justify-between items-center">
+                                            <span class="text-gray-600 dark:text-gray-400">Directividad:</span>
+                                            <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.directividad?.toFixed(1) ?? "-"} dB</span>
+                                        </div>`;
+                        detailsHTML += `<div class="flex justify-between items-center">
+                                            <span class="text-gray-600 dark:text-gray-400">Desacoplo:</span>
+                                            <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.desacoplo?.toFixed(1) ?? "-"} dB</span>
+                                        </div>`;
+                        detailsHTML += `<div class="flex justify-between items-center">
+                                            <span class="text-gray-600 dark:text-gray-400">Pérd. Retorno:</span>
+                                            <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.perdidas_retorno?.toFixed(1) ?? "-"} dB</span>
+                                        </div>`;
                         break;
                     case "distribuidor":
-                        detailsHTML += `
-                            <div class="grid grid-cols-2 gap-2">
-                                <p class="text-gray-600 dark:text-gray-400">Número de Salidas: <span class="font-medium text-gray-900 dark:text-gray-100">${componentData.numero_salidas}</span></p>
-                                <p class="text-gray-600 dark:text-gray-400">Atenuación Distribución: <span class="font-medium text-gray-900 dark:text-gray-100">${componentData.atenuacion_distribucion.toFixed(2)} dB</span></p>
-                                <p class="text-gray-600 dark:text-gray-400">Desacoplo: <span class="font-medium text-gray-900 dark:text-gray-100">${componentData.desacoplo.toFixed(2)} dB</span></p>
-                                <p class="text-gray-600 dark:text-gray-400">Pérdidas Retorno: <span class="font-medium text-gray-900 dark:text-gray-100">${componentData.perdidas_retorno.toFixed(2)} dB</span></p>
-                            </div>`;
+                        detailsHTML += `<div class="flex justify-between items-center">
+                                            <span class="text-gray-600 dark:text-gray-400">Nº Salidas:</span>
+                                            <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.numero_salidas ?? "-"}</span>
+                                        </div>`;
+                        detailsHTML += `<div class="flex justify-between items-center">
+                                            <span class="text-gray-600 dark:text-gray-400">Aten. Dist.:</span>
+                                            <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.atenuacion_distribucion?.toFixed(1) ?? "-"} dB</span>
+                                        </div>`;
+                        detailsHTML += `<div class="flex justify-between items-center">
+                                            <span class="text-gray-600 dark:text-gray-400">Desacoplo:</span>
+                                            <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.desacoplo?.toFixed(1) ?? "-"} dB</span>
+                                        </div>`;
+                        detailsHTML += `<div class="flex justify-between items-center">
+                                            <span class="text-gray-600 dark:text-gray-400">Pérd. Retorno:</span>
+                                            <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.perdidas_retorno?.toFixed(1) ?? "-"} dB</span>
+                                        </div>`;
                         break;
                     case "toma":
-                        detailsHTML += `
-                            <div class="grid grid-cols-2 gap-2">
-                                <p class="text-gray-600 dark:text-gray-400">Atenuación: <span class="font-medium text-gray-900 dark:text-gray-100">${componentData.atenuacion.toFixed(2)} dB</span></p>
-                                <p class="text-gray-600 dark:text-gray-400">Desacoplo: <span class="font-medium text-gray-900 dark:text-gray-100">${componentData.desacoplo.toFixed(2)} dB</span></p>
-                            </div>`;
+                        detailsHTML += `<div class="flex justify-between items-center">
+                                            <span class="text-gray-600 dark:text-gray-400">Atenuación:</span>
+                                            <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.atenuacion?.toFixed(1) ?? "-"} dB</span>
+                                        </div>`;
+                        detailsHTML += `<div class="flex justify-between items-center">
+                                            <span class="text-gray-600 dark:text-gray-400">Desacoplo:</span>
+                                            <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.desacoplo?.toFixed(1) ?? "-"} dB</span>
+                                        </div>`;
                         break;
+                    default:
+                        detailsHTML += `<p class="text-gray-500 dark:text-gray-400">Tipo desconocido.</p>`;
                 }
 
                 details.innerHTML = detailsHTML;
             })
             .catch((error) => {
-                console.error("Error loading component details:", error);
-                details.innerHTML =
-                    '<p class="text-red-500 dark:text-red-400">Error al cargar los detalles del componente</p>';
+                console.error(`Error loading component details for ${modelo}:`, error);
+                details.innerHTML = '<p class="text-red-500 dark:text-red-400">Error al cargar detalles.</p>';
             });
-
-        content.appendChild(details);
-        item.appendChild(content);
-        list.appendChild(item);
     });
 
-    listElement.innerHTML = "";
-    listElement.appendChild(list);
+    listElement.appendChild(fragment); // Append all items at once
 }
 
 export function updateSimpleComponentList(type, data, listId) {
@@ -277,95 +311,256 @@ export function updateComponentList(type, data, customListId = null) {
 export function updateConfigSelect(configurations, configSelect) {
     if (!configSelect) return;
 
-    configSelect.innerHTML = configurations
-        .map((config) => {
-            const option = document.createElement("option");
-            option.value = config.id_configuraciones || config.id;
-            option.textContent = config.nombre;
-            option.dataset.config = JSON.stringify(config);
-            return option.outerHTML;
-        })
-        .join("");
+    const currentVal = configSelect.value; // Preserve selection if possible
+    // Initial placeholder + options
+    configSelect.innerHTML =
+        '<option value="">-- Seleccione --</option>' +
+        configurations
+            .map((config) => {
+                const id = config.id_configuraciones || config.id; // Handle potential ID key difference
+                const name = config.nombre || `Configuración ${id}`;
+                // Use JSON stringify carefully, ensure data is serializable
+                const dataString = JSON.stringify(config);
+                return `<option value="${id}" data-config='${dataString}'>${name}</option>`;
+            })
+            .join("");
 
-    if (configurations.length > 0 && !configSelect.value) {
-        configSelect.value = configurations[0].id_configuraciones || configurations[0].id;
+    // Try to restore previous selection
+    if (configSelect.querySelector(`option[value="${currentVal}"]`)) {
+        configSelect.value = currentVal;
+    } else if (configurations.length > 0 && !configSelect.value) {
+        // If no value selected and there are options, select the first one
+        // configSelect.value = configurations[0].id_configuraciones || configurations[0].id;
+        // configSelect.dispatchEvent(new Event('change')); // Trigger change if auto-selecting
     }
 }
 
 export function updateSignalTypeSelect(signalTypes, signalTypeSelect) {
     if (!signalTypeSelect) return;
 
-    signalTypeSelect.innerHTML = signalTypes
-        .map(
-            (typeObj) =>
-                `<option value="${typeObj.type}" data-min="${typeObj.min}" data-max="${typeObj.max}">${typeObj.type} (${typeObj.min}dB - ${typeObj.max}dB)</option>`,
-        )
-        .join("");
+    const currentVal = signalTypeSelect.value;
+    // Initial placeholder + options
+    signalTypeSelect.innerHTML =
+        '<option value="">-- Seleccione --</option>' +
+        signalTypes
+            .map(
+                (typeObj) =>
+                    `<option value="${typeObj.type}" data-min="${typeObj.min}" data-max="${typeObj.max}">${typeObj.type} (${typeObj.min}-${typeObj.max} dB)</option>`,
+            )
+            .join("");
 
-    if (signalTypes.length > 0) {
-        signalTypeSelect.value = signalTypes[0].type;
+    if (signalTypeSelect.querySelector(`option[value="${currentVal}"]`)) {
+        signalTypeSelect.value = currentVal;
+    } else if (signalTypes.length > 0 && !signalTypeSelect.value) {
+        // Optionally select the first type by default
+        // signalTypeSelect.value = signalTypes[0].type;
     }
 }
 
 export function updateSimulationResults(results) {
-    const signalLevelsTable = document.getElementById("signal-levels-table");
-    const simulationSummary = document.getElementById("simulation-summary");
+    const signalLevelsTableBody = document.getElementById("signal-levels-table");
+    const simulationSummaryContainer = document.getElementById("simulation-summary");
+    const headendLevelEl = document.getElementById("headend-level");
+    const qualityMarginsEl = document.getElementById("quality-margins");
+    const totalCostEl = document.getElementById("total-cost");
+    const overallStatusEl = document.getElementById("overall-status");
 
-    if (!signalLevelsTable || !simulationSummary || !results) return;
-
-    // Update signal levels table
-    signalLevelsTable.innerHTML = results.signal_levels
-        .sort((a, b) => a.floor - b.floor)
-        .map(
-            (floor) => `
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                    ${floor.floor}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                    ${floor.level.toFixed(2)} dBμV
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        floor.status === "ok"
-                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                            : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                    }">
-                        ${floor.status === "ok" ? "OK" : "Error"}
-                    </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                    ${floor.floor_cost.toFixed(2)} €
-                </td>
-            </tr>
-        `,
-        )
-        .join("");
-
-    // Update summary section
-    simulationSummary.classList.remove("hidden");
-
-    // Get current configuration data
-    const simulationConfig = document.getElementById("simulation-config");
-    const selectedOption = simulationConfig.options[simulationConfig.selectedIndex];
-    const configData = selectedOption ? JSON.parse(selectedOption.dataset.config) : null;
-
-    // Update headend level from configuration data
-    const headendLevel = document.getElementById("headend-level");
-    if (headendLevel && configData) {
-        headendLevel.textContent = `${configData.nivel_cabecera.toFixed(2)} dBμV`;
+    // Ensure all required elements exist
+    if (
+        !signalLevelsTableBody ||
+        !simulationSummaryContainer ||
+        !headendLevelEl ||
+        !qualityMarginsEl ||
+        !totalCostEl ||
+        !overallStatusEl ||
+        !results
+    ) {
+        console.warn("Could not update simulation results - one or more elements missing or no results data.");
+        // Reset display if elements exist but no data
+        if (signalLevelsTableBody)
+            signalLevelsTableBody.innerHTML =
+                '<tr><td colspan="4" class="px-6 py-10 text-center text-sm text-gray-500 dark:text-gray-400">No hay resultados disponibles.</td></tr>';
+        if (simulationSummaryContainer)
+            simulationSummaryContainer.querySelector("p.text-xs")?.classList.remove("hidden"); // Show placeholder text
+        if (headendLevelEl) headendLevelEl.textContent = "-";
+        if (qualityMarginsEl) qualityMarginsEl.textContent = "-";
+        if (totalCostEl) totalCostEl.textContent = "-";
+        if (overallStatusEl) overallStatusEl.textContent = "-";
+        updateChartPlaceholder(true); // Show chart placeholder
+        return;
     }
 
-    // Update quality margins
-    const qualityMargins = document.getElementById("quality-margins");
-    if (qualityMargins && results.margins) {
-        qualityMargins.textContent = `${results.margins.min} dBμV - ${results.margins.max} dBμV`;
+    // --- Update Signal Levels Table ---
+    if (results.signal_levels && results.signal_levels.length > 0) {
+        signalLevelsTableBody.innerHTML = results.signal_levels
+            .sort((a, b) => a.floor - b.floor) // Ensure sorted by floor
+            .map((floor) => {
+                const level = typeof floor.level === "number" ? floor.level.toFixed(1) : "N/A";
+                const cost = typeof floor.floor_cost === "number" ? floor.floor_cost.toFixed(2) : "N/A";
+                const statusText = floor.status === "ok" ? "OK" : "Error";
+                const statusClass =
+                    floor.status === "ok"
+                        ? "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300"
+                        : "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300";
+
+                return `
+                        <tr class="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors duration-150">
+                            <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">${floor.floor}</td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">${level} dBµV</td>
+                            <td class="px-4 py-2 whitespace-nowrap text-center">
+                                <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">
+                                    ${statusText}
+                                </span>
+                            </td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 text-right">${cost} €</td>
+                        </tr>
+                    `;
+            })
+            .join("");
+    } else {
+        signalLevelsTableBody.innerHTML =
+            '<tr><td colspan="4" class="px-6 py-10 text-center text-sm text-gray-500 dark:text-gray-400">No se generaron niveles de señal.</td></tr>';
     }
 
-    // Update total cost
-    const totalCost = document.getElementById("total-cost");
-    if (totalCost) {
-        totalCost.textContent = `${results.total_cost.toFixed(2)} €`;
+    // --- Update Summary Section ---
+    simulationSummaryContainer.querySelector("p.text-xs")?.classList.add("hidden"); // Hide placeholder
+
+    // Headend Level (comes from the simulation payload, which should include it)
+    headendLevelEl.textContent = results.nivel_cabecera ? `${results.nivel_cabecera.toFixed(1)} dBµV` : "-";
+
+    // Quality Margins (from results)
+    qualityMarginsEl.textContent = results.margins
+        ? `${results.margins.min.toFixed(1)} - ${results.margins.max.toFixed(1)} dBµV`
+        : "-";
+
+    // Total Cost (from results)
+    totalCostEl.textContent = typeof results.total_cost === "number" ? `${results.total_cost.toFixed(2)} €` : "-";
+
+    // Overall Status (derive from signal_levels)
+    const allOk = results.signal_levels && results.signal_levels.every((f) => f.status === "ok");
+    overallStatusEl.textContent = allOk ? "OK" : "Revisar";
+    overallStatusEl.className = `font-medium text-right ${allOk ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`;
+
+    // --- Update Chart ---
+    // Basic Chart.js implementation (requires Chart.js library to be included)
+    const chartCanvas = document.getElementById("results-chart");
+    if (chartCanvas && typeof Chart !== "undefined" && results.signal_levels && results.signal_levels.length > 0) {
+        updateChartPlaceholder(false); // Hide placeholder, show canvas
+        const floorLabels = results.signal_levels.map((f) => `Piso ${f.floor}`);
+        const signalData = results.signal_levels.map((f) => f.level);
+        const minMargin = results.margins?.min;
+        const maxMargin = results.margins?.max;
+
+        // Destroy previous chart instance if it exists
+        const existingChart = Chart.getChart(chartCanvas);
+        if (existingChart) {
+            existingChart.destroy();
+        }
+
+        const isDarkMode = document.documentElement.classList.contains("dark");
+        const gridColor = isDarkMode ? "rgba(100, 116, 139, 0.3)" : "rgba(203, 213, 225, 0.5)";
+        const textColor = isDarkMode ? "rgb(229, 231, 235)" : "rgb(55, 65, 81)";
+        const pointColor = isDarkMode ? "rgb(56, 189, 248)" : "rgb(2, 132, 199)"; // primary-400 / primary-600
+
+        new Chart(chartCanvas, {
+            type: "line",
+            data: {
+                labels: floorLabels,
+                datasets: [
+                    {
+                        label: "Nivel de Señal (dBµV)",
+                        data: signalData,
+                        borderColor: pointColor,
+                        backgroundColor: pointColor + "33", // Semi-transparent fill
+                        tension: 0.1,
+                        fill: false,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false, // Don't force start at 0
+                        grid: { color: gridColor },
+                        ticks: { color: textColor, padding: 10 },
+                        title: {
+                            display: true,
+                            text: "Nivel Señal (dBµV)",
+                            color: textColor,
+                            font: { size: 10 },
+                        },
+                    },
+                    x: {
+                        grid: { display: false }, // Hide vertical grid lines
+                        ticks: { color: textColor, padding: 10 },
+                        title: {
+                            display: true,
+                            text: "Piso",
+                            color: textColor,
+                            font: { size: 10 },
+                        },
+                    },
+                },
+                plugins: {
+                    legend: { display: false }, // Hide legend if only one dataset
+                    annotation: {
+                        // Requires chartjs-plugin-annotation
+                        annotations: {
+                            ...(minMargin !== undefined && {
+                                lineMin: {
+                                    type: "line",
+                                    yMin: minMargin,
+                                    yMax: minMargin,
+                                    borderColor: "rgba(239, 68, 68, 0.6)",
+                                    borderWidth: 1,
+                                    borderDash: [6, 6],
+                                    label: {
+                                        content: `Min: ${minMargin.toFixed(1)}`,
+                                        enabled: true,
+                                        position: "start",
+                                        backgroundColor: "rgba(239, 68, 68, 0.6)",
+                                        color: "white",
+                                        font: { size: 9 },
+                                        xPadding: 3,
+                                        yPadding: 3,
+                                        borderRadius: 2,
+                                    },
+                                },
+                            }),
+                            ...(maxMargin !== undefined && {
+                                lineMax: {
+                                    type: "line",
+                                    yMin: maxMargin,
+                                    yMax: maxMargin,
+                                    borderColor: "rgba(239, 68, 68, 0.6)",
+                                    borderWidth: 1,
+                                    borderDash: [6, 6],
+                                    label: {
+                                        content: `Max: ${maxMargin.toFixed(1)}`,
+                                        enabled: true,
+                                        position: "start",
+                                        backgroundColor: "rgba(239, 68, 68, 0.6)",
+                                        color: "white",
+                                        font: { size: 9 },
+                                        xPadding: 3,
+                                        yPadding: 3,
+                                        borderRadius: 2,
+                                    },
+                                },
+                            }),
+                        },
+                    },
+                },
+            },
+        });
+    } else {
+        updateChartPlaceholder(true); // Show placeholder if no chart possible
+        if (chartCanvas && typeof Chart === "undefined")
+            console.warn("Chart.js library not found. Cannot display chart.");
     }
 }
 
@@ -515,12 +710,31 @@ export function updateFloorSelector(numPisos) {
     const floorSelect = document.getElementById("simulation-floor");
     if (!floorSelect) return;
 
-    floorSelect.innerHTML = '<option value="">Seleccionar Piso</option>';
+    const currentVal = floorSelect.value;
+    floorSelect.innerHTML = '<option value="">-- Seleccione Piso --</option>'; // Placeholder
 
-    for (let i = 1; i <= numPisos; i++) {
-        const option = document.createElement("option");
-        option.value = i;
-        option.textContent = `Piso ${i}`;
-        floorSelect.appendChild(option);
+    if (numPisos && numPisos > 0) {
+        for (let i = 1; i <= numPisos; i++) {
+            const option = document.createElement("option");
+            option.value = i;
+            option.textContent = `Piso ${i}`;
+            floorSelect.appendChild(option);
+        }
+        // Try to restore selection
+        if (floorSelect.querySelector(`option[value="${currentVal}"]`)) {
+            floorSelect.value = currentVal;
+        }
+    } else {
+        floorSelect.innerHTML = '<option value="">-- Seleccione Configuración --</option>';
+    }
+}
+
+// --- New Function for Chart Placeholder ---
+function updateChartPlaceholder(show = true) {
+    const canvas = document.getElementById("results-chart");
+    const placeholder = document.getElementById("chart-placeholder-text");
+    if (canvas && placeholder) {
+        canvas.style.display = show ? "none" : "block";
+        placeholder.style.display = show ? "block" : "none";
     }
 }

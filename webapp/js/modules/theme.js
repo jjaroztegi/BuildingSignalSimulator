@@ -8,7 +8,7 @@ export function initTheme() {
     document.documentElement.classList.toggle("dark", isDarkMode);
 
     // Set up theme toggle button listener
-    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggle = document.getElementById("theme-toggle");
     if (themeToggle) {
         themeToggle.addEventListener("click", () => {
             document.documentElement.classList.toggle("dark");
