@@ -16,17 +16,30 @@
                     extend: {
                         colors: {
                             primary: {
-                                50: "#f0f9ff",
-                                100: "#e0f2fe",
-                                200: "#bae6fd",
-                                300: "#7dd3fc",
-                                400: "#38bdf8",
-                                500: "#0ea5e9",
-                                600: "#0284c7",
-                                700: "#0369a1",
-                                800: "#075985",
-                                900: "#0c4a6e",
-                                950: "#082f49",
+                                50: "#fafafa",
+                                100: "#f4f4f5",
+                                200: "#e4e4e7",
+                                300: "#d4d4d8",
+                                400: "#a1a1aa",
+                                500: "#71717a",
+                                600: "#52525b",
+                                700: "#3f3f46",
+                                800: "#27272a",
+                                900: "#18181b",
+                                950: "#09090b",
+                            },
+                            gray: {
+                                50: "#f9fafb",
+                                100: "#f3f4f6",
+                                200: "#e5e7eb",
+                                300: "#d1d5db",
+                                400: "#9ca3af",
+                                500: "#6b7280",
+                                600: "#4b5563",
+                                700: "#374151",
+                                800: "#1f2937",
+                                900: "#11182c",
+                                950: "#030712",
                             },
                         },
                     },
@@ -59,15 +72,15 @@
                 @apply text-primary-600 dark:text-primary-400 border-primary-500 dark:border-primary-400;
             }
             .inactive-tab {
-                @apply border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-600 dark:hover:text-gray-300;
+                @apply border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-300;
             }
         </style>
     </head>
-    <body class="min-h-screen bg-gray-100 text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-200">
+    <body class="min-h-screen bg-zinc-100 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-200">
         <div class="flex min-h-screen flex-col overflow-y-auto">
             <!-- Header -->
             <header
-                class="sticky top-0 z-30 border-b border-gray-200 bg-white px-4 py-2 shadow-sm dark:border-gray-800 dark:bg-gray-900"
+                class="sticky top-0 z-30 border-b border-zinc-200 bg-zinc-50 px-4 py-2 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
             >
                 <div class="flex items-center justify-between">
                     <!-- Logo & Desktop Nav -->
@@ -110,7 +123,7 @@
                         <button
                             id="theme-toggle"
                             type="button"
-                            class="rounded-lg p-2 text-gray-500 transition duration-150 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                            class="rounded-lg p-2 text-zinc-500 transition duration-150 hover:bg-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:focus:ring-zinc-600"
                         >
                             <span class="sr-only">Toggle theme</span>
                             <svg class="block h-5 w-5 dark:hidden" fill="currentColor" viewBox="0 0 20 20">
@@ -127,7 +140,7 @@
                     </div>
                 </div>
                 <!-- Mobile Navigation -->
-                <nav class="mt-1 flex border-t border-gray-200 md:hidden dark:border-gray-700">
+                <nav class="mt-1 flex border-t border-zinc-200 md:hidden dark:border-zinc-700">
                     <button
                         id="config-tab-mobile"
                         class="tab-button inactive-tab flex-1 border-t-2 px-2 py-2.5 text-center text-xs font-medium transition-colors duration-150 ease-in-out"
@@ -160,16 +173,16 @@
             </header>
 
             <!-- Main Content -->
-            <main class="flex-1 overflow-hidden bg-gray-100 p-4 sm:p-6 dark:bg-gray-950">
+            <main class="flex-1 overflow-hidden bg-zinc-100 p-4 sm:p-6 dark:bg-zinc-950">
                 <!-- Tab Content Container -->
                 <div class="h-full">
                     <!-- Configuration Tab -->
                     <section id="config-tab-content" class="tab-content h-full">
                         <div class="grid h-full grid-cols-1 gap-6 lg:grid-cols-2">
                             <!-- Left Panel: New Configuration Form -->
-                            <div class="flex flex-col rounded-xl bg-white p-6 shadow-lg dark:bg-gray-900">
+                            <div class="flex flex-col rounded-xl bg-zinc-50 p-6 shadow-lg dark:bg-zinc-900">
                                 <h2
-                                    class="mb-4 border-b border-gray-200 pb-3 text-lg font-semibold text-gray-900 dark:border-gray-700 dark:text-white"
+                                    class="mb-4 border-b border-zinc-200 pb-3 text-lg font-semibold text-zinc-900 dark:border-zinc-700 dark:text-white"
                                 >
                                     Crear Nueva Configuración
                                 </h2>
@@ -177,7 +190,7 @@
                                     <div>
                                         <label
                                             for="config-name"
-                                            class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                            class="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
                                             >Nombre</label
                                         >
                                         <input
@@ -186,13 +199,13 @@
                                             name="nombre"
                                             placeholder="ej., Edificio Principal"
                                             required
-                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                         />
                                     </div>
                                     <div>
                                         <label
                                             for="nivel-cabecera"
-                                            class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                            class="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
                                             >Nivel de Cabecera (70-120 dBμV)</label
                                         >
                                         <input
@@ -204,13 +217,13 @@
                                             required
                                             min="70"
                                             max="120"
-                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                         />
                                     </div>
                                     <div>
                                         <label
                                             for="num-pisos"
-                                            class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                            class="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
                                             >Número de Pisos</label
                                         >
                                         <input
@@ -220,13 +233,13 @@
                                             min="1"
                                             placeholder="ej., 5"
                                             required
-                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                         />
                                     </div>
                                     <div class="pt-2">
                                         <button
                                             type="submit"
-                                            class="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 dark:bg-primary-500 dark:hover:bg-primary-600 dark:focus:ring-primary-400 w-full rounded-lg px-5 py-2.5 text-sm font-medium text-white shadow-md transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
+                                            class="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 dark:bg-primary-500 dark:hover:bg-primary-600 dark:focus:ring-primary-400 w-full rounded-lg px-5 py-2.5 text-sm font-medium text-white shadow-md transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-zinc-900"
                                         >
                                             Crear Configuración
                                         </button>
@@ -236,10 +249,10 @@
 
                             <!-- Right Panel: Existing Configurations -->
                             <div
-                                class="scrollable-panel flex flex-col rounded-xl bg-white p-6 shadow-lg dark:bg-gray-900"
+                                class="scrollable-panel flex flex-col rounded-xl bg-zinc-50 p-6 shadow-lg dark:bg-zinc-900"
                             >
                                 <h2
-                                    class="mb-4 border-b border-gray-200 pb-3 text-lg font-semibold text-gray-900 dark:border-gray-700 dark:text-white"
+                                    class="mb-4 border-b border-zinc-200 pb-3 text-lg font-semibold text-zinc-900 dark:border-zinc-700 dark:text-white"
                                 >
                                     Configuraciones Existentes
                                 </h2>
@@ -247,12 +260,12 @@
                                     <div>
                                         <label
                                             for="id_configuraciones"
-                                            class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                            class="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
                                             >Seleccionar Configuración</label
                                         >
                                         <select
                                             id="id_configuraciones"
-                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                         >
                                             <option value="">-- Seleccione --</option>
                                             <!-- Options populated by JS -->
@@ -260,52 +273,52 @@
                                     </div>
                                     <div
                                         id="config-details"
-                                        class="mt-4 hidden rounded-lg border border-gray-200 bg-gray-50/50 p-4 dark:border-gray-700 dark:bg-gray-800/50"
+                                        class="mt-4 hidden rounded-lg border border-zinc-200 bg-zinc-50/50 p-4 dark:border-zinc-700 dark:bg-zinc-800/50"
                                     >
-                                        <h3 class="mb-3 text-base font-semibold text-gray-800 dark:text-gray-200">
+                                        <h3 class="mb-3 text-base font-semibold text-zinc-800 dark:text-zinc-200">
                                             Detalles
                                         </h3>
                                         <dl class="grid grid-cols-1 gap-x-4 gap-y-2 text-sm sm:grid-cols-2">
                                             <div
-                                                class="flex justify-between border-b border-gray-200 py-1.5 dark:border-gray-700"
+                                                class="flex justify-between border-b border-zinc-200 py-1.5 dark:border-zinc-700"
                                             >
-                                                <dt class="text-gray-500 dark:text-gray-400">Nombre:</dt>
+                                                <dt class="text-zinc-500 dark:text-zinc-400">Nombre:</dt>
                                                 <dd
                                                     id="config-name-display"
-                                                    class="text-right font-medium text-gray-900 dark:text-white"
+                                                    class="text-right font-medium text-zinc-900 dark:text-white"
                                                 >
                                                     -
                                                 </dd>
                                             </div>
                                             <div
-                                                class="flex justify-between border-b border-gray-200 py-1.5 dark:border-gray-700"
+                                                class="flex justify-between border-b border-zinc-200 py-1.5 dark:border-zinc-700"
                                             >
-                                                <dt class="text-gray-500 dark:text-gray-400">Nivel Cabecera:</dt>
+                                                <dt class="text-zinc-500 dark:text-zinc-400">Nivel Cabecera:</dt>
                                                 <dd
                                                     id="config-headend-display"
-                                                    class="text-right font-medium text-gray-900 dark:text-white"
+                                                    class="text-right font-medium text-zinc-900 dark:text-white"
                                                 >
                                                     -
                                                 </dd>
                                             </div>
                                             <div
-                                                class="flex justify-between border-b border-gray-200 py-1.5 dark:border-gray-700"
+                                                class="flex justify-between border-b border-zinc-200 py-1.5 dark:border-zinc-700"
                                             >
-                                                <dt class="text-gray-500 dark:text-gray-400">Nº Pisos:</dt>
+                                                <dt class="text-zinc-500 dark:text-zinc-400">Nº Pisos:</dt>
                                                 <dd
                                                     id="config-floors-display"
-                                                    class="text-right font-medium text-gray-900 dark:text-white"
+                                                    class="text-right font-medium text-zinc-900 dark:text-white"
                                                 >
                                                     -
                                                 </dd>
                                             </div>
                                             <div
-                                                class="flex justify-between border-b border-gray-200 py-1.5 dark:border-gray-700"
+                                                class="flex justify-between border-b border-zinc-200 py-1.5 dark:border-zinc-700"
                                             >
-                                                <dt class="text-gray-500 dark:text-gray-400">Creada:</dt>
+                                                <dt class="text-zinc-500 dark:text-zinc-400">Creada:</dt>
                                                 <dd
                                                     id="config-date-display"
-                                                    class="text-right font-medium text-gray-900 dark:text-white"
+                                                    class="text-right font-medium text-zinc-900 dark:text-white"
                                                 >
                                                     -
                                                 </dd>
@@ -322,11 +335,11 @@
                         <div class="grid min-h-0 grid-cols-1 gap-6 lg:grid-cols-2">
                             <!-- Left Panel: Add New Component Form -->
                             <div
-                                class="scrollable-panel flex flex-col rounded-xl bg-white p-6 shadow-lg dark:bg-gray-900"
+                                class="scrollable-panel flex flex-col rounded-xl bg-zinc-50 p-6 shadow-lg dark:bg-zinc-900"
                                 style="min-height: calc(100vh - 12rem)"
                             >
                                 <h2
-                                    class="mb-4 border-b border-gray-200 pb-3 text-lg font-semibold text-gray-900 dark:border-gray-700 dark:text-white"
+                                    class="mb-4 border-b border-zinc-200 pb-3 text-lg font-semibold text-zinc-900 dark:border-zinc-700 dark:text-white"
                                 >
                                     Añadir Nuevo Componente
                                 </h2>
@@ -334,14 +347,14 @@
                                     <div>
                                         <label
                                             for="component-type"
-                                            class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                            class="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
                                             >Tipo</label
                                         >
                                         <select
                                             id="component-type"
                                             name="type"
                                             required
-                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                         >
                                             <option value="">-- Seleccionar tipo --</option>
                                             <option value="coaxial">Cable Coaxial</option>
@@ -353,7 +366,7 @@
                                     <div>
                                         <label
                                             for="component-model"
-                                            class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                            class="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
                                             >Modelo</label
                                         >
                                         <input
@@ -362,13 +375,13 @@
                                             name="modelo"
                                             placeholder="ej., RG-6 / FP-2D"
                                             required
-                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                         />
                                     </div>
                                     <div>
                                         <label
                                             for="component-cost"
-                                            class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                            class="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
                                             >Costo (€)</label
                                         >
                                         <input
@@ -379,20 +392,20 @@
                                             placeholder="ej., 10.50"
                                             required
                                             min="0"
-                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                         />
                                     </div>
                                     <!-- Dynamic Fields Container -->
                                     <fieldset
                                         id="dynamic-fields-container"
-                                        class="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700"
+                                        class="mt-4 border-t border-zinc-200 pt-4 dark:border-zinc-700"
                                     >
-                                        <legend class="mb-3 text-sm font-medium text-gray-500 dark:text-gray-400">
+                                        <legend class="mb-3 text-sm font-medium text-zinc-500 dark:text-zinc-400">
                                             Propiedades Específicas
                                         </legend>
                                         <div id="dynamic-fields" class="space-y-4">
                                             <!-- JS inserts fields here -->
-                                            <p class="text-sm italic text-gray-400 dark:text-gray-500">
+                                            <p class="text-sm italic text-zinc-400 dark:text-zinc-500">
                                                 Seleccione un tipo de componente.
                                             </p>
                                         </div>
@@ -400,7 +413,7 @@
                                     <div class="pt-2">
                                         <button
                                             type="submit"
-                                            class="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 dark:bg-primary-500 dark:hover:bg-primary-600 dark:focus:ring-primary-400 w-full rounded-lg px-5 py-2.5 text-sm font-medium text-white shadow-md transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
+                                            class="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 dark:bg-primary-500 dark:hover:bg-primary-600 dark:focus:ring-primary-400 w-full rounded-lg px-5 py-2.5 text-sm font-medium text-white shadow-md transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-zinc-900"
                                         >
                                             Añadir Componente
                                         </button>
@@ -410,11 +423,11 @@
 
                             <!-- Right Panel: Component Lists -->
                             <div
-                                class="scrollable-panel flex flex-col rounded-xl bg-white p-6 shadow-lg dark:bg-gray-900"
+                                class="scrollable-panel flex flex-col rounded-xl bg-zinc-50 p-6 shadow-lg dark:bg-zinc-900"
                                 style="min-height: calc(100vh - 12rem)"
                             >
                                 <h2
-                                    class="mb-4 border-b border-gray-200 pb-3 text-lg font-semibold text-gray-900 dark:border-gray-700 dark:text-white"
+                                    class="mb-4 border-b border-zinc-200 pb-3 text-lg font-semibold text-zinc-900 dark:border-zinc-700 dark:text-white"
                                 >
                                     Componentes Disponibles
                                 </h2>
@@ -422,12 +435,12 @@
                                     <div>
                                         <label
                                             for="component-list-type"
-                                            class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                            class="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
                                             >Mostrar Tipo</label
                                         >
                                         <select
                                             id="component-list-type"
-                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                         >
                                             <option value="coaxial">Cables Coaxiales</option>
                                             <option value="derivador">Derivadores</option>
@@ -457,10 +470,10 @@
                         <div class="grid min-h-0 grid-cols-1 gap-6 lg:grid-cols-3">
                             <!-- Left Column: Configuration and Controls -->
                             <div
-                                class="scrollable-panel flex flex-col rounded-xl bg-white p-6 shadow-lg lg:col-span-1 dark:bg-gray-900"
+                                class="scrollable-panel flex flex-col rounded-xl bg-zinc-50 p-6 shadow-lg lg:col-span-1 dark:bg-zinc-900"
                             >
                                 <h2
-                                    class="mb-4 border-b border-gray-200 pb-3 text-lg font-semibold text-gray-900 dark:border-gray-700 dark:text-white"
+                                    class="mb-4 border-b border-zinc-200 pb-3 text-lg font-semibold text-zinc-900 dark:border-zinc-700 dark:text-white"
                                 >
                                     Parámetros de Simulación
                                 </h2>
@@ -469,13 +482,13 @@
                                     <div>
                                         <label
                                             for="simulation-config"
-                                            class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                            class="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
                                             >Configuración Edificio</label
                                         >
                                         <select
                                             id="simulation-config"
                                             name="id_configuraciones"
-                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                         >
                                             <option value="">-- Seleccione --</option>
                                         </select>
@@ -483,13 +496,13 @@
                                     <div>
                                         <label
                                             for="signal-type"
-                                            class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                            class="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
                                             >Tipo de Señal (Márgenes)</label
                                         >
                                         <select
                                             id="signal-type"
                                             name="tipo_senal"
-                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                         >
                                             <option value="">-- Seleccione --</option>
                                         </select>
@@ -497,7 +510,7 @@
                                     <div>
                                         <label
                                             for="signal-frequency"
-                                            class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                            class="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
                                             >Frecuencia (470-694 MHz)</label
                                         >
                                         <input
@@ -509,25 +522,25 @@
                                             step="1"
                                             value="470"
                                             required
-                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                            class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                         />
                                     </div>
 
                                     <!-- Component Selection for Schematic -->
-                                    <fieldset class="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700">
-                                        <legend class="mb-3 text-sm font-medium text-gray-500 dark:text-gray-400">
+                                    <fieldset class="mt-4 border-t border-zinc-200 pt-4 dark:border-zinc-700">
+                                        <legend class="mb-3 text-sm font-medium text-zinc-500 dark:text-zinc-400">
                                             Diseño Esquemático
                                         </legend>
                                         <div class="space-y-5">
                                             <div>
                                                 <label
                                                     for="simulation-floor"
-                                                    class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                                    class="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
                                                     >Piso Activo (para Editar)</label
                                                 >
                                                 <select
                                                     id="simulation-floor"
-                                                    class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                                    class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                                 >
                                                     <option value="">-- Seleccione Configuración --</option>
                                                     <!-- Options populated by JS -->
@@ -536,19 +549,19 @@
                                             <div>
                                                 <label
                                                     for="cable-select"
-                                                    class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                                    class="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
                                                     >Modelo Cable Coaxial</label
                                                 >
                                                 <select
                                                     id="cable-select"
-                                                    class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                                                    class="focus:border-primary-500 focus:ring-primary-500 dark:focus:border-primary-400 dark:focus:ring-primary-400 block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:ring focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                                                 >
                                                     <!-- Options populated by JS -->
                                                     <option value="">-- Cargando cables --</option>
                                                 </select>
                                             </div>
                                             <div
-                                                class="rounded-lg border border-dashed border-gray-300 bg-gray-50/50 p-3 text-xs text-gray-600 dark:border-gray-600 dark:bg-gray-800/30 dark:text-gray-400"
+                                                class="rounded-lg border border-dashed border-zinc-300 bg-zinc-50/50 p-3 text-xs text-zinc-600 dark:border-zinc-600 dark:bg-zinc-800/30 dark:text-zinc-400"
                                             >
                                                 <p>
                                                     <strong class="font-medium">Instrucciones:</strong> Seleccione un
@@ -563,7 +576,7 @@
                                     <div class="pt-2">
                                         <button
                                             id="run-simulation"
-                                            class="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 dark:bg-primary-500 dark:hover:bg-primary-600 dark:focus:ring-primary-400 w-full rounded-lg px-5 py-2.5 text-sm font-medium text-white shadow-md transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900"
+                                            class="bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 dark:bg-primary-500 dark:hover:bg-primary-600 dark:focus:ring-primary-400 w-full rounded-lg px-5 py-2.5 text-sm font-medium text-white shadow-md transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-zinc-900"
                                         >
                                             Ejecutar Simulación
                                         </button>
@@ -573,21 +586,21 @@
 
                             <!-- Right Column: Canvas -->
                             <div
-                                class="flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-lg lg:col-span-2 dark:bg-gray-900"
+                                class="flex h-full flex-col overflow-hidden rounded-xl bg-zinc-50 shadow-lg lg:col-span-2 dark:bg-zinc-900"
                                 style="min-height: calc(100vh - 12rem)"
                             >
                                 <!-- Canvas Header -->
                                 <div
-                                    class="flex flex-shrink-0 items-center justify-between border-b border-gray-200 bg-gray-50 p-3 dark:border-gray-800 dark:bg-gray-800/50"
+                                    class="flex flex-shrink-0 items-center justify-between border-b border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-800/50"
                                 >
-                                    <h2 class="text-base font-medium text-gray-900 dark:text-white">
+                                    <h2 class="text-base font-medium text-zinc-900 dark:text-white">
                                         Editor de Esquemático
                                     </h2>
                                     <div class="flex items-center space-x-2">
                                         <button
                                             id="zoom-in"
                                             title="Acercar"
-                                            class="rounded-md p-1.5 text-gray-500 shadow-sm transition hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+                                            class="rounded-md p-1.5 text-zinc-500 shadow-sm transition hover:bg-zinc-200 dark:bg-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-600"
                                         >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -607,7 +620,7 @@
                                         <button
                                             id="zoom-out"
                                             title="Alejar"
-                                            class="rounded-md p-1.5 text-gray-500 shadow-sm transition hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+                                            class="rounded-md p-1.5 text-zinc-500 shadow-sm transition hover:bg-zinc-200 dark:bg-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-600"
                                         >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -623,7 +636,7 @@
                                         <button
                                             id="reset-view"
                                             title="Restablecer Vista"
-                                            class="rounded-md p-1.5 text-gray-500 shadow-sm transition hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+                                            class="rounded-md p-1.5 text-zinc-500 shadow-sm transition hover:bg-zinc-200 dark:bg-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-600"
                                         >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -643,7 +656,7 @@
                                     </div>
                                 </div>
                                 <!-- Canvas Area -->
-                                <div class="relative flex-1 bg-gray-50 dark:bg-gray-800/30">
+                                <div class="relative flex-1 bg-zinc-50 dark:bg-zinc-800/30">
                                     <canvas id="schematic-canvas" class="absolute inset-0 h-full w-full"></canvas>
                                 </div>
                             </div>
@@ -655,39 +668,39 @@
                         <div class="grid min-h-0 grid-cols-1 gap-6 lg:grid-cols-2">
                             <!-- Left Panel: Signal Levels Table -->
                             <div
-                                class="flex flex-col overflow-hidden rounded-xl bg-white p-6 shadow-lg dark:bg-gray-900"
+                                class="flex flex-col overflow-hidden rounded-xl bg-zinc-50 p-6 shadow-lg dark:bg-zinc-900"
                                 style="min-height: calc(100vh - 12rem)"
                             >
                                 <h2
-                                    class="mb-4 flex-shrink-0 border-b border-gray-200 pb-3 text-lg font-semibold text-gray-900 dark:border-gray-700 dark:text-white"
+                                    class="mb-4 flex-shrink-0 border-b border-zinc-200 pb-3 text-lg font-semibold text-zinc-900 dark:border-zinc-700 dark:text-white"
                                 >
                                     Niveles de Señal
                                 </h2>
                                 <div class="custom-scrollbar -mx-6 flex-grow overflow-y-auto px-6">
-                                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                        <thead class="sticky top-0 bg-gray-50 dark:bg-gray-800">
+                                    <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
+                                        <thead class="sticky top-0 bg-zinc-50 dark:bg-zinc-800">
                                             <tr>
                                                 <th
                                                     scope="col"
-                                                    class="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                                                    class="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
                                                 >
                                                     Piso
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    class="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                                                    class="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
                                                 >
                                                     Nivel (dBµV)
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    class="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                                                    class="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
                                                 >
                                                     Estado
                                                 </th>
                                                 <th
                                                     scope="col"
-                                                    class="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                                                    class="px-4 py-2.5 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
                                                 >
                                                     Costo Piso (€)
                                                 </th>
@@ -695,13 +708,13 @@
                                         </thead>
                                         <tbody
                                             id="signal-levels-table"
-                                            class="divide-y divide-gray-200 dark:divide-gray-700"
+                                            class="divide-y divide-zinc-200 dark:divide-zinc-700"
                                         >
                                             <!-- JS inserts rows here -->
                                             <tr>
                                                 <td
                                                     colspan="4"
-                                                    class="px-6 py-10 text-center text-sm text-gray-500 dark:text-gray-400"
+                                                    class="px-6 py-10 text-center text-sm text-zinc-500 dark:text-zinc-400"
                                                 >
                                                     Ejecute una simulación para ver los resultados.
                                                 </td>
@@ -713,65 +726,65 @@
 
                             <!-- Right Panel: Summary and Visualization -->
                             <div
-                                class="flex flex-col space-y-6 overflow-hidden rounded-xl bg-white p-6 shadow-lg dark:bg-gray-900"
+                                class="flex flex-col space-y-6 overflow-hidden rounded-xl bg-zinc-50 p-6 shadow-lg dark:bg-zinc-900"
                                 style="min-height: calc(100vh - 12rem)"
                             >
                                 <h2
-                                    class="mb-0 flex-shrink-0 border-b border-gray-200 pb-3 text-lg font-semibold text-gray-900 dark:border-gray-700 dark:text-white"
+                                    class="mb-0 flex-shrink-0 border-b border-zinc-200 pb-3 text-lg font-semibold text-zinc-900 dark:border-zinc-700 dark:text-white"
                                 >
                                     Resumen de Simulación
                                 </h2>
                                 <div id="simulation-summary" class="space-y-4">
                                     <dl class="grid grid-cols-1 gap-x-4 gap-y-3 text-sm sm:grid-cols-2">
                                         <div
-                                            class="flex justify-between border-b border-gray-200 py-1.5 dark:border-gray-700"
+                                            class="flex justify-between border-b border-zinc-200 py-1.5 dark:border-zinc-700"
                                         >
-                                            <dt class="text-gray-500 dark:text-gray-400">Nivel Cabecera:</dt>
-                                            <dd id="headend-level" class="font-medium text-gray-900 dark:text-white">
+                                            <dt class="text-zinc-500 dark:text-zinc-400">Nivel Cabecera:</dt>
+                                            <dd id="headend-level" class="font-medium text-zinc-900 dark:text-white">
                                                 -
                                             </dd>
                                         </div>
                                         <div
-                                            class="flex justify-between border-b border-gray-200 py-1.5 dark:border-gray-700"
+                                            class="flex justify-between border-b border-zinc-200 py-1.5 dark:border-zinc-700"
                                         >
-                                            <dt class="text-gray-500 dark:text-gray-400">Márgenes:</dt>
-                                            <dd id="quality-margins" class="font-medium text-gray-900 dark:text-white">
+                                            <dt class="text-zinc-500 dark:text-zinc-400">Márgenes:</dt>
+                                            <dd id="quality-margins" class="font-medium text-zinc-900 dark:text-white">
                                                 -
                                             </dd>
                                         </div>
                                         <div
-                                            class="flex justify-between border-b border-gray-200 py-1.5 dark:border-gray-700"
+                                            class="flex justify-between border-b border-zinc-200 py-1.5 dark:border-zinc-700"
                                         >
-                                            <dt class="text-gray-500 dark:text-gray-400">Costo Total:</dt>
-                                            <dd id="total-cost" class="font-medium text-gray-900 dark:text-white">-</dd>
+                                            <dt class="text-zinc-500 dark:text-zinc-400">Costo Total:</dt>
+                                            <dd id="total-cost" class="font-medium text-zinc-900 dark:text-white">-</dd>
                                         </div>
                                         <div
-                                            class="flex justify-between border-b border-gray-200 py-1.5 dark:border-gray-700"
+                                            class="flex justify-between border-b border-zinc-200 py-1.5 dark:border-zinc-700"
                                         >
-                                            <dt class="text-gray-500 dark:text-gray-400">Estado General:</dt>
-                                            <dd id="overall-status" class="font-medium text-gray-900 dark:text-white">
+                                            <dt class="text-zinc-500 dark:text-zinc-400">Estado General:</dt>
+                                            <dd id="overall-status" class="font-medium text-zinc-900 dark:text-white">
                                                 -
                                             </dd>
                                         </div>
                                     </dl>
-                                    <p class="pt-2 text-center text-xs text-gray-400 dark:text-gray-500">
+                                    <p class="pt-2 text-center text-xs text-zinc-400 dark:text-zinc-500">
                                         Ejecute una simulación para ver el resumen.
                                     </p>
                                 </div>
 
                                 <h2
-                                    class="mb-0 flex-shrink-0 border-b border-gray-200 pb-3 text-lg font-semibold text-gray-900 dark:border-gray-700 dark:text-white"
+                                    class="mb-0 flex-shrink-0 border-b border-zinc-200 pb-3 text-lg font-semibold text-zinc-900 dark:border-zinc-700 dark:text-white"
                                 >
                                     Visualización de Niveles
                                 </h2>
                                 <div
-                                    class="relative flex flex-grow items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50/50 dark:border-gray-600 dark:bg-gray-800/30"
+                                    class="relative flex flex-grow items-center justify-center rounded-lg border border-dashed border-zinc-300 bg-zinc-50/50 dark:border-zinc-600 dark:bg-zinc-800/30"
                                 >
                                     <!-- Chart.js canvas will be inserted here -->
                                     <canvas id="results-chart" class="h-full w-full"></canvas>
                                     <p
                                         id="chart-placeholder-text"
-                                        class="absolute inset-0 flex items-center justify-center text-sm text-gray-400 dark:text-gray-500"
+                                        class="absolute inset-0 flex items-center justify-center text-sm text-zinc-400 dark:text-zinc-500"
                                     >
                                         Gráfico de resultados aparecerá aquí.
                                     </p>
@@ -824,15 +837,15 @@
 
             <!-- Footer -->
             <footer
-                class="flex-shrink-0 border-t border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900"
+                class="flex-shrink-0 border-t border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900"
             >
                 <div class="flex items-center justify-center space-x-4">
-                    <p class="text-center text-xs text-gray-500 dark:text-gray-400">Simulador de Señales © 2025</p>
+                    <p class="text-center text-xs text-zinc-500 dark:text-zinc-400">Simulador de Señales © 2025</p>
                     <a
                         href="https://github.com/jjaroztegi/BuildingSignalSimulator"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-gray-400 transition hover:text-gray-600 dark:hover:text-gray-300"
+                        class="text-zinc-400 transition hover:text-zinc-600 dark:hover:text-zinc-300"
                         title="Ver en GitHub"
                     >
                         <span class="sr-only">GitHub</span>

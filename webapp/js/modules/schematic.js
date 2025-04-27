@@ -64,19 +64,19 @@ export class SchematicEditor {
 
         // --- Colors ---
         this.COLORS = {
-            bt: { light: "#4CAF50", dark: "#66BB6A" }, // Green
-            di: { light: "#2196F3", dark: "#42A5F5" }, // Blue
-            de: { light: "#FFC107", dark: "#FFCA28" }, // Amber
-            cable: { light: "#757575", dark: "#9E9E9E" }, // Adjusted gray
-            textLightBg: { light: "#FFFFFF", dark: "#FFFFFF" }, // White text on components
-            textDarkBg: { light: "#424242", dark: "#E0E0E0" }, // Darker text on light bg
-            placeholderStroke: { light: "#BDBDBD", dark: "#757575" },
-            placeholderFill: { light: "rgba(224, 224, 224, 0.1)", dark: "rgba(97, 97, 97, 0.1)" },
-            componentStroke: { light: "rgba(0, 0, 0, 0.3)", dark: "rgba(255, 255, 255, 0.2)" },
-            grid: { light: "rgba(0, 0, 0, 0.08)", dark: "rgba(255, 255, 255, 0.08)" },
-            tempMessageBg: { light: "#FFF9C4", dark: "#424242" }, // Lighter Yellow / Dark Grey
-            tempMessageBorder: { light: "#FBC02D", dark: "#616161" },
-            tempMessageText: { light: "#5D4037", dark: "#CFD8DC" },
+            bt: { light: "#22c55e", dark: "#4ade80" }, // Example: Keep Green or switch to a neutral zinc
+            di: { light: "#0ea5e9", dark: "#38bdf8" }, // Example: Keep Blue or switch to a neutral zinc
+            de: { light: "#f59e0b", dark: "#facc15" }, // Example: Keep Amber or switch to a neutral zinc
+            cable: { light: "#a1a1aa", dark: "#d4d4d8" }, // Zinc 400 / Zinc 300
+            textLightBg: { light: "#ffffff", dark: "#ffffff" }, // White text on dark components still likely best
+            textDarkBg: { light: "#18181b", dark: "#f4f4f5" }, // Zinc 900 / Zinc 100 (for text on light/dark backgrounds)
+            placeholderStroke: { light: "#a1a1aa", dark: "#71717a" }, // Zinc 400 / Zinc 500
+            placeholderFill: { light: "rgba(228, 228, 231, 0.1)", dark: "rgba(113, 113, 122, 0.1)" }, // Zinc 200 / Zinc 500 transparent
+            componentStroke: { light: "rgba(0, 0, 0, 0.2)", dark: "rgba(255, 255, 255, 0.15)" }, // Subtler strokes
+            grid: { light: "rgba(0, 0, 0, 0.06)", dark: "rgba(255, 255, 255, 0.06)" }, // Fainter grid
+            tempMessageBg: { light: "#fefce8", dark: "#3f3f46" }, // Lighter Yellow / Zinc 700
+            tempMessageBorder: { light: "#eab308", dark: "#52525b" }, // Yellow 600 / Zinc 600
+            tempMessageText: { light: "#713f12", dark: "#e4e4e7" }, // Amber 900 / Zinc 200
         };
 
         requestAnimationFrame(() => {
@@ -670,7 +670,7 @@ export class SchematicEditor {
         const popup = document.createElement("div");
         popup.id = "component-selector-popup";
         popup.className =
-            "fixed z-50 p-4 bg-white rounded-lg shadow-xl dark:bg-gray-800 border border-gray-200 dark:border-gray-700";
+            "fixed z-50 p-4 bg-zinc-50 rounded-lg shadow-xl dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700";
         popup.style.left = `${event.clientX + 10}px`;
         popup.style.top = `${event.clientY + 5}px`;
         popup.style.minWidth = "200px";
@@ -724,7 +724,7 @@ export class SchematicEditor {
 
         // --- Build Popup DOM ---
         const title = document.createElement("h3");
-        title.className = "text-lg font-medium mb-3 text-gray-900 dark:text-white";
+        title.className = "text-lg font-medium mb-3 text-zinc-900 dark:text-white";
         title.textContent = titleText;
         popup.appendChild(title);
 
@@ -733,7 +733,7 @@ export class SchematicEditor {
 
         if (!models || models.length === 0) {
             const message = document.createElement("p");
-            message.className = "text-sm text-gray-500 dark:text-gray-400 px-3 py-1";
+            message.className = "text-sm text-zinc-500 dark:text-zinc-400 px-3 py-1";
             message.textContent = "No hay modelos disponibles.";
             list.appendChild(message);
         } else {
@@ -746,7 +746,7 @@ export class SchematicEditor {
                 button.className = `flex-grow text-left px-3 py-1.5 text-sm rounded-l transition-colors duration-150 ${
                     model === currentModel
                         ? "bg-primary-100 dark:bg-primary-700 font-medium text-primary-700 dark:text-primary-100"
-                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        : "text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700"
                 }`;
                 button.textContent = model;
 
@@ -765,10 +765,10 @@ export class SchematicEditor {
 
                 const infoButton = document.createElement("button");
                 infoButton.type = "button";
-                infoButton.className = `p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 rounded-r transition-colors duration-150 ${
+                infoButton.className = `p-1.5 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 rounded-r transition-colors duration-150 ${
                     model === currentModel
                         ? "bg-primary-100 dark:bg-primary-700"
-                        : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                        : "hover:bg-zinc-100 dark:hover:bg-zinc-700"
                 }`;
                 infoButton.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -795,7 +795,7 @@ export class SchematicEditor {
         // --- Add Remove/Cancel Buttons ---
         const buttonContainer = document.createElement("div");
         buttonContainer.className =
-            "flex justify-between items-center pt-3 mt-1 border-t border-gray-200 dark:border-gray-700";
+            "flex justify-between items-center pt-3 mt-1 border-t border-zinc-200 dark:border-zinc-700";
 
         if (currentModel !== null && removalHandler) {
             const removeButton = document.createElement("button");
@@ -816,7 +816,7 @@ export class SchematicEditor {
         cancelButton.type = "button";
         cancelButton.textContent = "Cancelar";
         cancelButton.className =
-            "text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1 rounded bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500";
+            "text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 px-3 py-1 rounded bg-zinc-100 dark:bg-zinc-600 hover:bg-zinc-200 dark:hover:bg-zinc-500";
         cancelButton.onclick = () => this.removeExistingPopups();
         buttonContainer.appendChild(cancelButton);
 
@@ -833,13 +833,13 @@ export class SchematicEditor {
         const popup = document.createElement("div");
         popup.id = "toma-quantity-selector";
         popup.className =
-            "fixed z-50 p-4 bg-white rounded-lg shadow-xl dark:bg-gray-800 border border-gray-200 dark:border-gray-700";
+            "fixed z-50 p-4 bg-zinc-50 rounded-lg shadow-xl dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700";
         popup.style.left = `${event.clientX + 10}px`;
         popup.style.top = `${event.clientY + 5}px`;
         popup.style.minWidth = "200px";
 
         const title = document.createElement("h3");
-        title.className = "text-lg font-medium mb-3 text-gray-900 dark:text-white";
+        title.className = "text-lg font-medium mb-3 text-zinc-900 dark:text-white";
         title.textContent = "Seleccionar Cantidad de Tomas";
         popup.appendChild(title);
 
@@ -850,7 +850,7 @@ export class SchematicEditor {
             const button = document.createElement("button");
             button.type = "button";
             button.className =
-                "text-left px-3 py-2 text-sm rounded transition-colors duration-150 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700";
+                "text-left px-3 py-2 text-sm rounded transition-colors duration-150 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700";
             button.textContent = `${quantity} Tomas`;
             button.onclick = (e) => {
                 e.stopPropagation();
@@ -866,7 +866,7 @@ export class SchematicEditor {
         cancelButton.type = "button";
         cancelButton.textContent = "Cancelar";
         cancelButton.className =
-            "mt-3 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1 rounded bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500";
+            "mt-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 px-3 py-1 rounded bg-zinc-100 dark:bg-zinc-600 hover:bg-zinc-200 dark:hover:bg-zinc-500";
         cancelButton.onclick = (e) => {
             e.stopPropagation();
             popup.remove();
@@ -918,7 +918,7 @@ export class SchematicEditor {
         const detailsPopup = document.createElement("div");
         detailsPopup.id = "component-details-popup";
         detailsPopup.className =
-            "fixed z-50 p-4 bg-white rounded-lg shadow-xl dark:bg-gray-800 border border-gray-200 dark:border-gray-700";
+            "fixed z-50 p-4 bg-zinc-50 rounded-lg shadow-xl dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700";
 
         // Position the popup to the right of the info button
         detailsPopup.style.left = `${event.clientX + 30}px`;
@@ -927,10 +927,10 @@ export class SchematicEditor {
 
         // Title
         const title = document.createElement("h3");
-        title.className = "text-base font-medium mb-3 text-gray-900 dark:text-white flex items-center justify-between";
+        title.className = "text-base font-medium mb-3 text-zinc-900 dark:text-white flex items-center justify-between";
         title.innerHTML = `
             <span>Detalles de ${model}</span>
-            <button class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300" onclick="this.closest('#component-details-popup').remove()">
+            <button class="text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300" onclick="this.closest('#component-details-popup').remove()">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -945,8 +945,8 @@ export class SchematicEditor {
         // Add cost (common to all components)
         content.innerHTML = `
             <div class="flex justify-between items-center">
-                <span class="text-gray-600 dark:text-gray-400">Costo:</span>
-                <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.costo?.toFixed(2) ?? "-"} €</span>
+                <span class="text-zinc-600 dark:text-zinc-400">Costo:</span>
+                <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.costo?.toFixed(2) ?? "-"} €</span>
             </div>
         `;
 
@@ -959,8 +959,8 @@ export class SchematicEditor {
             componentFields[apiType].forEach((field) => {
                 content.innerHTML += `
                     <div class="flex justify-between items-center">
-                        <span class="text-gray-600 dark:text-gray-400">${field.label.replace(" (dB)", "").replace(" (dB/100m)", "")}:</span>
-                        <span class="font-medium text-gray-800 dark:text-gray-200">
+                        <span class="text-zinc-600 dark:text-zinc-400">${field.label.replace(" (dB)", "").replace(" (dB/100m)", "")}:</span>
+                        <span class="font-medium text-zinc-800 dark:text-zinc-200">
                             ${componentData[field.name]?.toFixed(field.step === "0.01" ? 2 : 1) ?? "-"}
                             ${field.label.includes("dB/100m") ? " dB/100m" : field.label.includes("dB") ? " dB" : ""}
                         </span>

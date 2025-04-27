@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (error) {
             console.error(`Error fetching or displaying ${type} components:`, error);
             displayError(`Error al cargar ${type}: ${error.message}`, errorMessageElement, successMessageElement);
-            listElement.innerHTML = `<div class="text-gray-500 dark:text-gray-400">Error al cargar componentes.</div>`;
+            listElement.innerHTML = `<div class="text-zinc-500 dark:text-zinc-400">Error al cargar componentes.</div>`;
         }
     }
 

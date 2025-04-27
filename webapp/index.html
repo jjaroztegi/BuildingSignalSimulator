@@ -13,18 +13,31 @@
                     extend: {
                         colors: {
                             primary: {
-                                50: "#f0f9ff",
-                                100: "#e0f2fe",
-                                200: "#bae6fd",
-                                300: "#7dd3fc",
-                                400: "#38bdf8",
-                                500: "#0ea5e9",
-                                600: "#0284c7",
-                                700: "#0369a1",
-                                800: "#075985",
-                                900: "#0c4a6e",
-                                950: "#082f49",
+                                50: '#fafafa',
+                                100: '#f4f4f5',
+                                200: '#e4e4e7',
+                                300: '#d4d4d8',
+                                400: '#a1a1aa',
+                                500: '#71717a',
+                                600: '#52525b',
+                                700: '#3f3f46',
+                                800: '#27272a',
+                                900: '#18181b',
+                                950: '#09090b',
                             },
+                            gray: {
+                                50: '#f9fafb',
+                                100: '#f3f4f6',
+                                200: '#e5e7eb',
+                                300: '#d1d5db',
+                                400: '#9ca3af',
+                                500: '#6b7280',
+                                600: '#4b5563',
+                                700: '#374151',
+                                800: '#1f2937',
+                                900: '#11182c',
+                                950: '#030712',
+                            }
                         },
                     },
                 },
@@ -36,20 +49,20 @@
             initTheme();
         </script>
     </head>
-    <body class="bg-gray-100 font-sans text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-200">
+    <body class="bg-zinc-100 font-sans text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-200">
         <!-- Hero Section -->
         <div
-            class="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-950 dark:to-gray-900"
+            class="relative overflow-hidden bg-gradient-to-r from-zinc-200 via-zinc-200 to-zinc-300 dark:from-zinc-950 dark:via-zinc-950 dark:to-zinc-900"
         >
             <!-- Background Image -->
-            <div class="absolute inset-y-0 right-0 z-0 w-full md:w-3/5 lg:w-1/2">
+            <div class="absolute inset-y-0 right-0 z-0 w-full">
                 <img
-                    src="img/building.png"
+                    src="img/building.jpg"
                     alt="Modern building schematic"
-                    class="h-full w-full object-cover object-right opacity-80 dark:opacity-60"
+                    class="h-full w-full object-cover object-right opacity-85 dark:opacity-50"
                 />
                 <div
-                    class="absolute inset-0 bg-gradient-to-l from-transparent via-gray-100/30 to-gray-100 dark:via-gray-950/30 dark:to-gray-950"
+                    class="absolute inset-0 bg-gradient-to-r from-zinc-200 via-zinc-200/60 to-transparent dark:from-zinc-950 dark:via-zinc-950/60"
                 ></div>
             </div>
 
@@ -63,7 +76,7 @@
                         <button
                             id="theme-toggle"
                             type="button"
-                            class="rounded-lg p-2.5 text-gray-500 transition duration-150 hover:bg-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+                            class="rounded-lg p-2.5 text-zinc-500 transition duration-150 hover:bg-zinc-200 focus:outline-none focus:ring-4 focus:ring-zinc-200 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:focus:ring-zinc-700"
                         >
                             <span class="sr-only">Toggle theme</span>
                             <!-- Moon Icon -->
@@ -92,10 +105,10 @@
                     </div>
 
                     <!-- Text Content -->
-                    <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
+                    <h1 class="text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl dark:text-white">
                         Simulador de Señales en Edificios
                     </h1>
-                    <p class="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
+                    <p class="mt-6 text-lg leading-8 text-zinc-600 dark:text-zinc-300">
                         Diseñe y simule redes de distribución de señales tipo árbol-rama para edificios. Optimice
                         niveles y asegure calidad TDT.
                     </p>
@@ -108,7 +121,7 @@
                         </a>
                         <a
                             href="#learn-more"
-                            class="hover:text-primary-600 dark:hover:text-primary-400 text-sm font-semibold leading-6 text-gray-900 transition dark:text-gray-100"
+                            class="hover:text-primary-600 dark:hover:text-primary-400 text-sm font-semibold leading-6 text-zinc-900 transition dark:text-zinc-100"
                         >
                             Más información <span aria-hidden="true">→</span>
                         </a>
@@ -118,16 +131,16 @@
         </div>
 
         <!-- Project Description -->
-        <div id="learn-more" class="bg-white py-24 sm:py-32 dark:bg-gray-900">
+        <div id="learn-more" class="bg-zinc-50 py-24 sm:py-32 dark:bg-zinc-900">
             <div class="mx-auto max-w-7xl px-6 lg:px-8">
                 <div class="mx-auto max-w-3xl lg:text-center">
                     <h2 class="text-primary-600 dark:text-primary-400 text-base font-semibold leading-7">
                         Descripción del Ejercicio
                     </h2>
-                    <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
+                    <p class="mt-2 text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl dark:text-white">
                         Optimización de Redes TDT en Edificios
                     </p>
-                    <p class="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
+                    <p class="mt-6 text-lg leading-8 text-zinc-600 dark:text-zinc-300">
                         Diseñe redes eficientes para distribución de TDT, asegurando niveles de señal óptimos en cada
                         toma y cumpliendo las normativas (nivel cabecera &lt; 120 dBμV).
                     </p>
@@ -159,10 +172,10 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <h3 class="text-base font-semibold leading-7 text-gray-900 dark:text-white">
+                                    <h3 class="text-base font-semibold leading-7 text-zinc-900 dark:text-white">
                                         Estructura del Edificio
                                     </h3>
-                                    <p class="mt-2 text-justify text-base leading-7 text-gray-600 dark:text-gray-300">
+                                    <p class="mt-2 text-justify text-base leading-7 text-zinc-600 dark:text-zinc-300">
                                         Modelo flexible para edificios multi-planta (3m/planta). Incluye estructura
                                         estándar: derivador, distribuidor, y 2/4 tomas por planta con cables coaxiales
                                         de longitudes predefinidas (3m inter-planta, 10m DE-DI, 5m DI-BT).
@@ -192,10 +205,10 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <h3 class="text-base font-semibold leading-7 text-gray-900 dark:text-white">
+                                    <h3 class="text-base font-semibold leading-7 text-zinc-900 dark:text-white">
                                         Componentes de Red
                                     </h3>
-                                    <p class="mt-2 text-justify text-base leading-7 text-gray-600 dark:text-gray-300">
+                                    <p class="mt-2 text-justify text-base leading-7 text-zinc-600 dark:text-zinc-300">
                                         Amplia biblioteca: cables coaxiales, derivadores, distribuidores, tomas. Datos
                                         precisos de atenuación y características técnicas.
                                     </p>
@@ -224,10 +237,10 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <h3 class="text-base font-semibold leading-7 text-gray-900 dark:text-white">
+                                    <h3 class="text-base font-semibold leading-7 text-zinc-900 dark:text-white">
                                         Análisis de Señal
                                     </h3>
-                                    <p class="mt-2 text-justify text-base leading-7 text-gray-600 dark:text-gray-300">
+                                    <p class="mt-2 text-justify text-base leading-7 text-zinc-600 dark:text-zinc-300">
                                         Cálculo de niveles en el espectro TDT (470-694 MHz). Validación automática
                                         contra márgenes de calidad y optimización de costes.
                                     </p>
@@ -239,7 +252,7 @@
                             <img
                                 src="img/NetworkDiagram.png"
                                 alt="Diagrama de red árbol-rama en un edificio"
-                                class="w-full max-w-md rounded-xl bg-gray-50 shadow-xl ring-1 ring-gray-900/5 dark:bg-gray-800/50 dark:ring-white/10"
+                                class="w-full max-w-md rounded-xl bg-zinc-50 shadow-xl ring-1 ring-zinc-900/5 dark:bg-zinc-800/50 dark:ring-zinc-500/10"
                             />
                         </div>
                     </div>
@@ -248,7 +261,7 @@
         </div>
 
         <!-- Features Section -->
-        <div class="bg-gray-900 py-24 sm:py-32 dark:bg-gray-950">
+        <div class="bg-zinc-900 py-24 sm:py-32 dark:bg-zinc-950">
             <div class="mx-auto max-w-7xl px-6 lg:px-8">
                 <div class="mx-auto max-w-2xl lg:text-center">
                     <h2 class="text-primary-400 text-base font-semibold leading-7">Características Avanzadas</h2>
@@ -258,7 +271,7 @@
                 </div>
                 <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
                     <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-2">
-                        <div class="flex flex-col rounded-lg bg-white/5 p-6 ring-1 ring-white/10">
+                        <div class="flex flex-col rounded-lg bg-zinc-50/5 p-6 ring-1 ring-white/10">
                             <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
                                 <svg
                                     class="text-primary-400 h-5 w-5 flex-none"
@@ -268,20 +281,20 @@
                                 >
                                     <path
                                         fill-rule="evenodd"
-                                        d="M11.09 4.845c-.18.313-.047.719.266.898l.11.063c.106.06.184.157.226.273.042.116.034.243-.022.355l-.12.238c-.11.219-.05.488.14.638l.11.086c.147.115.338.13.504.035l.11-.063c.18-.1.396-.106.591-.02l.11.05c.195.088.426.044.57-.127l.11-.13c.124-.147.33-.206.505-.163l.11.027c.191.046.377-.041.483-.211l.11-.176c.09-.146.249-.244.425-.261l.11-.01c.206-.02.385-.17.44-.377l.11-.41c.052-.192-.018-.399-.17-.53l-.11-.095c-.134-.115-.22-.278-.24-.454l-.09-.81c-.02-.179-.11-.34-.25-.45l-.11-.085c-.166-.13-.22-.35-.14-.523l.11-.24c.076-.165.046-.36-.07-.501l-.11-.13c-.13-.153-.34-.21-.53-.15l-.11.034c-.19.06-.398.03-.57-.08l-.11-.063c-.18-.1-.396-.106-.59-.02l-.11.05c-.196.088-.427.044-.572-.127l-.11-.13c-.124-.147-.33-.206-.504-.163l-.11.027c-.191.046-.377-.041-.484-.211l-.11-.176c-.09-.146-.249-.244-.424-.261l-.11-.01c-.206-.02-.385-.17-.44-.377l-.11-.41c-.052-.192.018-.399.17-.53l.11-.095c.134-.115.22-.278.24-.454l.09-.81c.02-.179.11-.34.25-.45l.11-.085c.166.13.22.35.14.523l-.11.24c-.076.165-.046.36.07.501l.11.13c.13.153.34.21.53.15l.11-.034c.19-.06.398-.03.57.08zM8.91 4.845c.18.313.047.719-.266.898l-.11.063c-.106.06-.184.157-.226.273-.042.116-.034.243.022.355l.12.238c.11.219.05.488-.14.638l-.11.086c-.147.115-.338.13-.504.035l-.11-.063c-.18-.1-.396-.106-.591-.02l-.11.05c-.195.088-.426.044-.57.127l-.11.13c-.124.147-.33.206-.505.163l-.11-.027c-.191-.046-.377.041-.483.211l-.11.176c-.09.146-.249.244-.425.261l-.11.01c-.206.02-.385.17-.44.377l-.11.41c-.052.192.018.399.17.53l.11.095c.134.115.22.278.24.454l.09.81c.02.179.11.34.25.45l.11.085c.166.13.22.35.14.523l-.11.24c-.076.165-.046.36.07.501l.11.13c.13.153.34.21.53.15l.11-.034c.19-.06.398-.03.57.08l.11.063c.18.1.396.106.59.02l.11-.05c.196-.088.427-.044.572.127l.11.13c.124.147.33.206.504.163l.11-.027c.191-.046.377.041.484.211l.11.176c.09.146.249.244.424.261l.11.01c.206.02.385.17.44.377l.11.41c.052.192-.018.399-.17.53l-.11.095c-.134.115-.22.278-.24.454l-.09.81c-.02.179-.11.34-.25.45l-.11.085c.11.086.26.11.41.07l1.16-.39c.18-.06.31-.205.35-.386l.11-.41c.05-.192-.02-.4-.17-.53l-.11-.095c-.13-.115-.22-.278-.24-.454l-.09-.81c-.02-.179-.11-.34-.25-.45l-.11-.085c-.166-.13-.22-.35-.14-.523l.11-.24c.076-.165.046-.36-.07-.501l-.11-.13c-.13-.153-.34-.21-.53-.15l-.11.034c-.19.06-.398.03-.57-.08z"
+                                        d="M11.09 4.845c-.18.313-.047.719.266.898l.11.063c.106.06.184.157.226.273.042.116.034.243-.022.355l-.12.238c-.11.219-.05.488.14.638l.11.086c.147.115.338.13.504.035l.11-.063c.18-.1.396-.106.591-.02l.11.05c.195.088.426.044.57-.127l.11-.13c.124-.147.33-.206.505-.163l.11.027c.191.046.377-.041.483-.211l.11-.176c.09-.146.249-.244.425-.261l.11-.01c.206-.02.385-.17.44-.377l.11-.41c.052-.192-.018-.399-.17-.53l-.11-.095c-.134-.115-.22-.278-.24-.454l-.09-.81c-.02-.179-.11-.34-.25-.45l-.11-.085c-.166-.13-.22-.35-.14-.523l.11-.24c.076-.165.046-.36-.07-.501l-.11-.13c-.13-.153-.34-.21-.53-.15l-.11.034c-.19.06-.398.03-.57-.08l-.11-.063c-.18-.1-.396-.106-.59-.02l-.11.05c-.196.088-.427.044-.572-.127l-.11-.13c-.124-.147-.33-.206-.504-.163l-.11.027c-.191.046-.377-.041-.484-.211l-.11-.176c-.09-.146-.249-.244-.424-.261l-.11-.01c-.206-.02-.385-.17-.44-.377l-.11-.41c-.052-.192.018-.399.17-.53l.11-.095c.134-.115.22-.278.24-.454l.09-.81c.02-.179.11-.34.25-.45l.11-.085c.166.13.22.35.14.523l-.11.24c-.076.165-.046.36.07.501l.11.13c.13.153.34.21.53.15l.11-.034c.19-.06.398-.03.57.08l.11.063c.18.1.396.106.59.02l.11-.05c.196-.088.427-.044.572.127l.11.13c.124.147.33.206.504.163l.11-.027c.191-.046.377.041.484.211l.11.176c.09.146.249.244.424.261l.11.01c.206.02.385.17.44.377l.11.41c.052.192-.018.399-.17.53l-.11.095c-.134.115-.22.278-.24.454l-.09.81c-.02.179-.11.34-.25.45l-.11.085c.11.086.26.11.41.07l1.16-.39c.18-.06.31-.205.35-.386l.11-.41c.05-.192-.02-.4-.17-.53l-.11-.095c-.13-.115-.22-.278-.24-.454l-.09-.81c-.02-.179-.11-.34-.25-.45l-.11-.085c-.166-.13-.22-.35-.14-.523l.11-.24c.076-.165.046-.36-.07-.501l-.11-.13c-.13-.153-.34-.21-.53-.15l-.11.034c-.19.06-.398.03-.57-.08zM8.91 4.845c.18.313.047.719-.266.898l-.11.063c-.106.06-.184.157-.226.273-.042.116-.034.243.022.355l.12.238c.11.219.05.488-.14.638l-.11.086c-.147.115-.338.13-.504.035l-.11-.063c-.18-.1-.396-.106-.591-.02l-.11.05c-.195.088-.426.044-.57.127l-.11.13c-.124.147-.33.206-.505.163l-.11-.027c-.191-.046-.377.041-.483.211l-.11.176c-.09.146-.249.244-.425.261l-.11.01c-.206.02-.385.17-.44.377l-.11.41c-.052.192.018.399.17.53l.11.095c.134.115.22.278.24.454l.09.81c.02.179.11.34.25.45l.11.085c.166.13.22.35.14.523l-.11.24c-.076.165-.046.36.07.501l.11.13c.13.153.34.21.53.15l.11-.034c.19-.06.398-.03.57.08l.11.063c.18.1.396.106.59.02l.11-.05c.196-.088.427-.044.572.127l.11.13c.124.147.33.206.504.163l.11-.027c.191.046.377-.041.484-.211l.11-.176c.09-.146.249-.244.424-.261l.11-.01c.206-.02.385-.17.44-.377l.11-.41c.052-.192-.018-.399-.17-.53l-.11-.095c-.134-.115-.22-.278-.24-.454l-.09-.81c-.02-.179-.11-.34-.25-.45l-.11-.085c-.166-.13-.22-.35-.14-.523l.11-.24c.076-.165.046-.36-.07-.501l-.11-.13c-.13-.153-.34-.21-.53-.15l-.11.034c-.19.06-.398.03-.57-.08z"
                                         clip-rule="evenodd"
                                     />
                                 </svg>
                                 Análisis de Frecuencias
                             </dt>
-                            <dd class="mt-1 flex flex-auto flex-col text-base leading-7 text-gray-300">
+                            <dd class="mt-1 flex flex-auto flex-col text-base leading-7 text-zinc-300">
                                 <p class="flex-auto">
                                     Simule la distribución en todo el rango TDT (470-694 MHz) para garantizar
                                     rendimiento óptimo en todos los canales.
                                 </p>
                             </dd>
                         </div>
-                        <div class="flex flex-col rounded-lg bg-white/5 p-6 ring-1 ring-white/10">
+                        <div class="flex flex-col rounded-lg bg-zinc-50/5 p-6 ring-1 ring-white/10">
                             <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
                                 <svg
                                     class="text-primary-400 h-5 w-5 flex-none"
@@ -290,7 +303,7 @@
                                     aria-hidden="true"
                                 >
                                     <path
-                                        d="M3.105 2.289a.75.75 0 00-.826.95l1.414 4.95-1.414 4.949a.75.75 0 101.504.428L5.82 13.01a.75.75 0 001.22-.596l-.5-3.504a.75.75 0 00-1.22-.596L3.105 2.29zm13.79 0a.75.75 0 00-.826-.95l-1.414 4.95 1.414 4.949a.75.75 0 101.504-.428L14.18 13.01a.75.75 0 00-1.22-.596l.5-3.504a.75.75 0 001.22-.596l2.175 5.555a.75.75 0 101.504-.428L16.895 2.29z"
+                                        d="M3.105 2.289a.75.75 0 00-.826.95l1.414 4.95-1.414 4.949a.75.75 0 101.504.428L5.82 13.01a.75.75 0 001.22-.596l-.5-3.504a.75.75 0 00-1.22-.596L3.105 2.29zm13.79 0a.75.75 0 00-.826-.95l-1.414 4.95 1.414 4.949a.75.75 0 101.504-.428L14.18 13.01a.75.75 0 00-1.22-.596l.5-3.504a.75.75 0 00-1.22-.596l2.175 5.555a.75.75 0 101.504-.428L16.895 2.29z"
                                     />
                                     <path
                                         fill-rule="evenodd"
@@ -300,14 +313,14 @@
                                 </svg>
                                 Selección Inteligente
                             </dt>
-                            <dd class="mt-1 flex flex-auto flex-col text-base leading-7 text-gray-300">
+                            <dd class="mt-1 flex flex-auto flex-col text-base leading-7 text-zinc-300">
                                 <p class="flex-auto">
                                     Elija componentes de una base de datos validada (derivadores FP, coaxiales,
                                     distribuidores) con especificaciones claras.
                                 </p>
                             </dd>
                         </div>
-                        <div class="flex flex-col rounded-lg bg-white/5 p-6 ring-1 ring-white/10">
+                        <div class="flex flex-col rounded-lg bg-zinc-50/5 p-6 ring-1 ring-white/10">
                             <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
                                 <svg
                                     class="text-primary-400 h-5 w-5 flex-none"
@@ -323,14 +336,14 @@
                                 </svg>
                                 Validación de Calidad
                             </dt>
-                            <dd class="mt-1 flex flex-auto flex-col text-base leading-7 text-gray-300">
+                            <dd class="mt-1 flex flex-auto flex-col text-base leading-7 text-zinc-300">
                                 <p class="flex-auto">
                                     Compruebe automáticamente los niveles contra los márgenes de calidad. Asegure
                                     recepción óptima y cumpla normativas (cabecera &lt; 120 dBμV).
                                 </p>
                             </dd>
                         </div>
-                        <div class="flex flex-col rounded-lg bg-white/5 p-6 ring-1 ring-white/10">
+                        <div class="flex flex-col rounded-lg bg-zinc-50/5 p-6 ring-1 ring-white/10">
                             <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-white">
                                 <svg
                                     class="text-primary-400 h-5 w-5 flex-none"
@@ -344,7 +357,7 @@
                                 </svg>
                                 Optimización de Costes
                             </dt>
-                            <dd class="mt-1 flex flex-auto flex-col text-base leading-7 text-gray-300">
+                            <dd class="mt-1 flex flex-auto flex-col text-base leading-7 text-zinc-300">
                                 <p class="flex-auto">
                                     Realice seguimiento del coste total. Encuentre el equilibrio perfecto entre
                                     rendimiento técnico y presupuesto disponible.
@@ -357,14 +370,14 @@
         </div>
 
         <!-- Footer -->
-        <footer class="border-t border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-950">
+        <footer class="border-t border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
             <div class="mx-auto max-w-7xl px-6 py-8 md:flex md:items-center md:justify-between lg:px-8">
                 <div class="flex justify-center space-x-6 md:order-2">
                     <a
                         href="https://github.com/jjaroztegi/BuildingSignalSimulator"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="text-gray-400 transition hover:text-gray-500 dark:hover:text-gray-300"
+                        class="text-zinc-400 transition hover:text-zinc-500 dark:hover:text-zinc-300"
                     >
                         <span class="sr-only">GitHub</span>
                         <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -377,7 +390,7 @@
                     </a>
                 </div>
                 <div class="mt-8 md:order-1 md:mt-0">
-                    <p class="text-center text-xs leading-5 text-gray-500 dark:text-gray-400">
+                    <p class="text-center text-xs leading-5 text-zinc-500 dark:text-zinc-400">
                         &copy; 2025 Simulador de Señales en Edificios. Todos los derechos reservados.
                     </p>
                 </div>

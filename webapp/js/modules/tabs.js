@@ -41,10 +41,10 @@ export function switchTab(tabId) {
         button.classList.remove("active-tab", "border-blue-500", "text-blue-600", "dark:text-blue-400");
         button.classList.add(
             "border-transparent",
-            "text-gray-500",
-            "dark:text-gray-400",
-            "hover:text-gray-700",
-            "dark:hover:text-gray-300",
+            "text-zinc-500",
+            "dark:text-zinc-400",
+            "hover:text-zinc-700",
+            "dark:hover:text-zinc-300",
         );
     });
 
@@ -60,10 +60,10 @@ export function switchTab(tabId) {
         selectedButton.classList.add("active-tab", "border-blue-500", "text-blue-600", "dark:text-blue-400");
         selectedButton.classList.remove(
             "border-transparent",
-            "text-gray-500",
-            "dark:text-gray-400",
-            "hover:text-gray-700",
-            "dark:hover:text-gray-300",
+            "text-zinc-500",
+            "dark:text-zinc-400",
+            "hover:text-zinc-700",
+            "dark:hover:text-zinc-300",
         );
     }
 
@@ -74,10 +74,10 @@ export function switchTab(tabId) {
         counterpartButton.classList.add("active-tab", "border-blue-500", "text-blue-600", "dark:text-blue-400");
         counterpartButton.classList.remove(
             "border-transparent",
-            "text-gray-500",
-            "dark:text-gray-400",
-            "hover:text-gray-700",
-            "dark:hover:text-gray-300",
+            "text-zinc-500",
+            "dark:text-zinc-400",
+            "hover:text-zinc-700",
+            "dark:hover:text-zinc-300",
         );
     }
 

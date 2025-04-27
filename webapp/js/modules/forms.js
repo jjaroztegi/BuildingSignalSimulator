@@ -89,7 +89,7 @@ export function updateComponentForm(type) {
     // If no type selected or invalid type, show placeholder
     if (!type || !componentFields[type]) {
         dynamicFieldsContainer.innerHTML =
-            '<p class="text-sm text-gray-400 dark:text-gray-500 italic">Seleccione un tipo de componente para ver sus propiedades.</p>';
+            '<p class="text-sm text-zinc-400 dark:text-zinc-500 italic">Seleccione un tipo de componente para ver sus propiedades.</p>';
         return;
     }
 
@@ -102,7 +102,7 @@ export function updateComponentForm(type) {
         label.htmlFor = field.name;
         label.textContent = field.label;
         // Apply consistent label styling
-        label.className = "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1";
+        label.className = "block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1";
 
         const input = document.createElement("input");
         input.type = field.type;
@@ -117,7 +117,7 @@ export function updateComponentForm(type) {
         }
         // Apply consistent input styling
         input.className =
-            "block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-primary-400 dark:focus:ring-primary-400";
+            "block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-primary-400 dark:focus:ring-primary-400";
 
         fieldWrapper.appendChild(label);
         fieldWrapper.appendChild(input);
