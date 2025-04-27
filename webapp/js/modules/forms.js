@@ -220,8 +220,8 @@ export async function handleFormSubmit(
     if (isNaN(nivelCabecera) || nivelCabecera < 70 || nivelCabecera > 120) {
         errors.push("Nivel de Cabecera debe ser un número entre 70 y 120.");
     }
-    if (isNaN(numPisos) || numPisos < 1) {
-        errors.push("Número de Pisos debe ser un número entero mayor que 0.");
+    if (isNaN(numPisos) || numPisos < 1 || numPisos > 50) {
+        errors.push("Número de Pisos debe ser un número entero entre 1 y 50.");
     }
 
     if (errors.length > 0) {

@@ -234,12 +234,13 @@ public class SignalCalculationServlet extends HttpServlet {
                 ComponentInfo coaxInfo = getCoaxialInfoByFrequency(cableConfig, frequency);
                 double atenuacion15m = (coaxInfo.attenuation / 100.0) * 15.0; // 15m of cable
                 signalToStay -= atenuacion15m;
-                floorCost += coaxInfo.cost;
+                double cableCost15m = coaxInfo.cost * 15.0; // Cost per meter * 15 meters
+                floorCost += cableCost15m;
                 info.componentEffects.add(new ComponentEffect(
                         "coaxial_en_planta_15m",
                         selectedCableModel,
                         atenuacion15m,
-                        coaxInfo.cost));
+                        cableCost15m));
             }
 
             // Apply distribuidor attenuation first
@@ -310,6 +311,13 @@ public class SignalCalculationServlet extends HttpServlet {
                     ComponentInfo coaxInfo = getCoaxialInfoByFrequency(cableConfig, frequency);
                     double atenuacion3m = (coaxInfo.attenuation / 100.0) * 3.0; // 3m between floors
                     nextSignal -= atenuacion3m;
+                    double cableCost3m = coaxInfo.cost * 3.0; // Cost per meter * 3 meters
+                    floorCost += cableCost3m;
+                    info.componentEffects.add(new ComponentEffect(
+                            "coaxial_entre_pisos_3m",
+                            selectedCableModel,
+                            atenuacion3m,
+                            cableCost3m));
                 }
 
                 signalDownward = nextSignal;

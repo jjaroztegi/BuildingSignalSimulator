@@ -80,10 +80,17 @@ public class ConfigurationServlet extends HttpServlet {
         }
 
         try {
+            int numPisosInt = Integer.parseInt(numPisos);
+            if (numPisosInt < 1 || numPisosInt > 50) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.write("{\"error\":\"El número de pisos debe estar entre 1 y 50\"}");
+                return;
+            }
+
             Configuracion configuracion = new Configuracion();
             configuracion.setNombre(nombre);
             configuracion.setNivel_cabecera(Double.parseDouble(nivelCabecera));
-            configuracion.setNum_pisos(Integer.parseInt(numPisos));
+            configuracion.setNum_pisos(numPisosInt);
             configuracion.setCosto_total(0.0);
 
             // Check if configuration with same name already exists

@@ -270,7 +270,7 @@ export class SchematicEditor {
                 if (!configSelect) return;
                 const selectedOption = configSelect.options[configSelect.selectedIndex];
                 if (!selectedOption) return;
-                const configData = JSON.parse(selectedOption.dataset.config || '{}');
+                const configData = JSON.parse(selectedOption.dataset.config || "{}");
                 const maxFloors = configData.num_pisos || 0;
 
                 // Don't allow adding more floors if we've reached the limit
@@ -278,7 +278,7 @@ export class SchematicEditor {
                     this._showTemporaryMessage(
                         `No se pueden añadir más pisos. Límite: ${maxFloors} pisos.`,
                         e.clientX,
-                        e.clientY
+                        e.clientY,
                     );
                     return;
                 }
@@ -1343,7 +1343,7 @@ export class SchematicEditor {
         if (!configSelect) return;
         const selectedOption = configSelect.options[configSelect.selectedIndex];
         if (!selectedOption) return;
-        const configData = JSON.parse(selectedOption.dataset.config || '{}');
+        const configData = JSON.parse(selectedOption.dataset.config || "{}");
         const maxFloors = configData.num_pisos || 0;
 
         // Don't show placeholder if we've reached the limit
@@ -1357,7 +1357,7 @@ export class SchematicEditor {
 
         this.ctx.save();
         const theme = document.documentElement.classList.contains("dark") ? "dark" : "light";
-        
+
         // Draw dashed rectangle for placeholder
         this.ctx.strokeStyle = this._getColor("placeholderStroke", theme);
         this.ctx.fillStyle = this._getColor("placeholderFill", theme);
@@ -1390,7 +1390,7 @@ export class SchematicEditor {
             type: "NEXT_FLOOR",
             x: DE_X,
             y: nextFloorY,
-            size: COMPONENT_SIZE
+            size: COMPONENT_SIZE,
         };
     }
 
@@ -1439,11 +1439,7 @@ export class SchematicEditor {
             this.ctx.font = `italic ${14 / this.scale}px sans-serif`; // Slightly larger italic font
             const viewCenterX = (logicalWidth / 2 - this.offsetX) / this.scale;
             const viewCenterY = (logicalHeight / 2 - this.offsetY) / this.scale;
-            this.ctx.fillText(
-                "Haga clic en el botón '+' para añadir el primer piso",
-                viewCenterX,
-                viewCenterY,
-            );
+            this.ctx.fillText("Haga clic en el botón '+' para añadir el primer piso", viewCenterX, viewCenterY);
             this.ctx.restore();
         }
         this.ctx.restore(); // Restore transformations

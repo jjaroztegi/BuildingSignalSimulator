@@ -49,14 +49,14 @@ export async function submitConfiguration(formData) {
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: new URLSearchParams(formData).toString(),
         });
-        
+
         if (!response.ok) {
             const errorData = await response.json();
             console.error("Error submitting configuration:", errorData.error);
             displayError(errorData.error);
             throw new Error(errorData.error);
         }
-        
+
         return await response.json();
     } catch (error) {
         console.error("Error submitting configuration:", error);
