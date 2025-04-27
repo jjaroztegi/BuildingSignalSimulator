@@ -86,6 +86,14 @@ public class ConfigurationServlet extends HttpServlet {
             configuracion.setNum_pisos(Integer.parseInt(numPisos));
             configuracion.setCosto_total(0.0);
 
+            // Check if configuration with same name already exists
+            ConfiguracionDAO configuracionDAO = new ConfiguracionDAO();
+            if (configuracionDAO.existsByName(nombre)) {
+                response.setStatus(HttpServletResponse.SC_CONFLICT);
+                out.write("{\"error\":\"Ya existe una configuracion con ese nombre\"}");
+                return;
+            }
+
             // Add current date and user information
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String currentDate = sdf.format(new java.util.Date());
@@ -94,7 +102,6 @@ public class ConfigurationServlet extends HttpServlet {
             configuracion.setFecha_modificacion(currentDate);
             configuracion.setUsuario_modificacion("admin");
 
-            ConfiguracionDAO configuracionDAO = new ConfiguracionDAO();
             configuracionDAO.insert(configuracion);
 
             // Get the generated ID

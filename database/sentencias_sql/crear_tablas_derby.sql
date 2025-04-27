@@ -9,7 +9,7 @@ CREATE TABLE tipos_componente (
 CREATE TABLE componentes (
     id_componentes INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_tipos_componente INTEGER NOT NULL,
-    modelo VARCHAR(100) NOT NULL,
+    modelo VARCHAR(100) NOT NULL UNIQUE,
     costo DECIMAL(10,2) NOT NULL,
     CONSTRAINT fk_componentes_tipos_componente 
     FOREIGN KEY (id_tipos_componente) 
@@ -68,7 +68,7 @@ CREATE TABLE tomas (
 -- Create configuraciones table (independent table)
 CREATE TABLE configuraciones (
     id_configuraciones INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
     nivel_cabecera DOUBLE NOT NULL,
     num_pisos INTEGER NOT NULL,
     costo_total DECIMAL(10,2) NOT NULL,

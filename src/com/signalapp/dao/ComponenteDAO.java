@@ -102,4 +102,24 @@ public class ComponenteDAO extends BaseDAO<Componente> {
             }
         }
     }
+
+    /**
+     * Checks if a component with the given model name already exists
+     * 
+     * @param modelo The model name of the component to check
+     * @return true if a component with the model name exists, false otherwise
+     * @throws SQLException if a database error occurs
+     */
+    public boolean existsByModelo(String modelo) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM " + getTableName() + " WHERE modelo = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, modelo);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+                return false;
+            }
+        }
+    }
 }

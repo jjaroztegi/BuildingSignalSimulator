@@ -49,15 +49,20 @@ export async function submitConfiguration(formData) {
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: new URLSearchParams(formData).toString(),
         });
+        
         if (!response.ok) {
-            console.error("Error submitting configuration:", `HTTP error! status: ${response.status}`);
-            displayError("Error al guardar la configuración. Por favor, intente de nuevo.");
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json();
+            console.error("Error submitting configuration:", errorData.error);
+            displayError(errorData.error);
+            throw new Error(errorData.error);
         }
+        
         return await response.json();
     } catch (error) {
         console.error("Error submitting configuration:", error);
-        displayError("Error al guardar la configuración. Por favor, intente de nuevo.");
+        if (!error.message.includes("Ya existe una configuracion con ese nombre")) {
+            displayError("Error al guardar la configuración. Por favor, intente de nuevo.");
+        }
         throw error;
     }
 }
@@ -208,15 +213,18 @@ export async function submitComponent(formData) {
         });
 
         if (!response.ok) {
-            console.error("Error submitting component:", `HTTP error! status: ${response.status}`);
-            displayError("Error al guardar el componente. Por favor, intente de nuevo.");
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json();
+            console.error("Error submitting component:", errorData.error);
+            displayError(errorData.error);
+            throw new Error(errorData.error);
         }
 
         return await response.json();
     } catch (error) {
         console.error("Error submitting component:", error);
-        displayError("Error al guardar el componente. Por favor, intente de nuevo.");
+        if (!error.message.includes("Ya existe un componente con ese modelo")) {
+            displayError("Error al guardar el componente. Por favor, intente de nuevo.");
+        }
         throw error;
     }
 }

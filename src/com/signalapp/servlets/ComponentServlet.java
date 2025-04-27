@@ -206,8 +206,15 @@ public class ComponentServlet extends HttpServlet {
             int idTipo = getTipoComponenteId(type.toLowerCase());
             componente.setId_tipos_componente(idTipo);
 
-            // Insert Componente
+            // Check if component with same model name already exists
             ComponenteDAO componenteDAO = new ComponenteDAO();
+            if (componenteDAO.existsByModelo(modelo)) {
+                response.setStatus(HttpServletResponse.SC_CONFLICT);
+                out.write("{\"error\":\"Ya existe un componente con ese modelo\"}");
+                return;
+            }
+
+            // Insert Componente
             componenteDAO.insert(componente);
 
             // Get the generated component ID

@@ -93,4 +93,24 @@ public class ConfiguracionDAO extends BaseDAO<Configuracion> {
             }
         }
     }
+
+    /**
+     * Checks if a configuration with the given name already exists
+     * 
+     * @param nombre The name of the configuration to check
+     * @return true if a configuration with the name exists, false otherwise
+     * @throws SQLException if a database error occurs
+     */
+    public boolean existsByName(String nombre) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM " + getTableName() + " WHERE nombre = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+                return false;
+            }
+        }
+    }
 }

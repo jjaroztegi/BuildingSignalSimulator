@@ -46,6 +46,14 @@ Get a list of component models for a specific type.
 ["model1", "model2", "model3"]
 ```
 
+**Error Response:**
+
+```json
+{
+    "error": "Missing component type parameter"
+}
+```
+
 ### Get Component Details
 
 Get detailed information about a specific component.
@@ -193,6 +201,78 @@ Add a new component to the system.
 ```json
 {
     "error": "Faltan parámetros requeridos"
+}
+```
+
+### Update Component
+
+Update an existing component in the system.
+
+**Endpoint:** `PUT /components`
+
+**Parameters:**
+
+-   `type` (required): One of `coaxial`, `derivador`, `distribuidor`, or `toma`
+-   `modelo` (required): Model name/identifier
+-   `costo` (required): Cost of the component
+-   `properties` (required): JSON object containing component-specific properties
+
+**Component-Specific Properties:**
+
+Same as Add New Component section.
+
+**Response:**
+
+```json
+{
+    "success": "Component updated successfully"
+}
+```
+
+**Error Responses:**
+
+```json
+{
+    "error": "Faltan parámetros requeridos"
+}
+```
+
+```json
+{
+    "error": "Componente no encontrado"
+}
+```
+
+### Delete Component
+
+Delete a component from the system.
+
+**Endpoint:** `DELETE /components`
+
+**Parameters:**
+
+-   `type` (required): One of `coaxial`, `derivador`, `distribuidor`, or `toma`
+-   `modelo` (required): Model name/identifier
+
+**Response:**
+
+```json
+{
+    "success": "Component deleted successfully"
+}
+```
+
+**Error Responses:**
+
+```json
+{
+    "error": "Faltan parámetros requeridos"
+}
+```
+
+```json
+{
+    "error": "Componente no encontrado"
 }
 ```
 

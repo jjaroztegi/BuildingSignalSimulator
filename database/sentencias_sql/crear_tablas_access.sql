@@ -9,7 +9,7 @@ CREATE TABLE tipos_componente (
 CREATE TABLE componentes (
     id_componentes COUNTER PRIMARY KEY,
     id_tipos_componente LONG NOT NULL,
-    modelo TEXT(100) NOT NULL,
+    modelo TEXT(100) NOT NULL UNIQUE,
     costo CURRENCY NOT NULL,
     CONSTRAINT fk_componentes_tipos_componente 
     FOREIGN KEY (id_tipos_componente) 
@@ -68,7 +68,7 @@ CREATE TABLE tomas (
 -- Create configuraciones table (independent table)
 CREATE TABLE configuraciones (
     id_configuraciones COUNTER PRIMARY KEY,
-    nombre TEXT(100) NOT NULL,
+    nombre TEXT(100) NOT NULL UNIQUE,
     nivel_cabecera DOUBLE NOT NULL,
     num_pisos LONG NOT NULL,
     costo_total CURRENCY NOT NULL,
