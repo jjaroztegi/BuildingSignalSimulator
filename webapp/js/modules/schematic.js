@@ -254,22 +254,66 @@ export class SchematicEditor {
 
     /** Handles click events on the canvas to detect component clicks. */
     _handleClick = (e) => {
-        // console.log("Executing _handleClick");
         if (!this.canvas) return;
 
         const rect = this.canvas.getBoundingClientRect();
-        // Calculate click coordinates in canvas world space
         const clickX = (e.clientX - rect.left - this.offsetX) / this.scale;
         const clickY = (e.clientY - rect.top - this.offsetY) / this.scale;
-        // console.log(`Click Coordinates (World): x=${clickX.toFixed(1)}, y=${clickY.toFixed(1)}`);
 
+        // First check if we clicked on the next floor placeholder
         const sortedFloors = this._getSortedFloorNumbers();
-        // console.log(`Sorted floors: [${sortedFloors.join(', ')}]`);
+        if (sortedFloors.length > 0) {
+            // Use the stored placeholder data instead of redrawing
+            if (this.nextFloorPlaceholder && this._isPointInArea(clickX, clickY, this.nextFloorPlaceholder)) {
+                // Get the current configuration's floor limit
+                const configSelect = document.getElementById("simulation-config");
+                if (!configSelect) return;
+                const selectedOption = configSelect.options[configSelect.selectedIndex];
+                if (!selectedOption) return;
+                const configData = JSON.parse(selectedOption.dataset.config || '{}');
+                const maxFloors = configData.num_pisos || 0;
+
+                // Don't allow adding more floors if we've reached the limit
+                if (sortedFloors.length >= maxFloors) {
+                    this._showTemporaryMessage(
+                        `No se pueden añadir más pisos. Límite: ${maxFloors} pisos.`,
+                        e.clientX,
+                        e.clientY
+                    );
+                    return;
+                }
+
+                const nextFloor = Math.max(...sortedFloors) + 1;
+                this.setCurrentFloor(nextFloor);
+                // Update the floor selector in the UI
+                const floorSelect = document.getElementById("simulation-floor");
+                if (floorSelect) {
+                    floorSelect.value = nextFloor;
+                }
+                return;
+            }
+        }
+
+        // If no floors exist yet, show the first floor placeholder
+        if (sortedFloors.length === 0) {
+            const viewCenterX = (rect.width / 2 - this.offsetX) / this.scale;
+            const viewCenterY = (rect.height / 2 - this.offsetY) / this.scale;
+            const placeholderSize = this.LAYOUT.COMPONENT_SIZE;
+            if (this._isPointInArea(clickX, clickY, { x: viewCenterX, y: viewCenterY, size: placeholderSize })) {
+                this.setCurrentFloor(1);
+                const floorSelect = document.getElementById("simulation-floor");
+                if (floorSelect) {
+                    floorSelect.value = 1;
+                }
+                return;
+            }
+        }
+
+        // Continue with existing component click handling
         for (let i = 0; i < sortedFloors.length; i++) {
             const floor = sortedFloors[i];
             const floorY = this._getFloorCenterY(i);
             const clickableAreas = this._getClickableAreas(floor, floorY);
-            // console.log(`Checking Floor ${floor} (Index ${i}, Y=${floorY.toFixed(1)}) with ${clickableAreas.length} areas.`);
 
             for (const area of clickableAreas) {
                 if (this._isPointInArea(clickX, clickY, area)) {
@@ -304,13 +348,11 @@ export class SchematicEditor {
                     }
 
                     // If checks pass, show the selector
-                    // console.log(`Proceeding to show selector for Type: ${area.type}, Floor: ${floor}, Position: ${area.positionIndex}`);
                     this._showComponentSelector(area.type, floor, area.positionIndex, e, area.slotIndex);
                     return; // Stop after finding the first hit
                 }
             }
         }
-        // console.log("No component area hit.");
     };
 
     // --- Zoom/Pan Helpers ---
@@ -1291,6 +1333,67 @@ export class SchematicEditor {
         return Array.from(this.floorComponents.keys()).sort((a, b) => a - b);
     }
 
+    /** Draws a placeholder for the next floor's DE component */
+    _drawNextFloorPlaceholder() {
+        const sortedFloors = this._getSortedFloorNumbers();
+        if (sortedFloors.length === 0) return;
+
+        // Get the current configuration's floor limit
+        const configSelect = document.getElementById("simulation-config");
+        if (!configSelect) return;
+        const selectedOption = configSelect.options[configSelect.selectedIndex];
+        if (!selectedOption) return;
+        const configData = JSON.parse(selectedOption.dataset.config || '{}');
+        const maxFloors = configData.num_pisos || 0;
+
+        // Don't show placeholder if we've reached the limit
+        if (sortedFloors.length >= maxFloors) return;
+
+        const lastFloorIndex = sortedFloors.length - 1;
+        const lastFloorY = this._getFloorCenterY(lastFloorIndex);
+        const nextFloorY = lastFloorY + this.LAYOUT.FLOOR_SPACING;
+        const { DE_X, COMPONENT_SIZE } = this.LAYOUT;
+        const halfSize = COMPONENT_SIZE / 2;
+
+        this.ctx.save();
+        const theme = document.documentElement.classList.contains("dark") ? "dark" : "light";
+        
+        // Draw dashed rectangle for placeholder
+        this.ctx.strokeStyle = this._getColor("placeholderStroke", theme);
+        this.ctx.fillStyle = this._getColor("placeholderFill", theme);
+        this.ctx.setLineDash([3 / this.scale, 3 / this.scale]);
+        this.ctx.lineWidth = this.LAYOUT.COMPONENT_BORDER_WIDTH / this.scale;
+
+        this.ctx.beginPath();
+        this.ctx.rect(DE_X - halfSize, nextFloorY - halfSize, COMPONENT_SIZE, COMPONENT_SIZE);
+        this.ctx.fill();
+        this.ctx.stroke();
+        this.ctx.setLineDash([]);
+
+        // Draw "+" symbol
+        this.ctx.fillStyle = this._getColor("placeholderStroke", theme);
+        this.ctx.globalAlpha = 0.6;
+        this.ctx.textAlign = "center";
+        this.ctx.textBaseline = "middle";
+        this.ctx.font = `bold ${this.LAYOUT.FONT_SIZE_TYPE / this.scale}px sans-serif`;
+        this.ctx.fillText("+", DE_X, nextFloorY);
+        this.ctx.globalAlpha = 1.0;
+
+        // Draw "Añadir Piso" text below
+        this.ctx.font = `${this.LAYOUT.FONT_SIZE_LABEL / this.scale}px sans-serif`;
+        this.ctx.fillText("Añadir Piso", DE_X, nextFloorY + halfSize + 15 / this.scale);
+
+        this.ctx.restore();
+
+        // Return the clickable area for this placeholder
+        return {
+            type: "NEXT_FLOOR",
+            x: DE_X,
+            y: nextFloorY,
+            size: COMPONENT_SIZE
+        };
+    }
+
     /** Main render loop. */
     render() {
         if (!this.ctx || !this.canvas) return;
@@ -1325,6 +1428,8 @@ export class SchematicEditor {
             if (sortedFloors.length > 1) {
                 this._drawInterFloorConnections(sortedFloors);
             }
+            // Draw next floor placeholder and store its data
+            this.nextFloorPlaceholder = this._drawNextFloorPlaceholder();
         } else {
             // Draw placeholder message if no floors configured
             this.ctx.save();
@@ -1335,7 +1440,7 @@ export class SchematicEditor {
             const viewCenterX = (logicalWidth / 2 - this.offsetX) / this.scale;
             const viewCenterY = (logicalHeight / 2 - this.offsetY) / this.scale;
             this.ctx.fillText(
-                "Seleccione una configuración y un piso para comenzar el diseño",
+                "Haga clic en el botón '+' para añadir el primer piso",
                 viewCenterX,
                 viewCenterY,
             );
