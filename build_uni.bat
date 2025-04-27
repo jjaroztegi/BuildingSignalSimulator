@@ -75,7 +75,7 @@ xcopy /E /I /Y "src\%PACKAGE_NAME%\*.java" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\
 
 REM Copy lib folder with all JARs
 echo Copying library files...
-xcopy /Y "lib\*.jar" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\lib\" > NUL
+xcopy /Y "lib\derby.jar" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\lib\" > NUL
 
 @REM REM Copy access database
 @REM echo Copying database files...
@@ -86,6 +86,10 @@ echo Copying database files...
 xcopy /Y /E /I "database\DistribucionDeSenal\*" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\database\DistribucionDeSenal\" > NUL
 
 echo Deployment complete.
+
+echo Creating WAR file with compression...
+"%JAVA_HOME%\bin\jar" -cf BuildingSignalSimulator.war -C "%TOMCAT_WEBAPPS%\%APP_NAME%" . > NUL
+echo WAR file created successfully with compression.
 
 REM --- Start Tomcat ---
 echo Starting Tomcat...

@@ -229,7 +229,7 @@ public class SignalCalculationServlet extends HttpServlet {
             }
 
             // Apply 15m coaxial attenuation within floor using the selected cable model
-            if (selectedCableModel != null && !selectedCableModel.isEmpty()) {
+            if (selectedCableModel != null && !selectedCableModel.isEmpty() && !floorComponents.isEmpty()) {
                 ComponentConfig cableConfig = new ComponentConfig("coaxial", selectedCableModel, floor);
                 ComponentInfo coaxInfo = getCoaxialInfoByFrequency(cableConfig, frequency);
                 double atenuacion15m = (coaxInfo.attenuation / 100.0) * 15.0; // 15m of cable
@@ -249,15 +249,23 @@ public class SignalCalculationServlet extends HttpServlet {
                     .collect(Collectors.toList());
 
             double signalAfterDistribuidor = signalToStay;
-            for (ComponentConfig distribuidor : distribuidores) {
-                ComponentInfo distribInfo = getComponentInfo(distribuidor, frequency);
+            
+            // Apply attenuation only from first distributor
+            if (!distribuidores.isEmpty()) {
+                ComponentConfig firstDistribuidor = distribuidores.get(0);
+                ComponentInfo distribInfo = getComponentInfo(firstDistribuidor, frequency);
                 signalAfterDistribuidor -= distribInfo.attenuation;
-                floorCost += distribInfo.cost;
                 info.componentEffects.add(new ComponentEffect(
                         "distribuidor",
-                        distribuidor.model,
+                        firstDistribuidor.model,
                         distribInfo.attenuation,
                         distribInfo.cost));
+            }
+            
+            // Count costs for all distributors
+            for (ComponentConfig distribuidor : distribuidores) {
+                ComponentInfo distribInfo = getComponentInfo(distribuidor, frequency);
+                floorCost += distribInfo.cost;
             }
 
             // Apply toma attenuation (only once per floor since all tomas have same model)
