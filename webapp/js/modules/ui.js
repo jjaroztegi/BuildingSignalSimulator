@@ -480,12 +480,19 @@ export function updateSimulationResults(results) {
             existingChart.destroy();
         }
 
-        const isDarkMode = document.documentElement.classList.contains("dark");
-        const gridColor = isDarkMode ? "rgba(113, 113, 122, 0.2)" : "rgba(212, 212, 216, 0.4)"; // Zinc 500 / Zinc 300 transparent
-        const textColor = isDarkMode ? "rgb(228, 228, 231)" : "rgb(63, 63, 70)"; // Zinc 200 / Zinc 700
-        const pointColor = isDarkMode ? "rgb(161, 161, 170)" : "rgb(82, 82, 91)"; // Zinc 400 / Zinc 600
+        // Function to get current theme colors
+        const getThemeColors = () => {
+            const isDarkMode = document.documentElement.classList.contains("dark");
+            return {
+                gridColor: isDarkMode ? "rgba(113, 113, 122, 0.2)" : "rgba(212, 212, 216, 0.4)", // Zinc 500 / Zinc 300 transparent
+                textColor: isDarkMode ? "rgb(228, 228, 231)" : "rgb(63, 63, 70)", // Zinc 200 / Zinc 700
+                pointColor: isDarkMode ? "rgb(161, 161, 170)" : "rgb(82, 82, 91)", // Zinc 400 / Zinc 600
+            };
+        };
 
-        new Chart(chartCanvas, {
+        // Create chart with initial theme colors
+        const themeColors = getThemeColors();
+        const chart = new Chart(chartCanvas, {
             type: "line",
             data: {
                 labels: floorLabels,
@@ -493,8 +500,8 @@ export function updateSimulationResults(results) {
                     {
                         label: "Nivel de Señal (dBµV)",
                         data: signalData,
-                        borderColor: pointColor,
-                        backgroundColor: pointColor + "33", // Semi-transparent fill
+                        borderColor: themeColors.pointColor,
+                        backgroundColor: themeColors.pointColor + "33", // Semi-transparent fill
                         tension: 0.1,
                         fill: false,
                         pointRadius: 4,
@@ -508,22 +515,22 @@ export function updateSimulationResults(results) {
                 scales: {
                     y: {
                         beginAtZero: false, // Don't force start at 0
-                        grid: { color: gridColor },
-                        ticks: { color: textColor, padding: 10 },
+                        grid: { color: themeColors.gridColor },
+                        ticks: { color: themeColors.textColor, padding: 10 },
                         title: {
                             display: true,
                             text: "Nivel Señal (dBµV)",
-                            color: textColor,
+                            color: themeColors.textColor,
                             font: { size: 10 },
                         },
                     },
                     x: {
                         grid: { display: false }, // Hide vertical grid lines
-                        ticks: { color: textColor, padding: 10 },
+                        ticks: { color: themeColors.textColor, padding: 10 },
                         title: {
                             display: true,
                             text: "Piso",
-                            color: textColor,
+                            color: themeColors.textColor,
                             font: { size: 10 },
                         },
                     },
@@ -580,6 +587,27 @@ export function updateSimulationResults(results) {
                 },
             },
         });
+
+        // Add theme change listener to update chart colors
+        const themeObserver = new MutationObserver(() => {
+            const newColors = getThemeColors();
+            chart.options.scales.y.grid.color = newColors.gridColor;
+            chart.options.scales.y.ticks.color = newColors.textColor;
+            chart.options.scales.y.title.color = newColors.textColor;
+            chart.options.scales.x.ticks.color = newColors.textColor;
+            chart.options.scales.x.title.color = newColors.textColor;
+            chart.data.datasets[0].borderColor = newColors.pointColor;
+            chart.data.datasets[0].backgroundColor = newColors.pointColor + "33";
+            chart.update();
+        });
+
+        themeObserver.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ["class"],
+        });
+
+        // Store the observer on the chart instance for cleanup
+        chart.themeObserver = themeObserver;
     } else {
         updateChartPlaceholder(true); // Show placeholder if no chart possible
         if (chartCanvas && typeof Chart === "undefined")

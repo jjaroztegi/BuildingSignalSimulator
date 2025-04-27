@@ -49,8 +49,8 @@ export class SchematicEditor {
             DI_X_OFFSET: 100,
             BT_X_OFFSET_FROM_DI: 80,
             BT_VERTICAL_SPACING: 45,
-            CABLE_DE_DI: "10m",
-            CABLE_DI_BT: "5m",
+            CABLE_DE_DI: "5m",
+            CABLE_DI_BT: "10m",
             CABLE_INTERFLOOR: "3m",
             PLACEHOLDER_ALPHA: 0.3,
             CONNECTION_LINE_WIDTH: 1.5, // Slightly thinner lines
@@ -1439,7 +1439,7 @@ export class SchematicEditor {
             this.ctx.font = `italic ${14 / this.scale}px sans-serif`; // Slightly larger italic font
             const viewCenterX = (logicalWidth / 2 - this.offsetX) / this.scale;
             const viewCenterY = (logicalHeight / 2 - this.offsetY) / this.scale;
-            this.ctx.fillText("Haga clic en el botón '+' para añadir el primer piso", viewCenterX, viewCenterY);
+            this.ctx.fillText("Seleccione un piso para empezar a configurar", viewCenterX, viewCenterY);
             this.ctx.restore();
         }
         this.ctx.restore(); // Restore transformations
