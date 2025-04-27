@@ -2,6 +2,9 @@
  * Manages the schematic editor canvas, including drawing components,
  * handling user interactions (pan, zoom, clicks), and managing component data per floor.
  */
+import { fetchComponentsByModel } from "./servlet.js";
+import { componentFields } from "./forms.js";
+
 export class SchematicEditor {
     /**
      * Creates an instance of SchematicEditor.
@@ -616,6 +619,7 @@ export class SchematicEditor {
         let currentModel = null;
         let modelSetter = null;
         let removalHandler = null;
+        let apiType = "";
 
         const floorData = this.floorComponents.get(floor);
         if (!floorData) {
@@ -630,6 +634,7 @@ export class SchematicEditor {
                 currentModel = floorData.derivador;
                 modelSetter = (model) => this._setComponentValue(floor, "DE", 0, model);
                 removalHandler = () => this._setComponentValue(floor, "DE", 0, null);
+                apiType = "derivador";
                 break;
             case "DI":
                 const sideLabelDI = positionOrSideIndex === 0 ? "Izquierda" : "Derecha";
@@ -638,8 +643,9 @@ export class SchematicEditor {
                 currentModel = floorData.distribuidores[positionOrSideIndex];
                 modelSetter = (model) => this._setComponentValue(floor, "DI", positionOrSideIndex, model);
                 removalHandler = () => this._setComponentValue(floor, "DI", positionOrSideIndex, null);
+                apiType = "distribuidor";
                 break;
-            case "BT": // Handle individual Toma selection
+            case "BT":
                 if (slotIndex === null || slotIndex < 0 || slotIndex > 3) {
                     console.error("Invalid slotIndex for BT selector:", slotIndex);
                     return;
@@ -652,6 +658,7 @@ export class SchematicEditor {
                 currentModel = currentTomasArray[slotIndex] || null; // Get model at specific index, or null
                 modelSetter = (model) => this._setSingleTomaModel(floor, sideIndex, slotIndex, model);
                 removalHandler = () => this._setSingleTomaModel(floor, sideIndex, slotIndex, null); // Set to null to remove
+                apiType = "toma";
                 break;
             default:
                 console.error("Unknown component type for selector:", type);
@@ -674,9 +681,12 @@ export class SchematicEditor {
             list.appendChild(message);
         } else {
             models.forEach((model) => {
+                const buttonContainer = document.createElement("div");
+                buttonContainer.className = "flex items-center mb-1";
+
                 const button = document.createElement("button");
                 button.type = "button";
-                button.className = `block w-full text-left px-3 py-1.5 text-sm rounded transition-colors duration-150 mb-1 ${
+                button.className = `flex-grow text-left px-3 py-1.5 text-sm rounded-l transition-colors duration-150 ${
                     model === currentModel
                         ? "bg-primary-100 dark:bg-primary-700 font-medium text-primary-700 dark:text-primary-100"
                         : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -686,7 +696,32 @@ export class SchematicEditor {
                     if (modelSetter) modelSetter(model);
                     this.removeExistingPopups();
                 };
-                list.appendChild(button);
+
+                const infoButton = document.createElement("button");
+                infoButton.type = "button";
+                infoButton.className = `p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 rounded-r transition-colors duration-150 ${
+                    model === currentModel
+                        ? "bg-primary-100 dark:bg-primary-700"
+                        : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                }`;
+                infoButton.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>`;
+
+                // Handle info button click
+                infoButton.onclick = async (e) => {
+                    e.stopPropagation();
+                    try {
+                        const componentData = await fetchComponentsByModel(apiType, model);
+                        this._showComponentDetails(componentData, type, model, e);
+                    } catch (error) {
+                        console.error("Error fetching component details:", error);
+                    }
+                };
+
+                buttonContainer.appendChild(button);
+                buttonContainer.appendChild(infoButton);
+                list.appendChild(buttonContainer);
             });
         }
         popup.appendChild(list);
@@ -725,6 +760,79 @@ export class SchematicEditor {
         this._addOutsideClickListener();
     }
 
+    /** Shows component details in a popup */
+    _showComponentDetails(componentData, type, model, event) {
+        const detailsPopup = document.createElement("div");
+        detailsPopup.id = "component-details-popup";
+        detailsPopup.className =
+            "fixed z-50 p-4 bg-white rounded-lg shadow-xl dark:bg-gray-800 border border-gray-200 dark:border-gray-700";
+
+        // Position the popup to the right of the info button
+        detailsPopup.style.left = `${event.clientX + 30}px`;
+        detailsPopup.style.top = `${event.clientY - 10}px`;
+        detailsPopup.style.minWidth = "220px";
+
+        // Title
+        const title = document.createElement("h3");
+        title.className = "text-base font-medium mb-3 text-gray-900 dark:text-white flex items-center justify-between";
+        title.innerHTML = `
+            <span>Detalles de ${model}</span>
+            <button class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300" onclick="this.closest('#component-details-popup').remove()">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        `;
+        detailsPopup.appendChild(title);
+
+        // Details content
+        const content = document.createElement("div");
+        content.className = "space-y-2 text-sm";
+
+        // Add cost (common to all components)
+        content.innerHTML = `
+            <div class="flex justify-between items-center">
+                <span class="text-gray-600 dark:text-gray-400">Costo:</span>
+                <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.costo?.toFixed(2) ?? "-"} €</span>
+            </div>
+        `;
+
+        // Get the API type based on the internal type
+        const apiType =
+            type === "DE" ? "derivador" : type === "DI" ? "distribuidor" : type === "BT" ? "toma" : "coaxial";
+
+        // Add component-specific properties using componentFields
+        if (componentFields[apiType]) {
+            componentFields[apiType].forEach((field) => {
+                content.innerHTML += `
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600 dark:text-gray-400">${field.label.replace(" (dB)", "").replace(" (dB/100m)", "")}:</span>
+                        <span class="font-medium text-gray-800 dark:text-gray-200">
+                            ${componentData[field.name]?.toFixed(field.step === "0.01" ? 2 : 1) ?? "-"}
+                            ${field.label.includes("dB/100m") ? " dB/100m" : field.label.includes("dB") ? " dB" : ""}
+                        </span>
+                    </div>
+                `;
+            });
+        }
+
+        detailsPopup.appendChild(content);
+        document.body.appendChild(detailsPopup);
+
+        // Add click outside listener for this popup
+        const handleOutsideClick = (e) => {
+            if (!detailsPopup.contains(e.target) && !e.target.closest('button[type="button"]')) {
+                detailsPopup.remove();
+                document.removeEventListener("click", handleOutsideClick);
+            }
+        };
+
+        // Delay adding the listener to prevent immediate closing
+        setTimeout(() => {
+            document.addEventListener("click", handleOutsideClick);
+        }, 0);
+    }
+
     /** Adds a listener to close popups when clicking outside. */
     _addOutsideClickListener() {
         // Use timeout to prevent the initiating click from closing the popup
@@ -753,7 +861,7 @@ export class SchematicEditor {
 
     /** Removes any active component selection popups and temporary messages. */
     removeExistingPopups() {
-        ["component-selector-popup", "schematic-temp-message"].forEach((id) => {
+        ["component-selector-popup", "component-details-popup", "schematic-temp-message"].forEach((id) => {
             document.getElementById(id)?.remove();
         });
         // Clean up the outside click listener just in case it's still attached

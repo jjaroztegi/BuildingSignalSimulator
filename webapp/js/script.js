@@ -368,7 +368,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
 
-            const componentsData = schematicEditor.getAllComponents(); // Get { cable: 'RG-6', floors: { '1': { derivador: '...', ... } } }
+            const componentsData = schematicEditor.getAllComponents();
 
             // Check if any components were actually placed
             if (Object.keys(componentsData.floors).length === 0) {
@@ -417,8 +417,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         });
                     }
                     // Add Coaxial Cable information (implicit based on schematic and API calculation logic)
-                    // The API.md suggests the backend calculates cable based on fixed lengths per floor/connection.
-                    // We might need to pass the selected *cable model* though.
+                    // We might need to pass the selected *cable model*.
                     // Let's assume the backend primarily needs the *type* of cable used universally.
                     // If specific lengths/models per connection are needed, the schematic/API interaction needs adjustment.
                     // For now, ensure the selected cable model is available if needed, but don't add explicit 'coaxial' entries per floor here.
