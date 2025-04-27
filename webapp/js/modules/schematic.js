@@ -273,8 +273,15 @@ export class SchematicEditor {
 
             for (const area of clickableAreas) {
                 if (this._isPointInArea(clickX, clickY, area)) {
-                    // console.log(`--> Hit detected on Floor ${floor}, Area Type: ${area.type}, Position: ${area.positionIndex}`);
-                    // console.log(`    Current Active Floor in Editor: ${this.currentFloor}`);
+                    // Skip left side components (positionIndex 0)
+                    if (area.type !== "DE" && area.positionIndex === 0) {
+                        this._showTemporaryMessage(
+                            "Los componentes del lado izquierdo son simétricos respecto al lado derecho.",
+                            e.clientX,
+                            e.clientY,
+                        );
+                        return;
+                    }
 
                     // *** Floor Activation Check ***
                     if (this.currentFloor === null) {
@@ -287,15 +294,13 @@ export class SchematicEditor {
                         return; // Prevent interaction
                     }
                     if (this.currentFloor !== floor) {
-                        console.warn(
-                            `Interaction prevented: Clicked on Floor ${floor}, but active floor is ${this.currentFloor}.`,
-                        );
-                        this._showTemporaryMessage(
-                            `Seleccione el Piso ${this.currentFloor} para editarlo, o cambie al Piso ${floor}.`,
-                            e.clientX,
-                            e.clientY,
-                        );
-                        return; // Prevent interaction
+                        this.setCurrentFloor(floor);
+                        // Update the floor selector in the UI
+                        const floorSelect = document.getElementById("simulation-floor");
+                        if (floorSelect) {
+                            floorSelect.value = floor;
+                        }
+                        return;
                     }
 
                     // If checks pass, show the selector
@@ -425,24 +430,23 @@ export class SchematicEditor {
                 }
                 break;
             case "DI":
-                if (positionIndex === 0 || positionIndex === 1) {
+                if (positionIndex === 1) {
+                    // Only allow right side (index 1) editing
                     if (floorData.distribuidores[positionIndex] !== model) {
                         floorData.distribuidores[positionIndex] = model;
+                        // Mirror to left side
+                        floorData.distribuidores[0] = model;
                         // Clear associated tomas if DI is removed
                         if (model === null) {
-                            if (positionIndex === 0 && floorData.tomasLeft.length > 0) {
-                                floorData.tomasLeft = [];
-                                console.log(`Cleared Floor ${floor} Left Tomas due to DI removal.`);
-                            } else if (positionIndex === 1 && floorData.tomasRight.length > 0) {
-                                floorData.tomasRight = [];
-                                console.log(`Cleared Floor ${floor} Right Tomas due to DI removal.`);
-                            }
+                            floorData.tomasLeft = [];
+                            floorData.tomasRight = [];
+                            console.log(`Cleared Floor ${floor} Tomas due to DI removal.`);
                         }
                         changed = true;
-                        console.log(`Set Floor ${floor} DI[${positionIndex}] to: ${model}`);
+                        console.log(`Set Floor ${floor} DI[${positionIndex}] to: ${model} (mirrored to left side)`);
                     }
                 } else {
-                    console.error(`Invalid positionIndex ${positionIndex} for DI.`);
+                    console.error(`Invalid positionIndex ${positionIndex} for DI. Only right side (1) is editable.`);
                     return false;
                 }
                 break;
@@ -475,8 +479,14 @@ export class SchematicEditor {
             return false;
         }
 
+        // Only allow right side editing
+        if (sideIndex === 0) {
+            console.error("Cannot edit left side tomas directly. They are automatically mirrored from the right side.");
+            return false;
+        }
+
         const floorData = this.floorComponents.get(floor);
-        const tomasArray = sideIndex === 0 ? floorData.tomasLeft : floorData.tomasRight;
+        const tomasArray = floorData.tomasRight;
 
         // Pad array with nulls if necessary
         while (tomasArray.length <= slotIndex) {
@@ -486,13 +496,22 @@ export class SchematicEditor {
         // Set the model (or null to remove)
         if (tomasArray[slotIndex] !== model) {
             tomasArray[slotIndex] = model;
-            console.log(`Set Floor ${floor} ${sideIndex === 0 ? "Left" : "Right"} Toma[${slotIndex}] to: ${model}`);
+            // Mirror to left side
+            while (floorData.tomasLeft.length <= slotIndex) {
+                floorData.tomasLeft.push(null);
+            }
+            floorData.tomasLeft[slotIndex] = model;
+
+            console.log(`Set Floor ${floor} Right Toma[${slotIndex}] to: ${model} (mirrored to left side)`);
 
             // Trim trailing nulls for accurate length tracking
             while (tomasArray.length > 0 && tomasArray[tomasArray.length - 1] === null) {
                 tomasArray.pop();
             }
-            console.log(` -> Updated Tomas Array (${sideIndex === 0 ? "Left" : "Right"}):`, tomasArray);
+            while (floorData.tomasLeft.length > 0 && floorData.tomasLeft[floorData.tomasLeft.length - 1] === null) {
+                floorData.tomasLeft.pop();
+            }
+            console.log(` -> Updated Tomas Arrays (Right: ${tomasArray}, Left: ${floorData.tomasLeft})`);
 
             this.render();
             return true;
@@ -603,7 +622,7 @@ export class SchematicEditor {
     }
 
     /** Displays the appropriate component selection popup. Handles individual BTs now. */
-    _showComponentSelector(type, floor, positionOrSideIndex, event, slotIndex = null) {
+    _showComponentSelector(type, floor, positionIndex, event, slotIndex = null) {
         this.removeExistingPopups();
 
         const popup = document.createElement("div");
@@ -637,27 +656,23 @@ export class SchematicEditor {
                 apiType = "derivador";
                 break;
             case "DI":
-                const sideLabelDI = positionOrSideIndex === 0 ? "Izquierda" : "Derecha";
+                const sideLabelDI = positionIndex === 0 ? "Izquierda" : "Derecha";
                 titleText = `Seleccionar Distribuidor (${sideLabelDI})`;
                 models = this.componentModels.distribuidores;
-                currentModel = floorData.distribuidores[positionOrSideIndex];
-                modelSetter = (model) => this._setComponentValue(floor, "DI", positionOrSideIndex, model);
-                removalHandler = () => this._setComponentValue(floor, "DI", positionOrSideIndex, null);
+                currentModel = floorData.distribuidores[positionIndex];
+                modelSetter = (model) => this._setComponentValue(floor, "DI", positionIndex, model);
+                removalHandler = () => this._setComponentValue(floor, "DI", positionIndex, null);
                 apiType = "distribuidor";
                 break;
             case "BT":
-                if (slotIndex === null || slotIndex < 0 || slotIndex > 3) {
-                    console.error("Invalid slotIndex for BT selector:", slotIndex);
+                if (positionIndex !== 1) {
+                    console.error("BT selector should only be shown for right side");
                     return;
                 }
-                const sideIndex = positionOrSideIndex;
-                const sideLabelBT = sideIndex === 0 ? "Izquierda" : "Derecha";
-                titleText = `Seleccionar Toma (${sideLabelBT}, Slot ${slotIndex + 1})`; // User-friendly 1-based index
+                titleText = "Seleccionar Tomas";
                 models = this.componentModels.tomas;
-                const currentTomasArray = sideIndex === 0 ? floorData.tomasLeft : floorData.tomasRight;
-                currentModel = currentTomasArray[slotIndex] || null; // Get model at specific index, or null
-                modelSetter = (model) => this._setSingleTomaModel(floor, sideIndex, slotIndex, model);
-                removalHandler = () => this._setSingleTomaModel(floor, sideIndex, slotIndex, null); // Set to null to remove
+                // Get the current model from any existing toma (they should all be the same)
+                currentModel = floorData.tomasRight[0] || null;
                 apiType = "toma";
                 break;
             default:
@@ -692,10 +707,19 @@ export class SchematicEditor {
                         : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`;
                 button.textContent = model;
-                button.onclick = () => {
-                    if (modelSetter) modelSetter(model);
-                    this.removeExistingPopups();
-                };
+
+                if (type === "BT") {
+                    // For BT, show quantity selector after model selection
+                    button.onclick = () => {
+                        this._showTomaQuantitySelector(floor, model, event);
+                        this.removeExistingPopups();
+                    };
+                } else {
+                    button.onclick = () => {
+                        if (modelSetter) modelSetter(model);
+                        this.removeExistingPopups();
+                    };
+                }
 
                 const infoButton = document.createElement("button");
                 infoButton.type = "button";
@@ -758,6 +782,93 @@ export class SchematicEditor {
 
         document.body.appendChild(popup);
         this._addOutsideClickListener();
+    }
+
+    /** Shows a popup to select the quantity of tomas (2 or 4) */
+    _showTomaQuantitySelector(floor, model, event) {
+        this.removeExistingPopups(); // Remove any existing popups first
+
+        const popup = document.createElement("div");
+        popup.id = "toma-quantity-selector";
+        popup.className =
+            "fixed z-50 p-4 bg-white rounded-lg shadow-xl dark:bg-gray-800 border border-gray-200 dark:border-gray-700";
+        popup.style.left = `${event.clientX + 10}px`;
+        popup.style.top = `${event.clientY + 5}px`;
+        popup.style.minWidth = "200px";
+
+        const title = document.createElement("h3");
+        title.className = "text-lg font-medium mb-3 text-gray-900 dark:text-white";
+        title.textContent = "Seleccionar Cantidad de Tomas";
+        popup.appendChild(title);
+
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "flex flex-col gap-2";
+
+        [2, 4].forEach((quantity) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className =
+                "text-left px-3 py-2 text-sm rounded transition-colors duration-150 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700";
+            button.textContent = `${quantity} Tomas`;
+            button.onclick = (e) => {
+                e.stopPropagation();
+                this._setTomaQuantity(floor, model, quantity);
+                popup.remove();
+            };
+            buttonContainer.appendChild(button);
+        });
+
+        popup.appendChild(buttonContainer);
+
+        const cancelButton = document.createElement("button");
+        cancelButton.type = "button";
+        cancelButton.textContent = "Cancelar";
+        cancelButton.className =
+            "mt-3 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 px-3 py-1 rounded bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500";
+        cancelButton.onclick = (e) => {
+            e.stopPropagation();
+            popup.remove();
+        };
+        popup.appendChild(cancelButton);
+
+        document.body.appendChild(popup);
+
+        // Add click outside handler
+        const handleOutsideClick = (e) => {
+            if (!popup.contains(e.target)) {
+                popup.remove();
+                document.removeEventListener("click", handleOutsideClick);
+            }
+        };
+
+        // Delay adding the listener to prevent immediate closing
+        setTimeout(() => {
+            document.addEventListener("click", handleOutsideClick);
+        }, 0);
+    }
+
+    /** Sets the specified quantity of tomas with the given model */
+    _setTomaQuantity(floor, model, quantity) {
+        if (!this.floorComponents.has(floor)) {
+            console.error(`Cannot set tomas: Floor ${floor} data not found.`);
+            return false;
+        }
+
+        const floorData = this.floorComponents.get(floor);
+
+        // Clear existing tomas
+        floorData.tomasLeft = [];
+        floorData.tomasRight = [];
+
+        // Set new tomas based on quantity
+        for (let i = 0; i < quantity; i++) {
+            floorData.tomasRight.push(model);
+            floorData.tomasLeft.push(model);
+        }
+
+        console.log(`Set ${quantity} tomas on floor ${floor} with model ${model}`);
+        this.render();
+        return true;
     }
 
     /** Shows component details in a popup */

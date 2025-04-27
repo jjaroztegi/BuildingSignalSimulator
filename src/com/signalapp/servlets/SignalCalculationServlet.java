@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Servlet to handle signal calculations and validation for building
@@ -241,23 +242,53 @@ public class SignalCalculationServlet extends HttpServlet {
                         coaxInfo.cost));
             }
 
-            // Apply distribuidor and toma attenuation
-            for (String type : Arrays.asList("distribuidor", "toma")) {
-                for (ComponentConfig config : floorComponents) {
-                    if (config.type.equalsIgnoreCase(type)) {
-                        ComponentInfo compInfo = getComponentInfo(config, frequency);
-                        signalToStay -= compInfo.attenuation;
-                        floorCost += compInfo.cost;
-                        info.componentEffects.add(new ComponentEffect(
-                                config.type,
-                                config.model,
-                                compInfo.attenuation,
-                                compInfo.cost));
-                    }
-                }
+            // Apply distribuidor attenuation first
+            List<ComponentConfig> distribuidores = floorComponents.stream()
+                    .filter(c -> c.type.equalsIgnoreCase("distribuidor"))
+                    .collect(Collectors.toList());
+
+            double signalAfterDistribuidor = signalToStay;
+            for (ComponentConfig distribuidor : distribuidores) {
+                ComponentInfo distribInfo = getComponentInfo(distribuidor, frequency);
+                signalAfterDistribuidor -= distribInfo.attenuation;
+                floorCost += distribInfo.cost;
+                info.componentEffects.add(new ComponentEffect(
+                        "distribuidor",
+                        distribuidor.model,
+                        distribInfo.attenuation,
+                        distribInfo.cost));
             }
 
-            info.finalLevel = signalToStay;
+            // Apply toma attenuation (only once per floor since all tomas have same model)
+            double signalAfterToma = signalAfterDistribuidor;
+            Optional<ComponentConfig> firstToma = floorComponents.stream()
+                    .filter(c -> c.type.equalsIgnoreCase("toma"))
+                    .findFirst();
+
+            if (firstToma.isPresent()) {
+                ComponentInfo tomaInfo = getComponentInfo(firstToma.get(), frequency);
+                signalAfterToma -= tomaInfo.attenuation;
+                info.componentEffects.add(new ComponentEffect(
+                        "toma",
+                        firstToma.get().model,
+                        tomaInfo.attenuation,
+                        tomaInfo.cost));
+            }
+
+            // Calculate total cost for all tomas
+            double tomaCosts = floorComponents.stream()
+                    .filter(c -> c.type.equalsIgnoreCase("toma"))
+                    .mapToDouble(toma -> {
+                        try {
+                            return getComponentInfo(toma, frequency).cost;
+                        } catch (SQLException e) {
+                            throw new RuntimeException("Error calculating toma cost", e);
+                        }
+                    })
+                    .sum();
+            floorCost += tomaCosts;
+
+            info.finalLevel = signalAfterToma;
             info.floorCost = floorCost;
             levels.put(floor, info);
 
