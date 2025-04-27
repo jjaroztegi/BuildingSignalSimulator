@@ -4,19 +4,19 @@ import { switchTab } from "./tabs.js";
 import { submitConfiguration, fetchConfigurations } from "./servlet.js";
 import { updateConfigSelect } from "./ui.js";
 
-// --- Component Field Definitions ---
-const componentFields = {
+// Component field configurations
+export const componentFields = {
     coaxial: [
         {
             name: "atenuacion_470mhz",
-            label: "Atenuación 470MHz (dB/100m)",
+            label: "Aten. 470MHz (dB/100m)",
             type: "number",
             step: "0.01",
             placeholder: "ej., 12.30",
         },
         {
             name: "atenuacion_694mhz",
-            label: "Atenuación 694MHz (dB/100m)",
+            label: "Aten. 694MHz (dB/100m)",
             type: "number",
             step: "0.01",
             placeholder: "ej., 15.57",

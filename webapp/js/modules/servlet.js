@@ -246,3 +246,95 @@ export async function runSimulation(simulationData) {
         throw error;
     }
 }
+
+export async function deleteComponent(type, model) {
+    try {
+        const url = new URL("components", window.location.href);
+        url.searchParams.append("type", type);
+        url.searchParams.append("modelo", model);
+
+        const response = await fetch(url, {
+            method: "DELETE",
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error(`Error deleting ${type} ${model}:`, errorData.error);
+            displayError(`Error al eliminar el componente ${model}: ${errorData.error}`);
+            throw new Error(errorData.error);
+        }
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error(`Error deleting ${type} ${model}:`, error);
+        displayError(`Error al eliminar el componente ${model}. Por favor, intente de nuevo.`);
+        throw error;
+    }
+}
+
+export async function updateComponent(type, model, formData) {
+    try {
+        // Convert form data to an object
+        const data = {};
+        formData.forEach((value, key) => {
+            if (key !== "type" && key !== "modelo") {
+                // Convert numeric strings to numbers
+                data[key] = !isNaN(value) && value !== "" ? Number(value) : value;
+            }
+        });
+
+        // Add component-specific properties
+        const properties = {};
+        switch (type.toLowerCase()) {
+            case "coaxial":
+                properties.atenuacion_470mhz = data.atenuacion_470mhz;
+                properties.atenuacion_694mhz = data.atenuacion_694mhz;
+                break;
+            case "derivador":
+                properties.atenuacion_derivacion = data.atenuacion_derivacion;
+                properties.atenuacion_paso = data.atenuacion_paso;
+                properties.directividad = data.directividad;
+                properties.desacoplo = data.desacoplo;
+                properties.perdidas_retorno = data.perdidas_retorno;
+                break;
+            case "distribuidor":
+                properties.numero_salidas = data.numero_salidas;
+                properties.atenuacion_distribucion = data.atenuacion_distribucion;
+                properties.desacoplo = data.desacoplo;
+                properties.perdidas_retorno = data.perdidas_retorno;
+                break;
+            case "toma":
+                properties.atenuacion = data.atenuacion;
+                properties.desacoplo = data.desacoplo;
+                break;
+        }
+
+        // Create the request body
+        const requestBody = new URLSearchParams({
+            type: type,
+            modelo: model,
+            costo: data.costo,
+            properties: JSON.stringify(properties),
+        });
+
+        const response = await fetch("components", {
+            method: "PUT",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: requestBody.toString(),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error(`Error updating ${type} ${model}:`, errorData.error);
+            displayError(`Error al actualizar el componente ${model}: ${errorData.error}`);
+            throw new Error(errorData.error);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error updating ${type} ${model}:`, error);
+        displayError(`Error al actualizar el componente ${model}. Por favor, intente de nuevo.`);
+        throw error;
+    }
+}

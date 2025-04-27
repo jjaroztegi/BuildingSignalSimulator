@@ -38,7 +38,7 @@ public class ConfigurationServlet extends HttpServlet {
                     jsonBuilder.append(",");
                 }
                 first = false;
-                
+
                 // Build JSON object with proper escaping
                 jsonBuilder.append("{");
                 jsonBuilder.append("\"id_configuraciones\":").append(config.getId_configuraciones()).append(",");
@@ -75,7 +75,7 @@ public class ConfigurationServlet extends HttpServlet {
 
         if (nombre == null || nivelCabecera == null || numPisos == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.write("{\"error\":\"Faltan parámetros requeridos\"}");
+            out.write("{\"error\":\"Faltan parametros requeridos\"}");
             return;
         }
 
@@ -100,10 +100,10 @@ public class ConfigurationServlet extends HttpServlet {
             // Get the generated ID
             int idConfiguracion = configuracionDAO.getIdByNombre(nombre);
             if (idConfiguracion == -1) {
-                throw new SQLException("No se pudo obtener el ID de la configuración");
+                throw new SQLException("No se pudo obtener el ID de la configuracion");
             }
 
-            out.write("{\"success\":\"Configuration created successfully\",\"id\":" + idConfiguracion + "}");
+            out.write("{\"success\":\"Configuracion creada exitosamente\",\"id\":" + idConfiguracion + "}");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\":\"" + escapeJson(e.getMessage()) + "\"}");
@@ -129,7 +129,7 @@ public class ConfigurationServlet extends HttpServlet {
 
         if (idConfiguracion == null || nombre == null || nivelCabecera == null || numPisos == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.write("{\"error\":\"Faltan parámetros requeridos\"}");
+            out.write("{\"error\":\"Faltan parametros requeridos\"}");
             return;
         }
 
@@ -143,7 +143,7 @@ public class ConfigurationServlet extends HttpServlet {
             ConfiguracionDAO configuracionDAO = new ConfiguracionDAO();
             configuracionDAO.update(configuracion, Integer.parseInt(idConfiguracion));
 
-            out.write("{\"success\":\"Configuration updated successfully\"}");
+            out.write("{\"success\":\"Configuracion actualizada exitosamente\"}");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\":\"" + escapeJson(e.getMessage()) + "\"}");
@@ -164,14 +164,14 @@ public class ConfigurationServlet extends HttpServlet {
         String idConfiguracion = request.getParameter("id_configuraciones");
         if (idConfiguracion == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.write("{\"error\":\"Falta el ID de la configuración\"}");
+            out.write("{\"error\":\"Falta el ID de la configuracion\"}");
             return;
         }
 
         try {
             ConfiguracionDAO configuracionDAO = new ConfiguracionDAO();
             configuracionDAO.delete(Integer.parseInt(idConfiguracion));
-            out.write("{\"success\":\"Configuration deleted successfully\"}");
+            out.write("{\"success\":\"Configuracion eliminada exitosamente\"}");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\":\"" + escapeJson(e.getMessage()) + "\"}");

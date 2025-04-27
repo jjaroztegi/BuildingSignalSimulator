@@ -1,5 +1,6 @@
-import { fetchComponentsByModel } from "./servlet.js";
-import { displayError, formatDate } from "./utils.js";
+import { fetchComponentsByModel, fetchComponentsByType, deleteComponent, updateComponent } from "./servlet.js";
+import { displayError, displaySuccess, clearMessages, formatDate } from "./utils.js";
+import { componentFields } from "./forms.js";
 
 // UI management module
 export function updateComponentSection(type, components) {
@@ -125,14 +126,34 @@ export function updateDetailedComponentList(type, models, listId) {
         details.innerHTML = '<p class="text-gray-400 dark:text-gray-500 italic">Cargando detalles...</p>';
         content.appendChild(details);
 
+        // Action Buttons
+        const actions = document.createElement("div");
+        actions.className = "flex justify-end space-x-2 mt-2 pt-2 border-t border-gray-200 dark:border-gray-700";
+
+        // Edit Button
+        const editButton = document.createElement("button");
+        editButton.className =
+            "text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300 px-2 py-1 rounded-md text-sm";
+        editButton.textContent = "Editar";
+        editButton.onclick = () => handleEditComponent(type, modelo);
+        actions.appendChild(editButton);
+
+        // Delete Button
+        const deleteButton = document.createElement("button");
+        deleteButton.className =
+            "text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 px-2 py-1 rounded-md text-sm";
+        deleteButton.textContent = "Eliminar";
+        deleteButton.onclick = () => handleDeleteComponent(type, modelo);
+        actions.appendChild(deleteButton);
+
+        content.appendChild(actions);
         item.appendChild(content);
-        fragment.appendChild(item); // Add item to fragment
+        fragment.appendChild(item);
 
         // Fetch and display component details
         fetchComponentsByModel(type, modelo)
             .then((componentData) => {
                 if (!componentData || typeof componentData.costo === "undefined") {
-                    // Basic check for valid data
                     console.error(`Error loading details for ${modelo}: Invalid data received`, componentData);
                     details.innerHTML = '<p class="text-red-500 dark:text-red-400">Error al cargar detalles.</p>';
                     return;
@@ -183,7 +204,7 @@ export function updateDetailedComponentList(type, models, listId) {
                                             <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.numero_salidas ?? "-"}</span>
                                         </div>`;
                         detailsHTML += `<div class="flex justify-between items-center">
-                                            <span class="text-gray-600 dark:text-gray-400">Aten. Dist.:</span>
+                                            <span class="text-gray-600 dark:text-gray-400">Aten. Distrib.:</span>
                                             <span class="font-medium text-gray-800 dark:text-gray-200">${componentData.atenuacion_distribucion?.toFixed(1) ?? "-"} dB</span>
                                         </div>`;
                         detailsHTML += `<div class="flex justify-between items-center">
@@ -212,12 +233,12 @@ export function updateDetailedComponentList(type, models, listId) {
                 details.innerHTML = detailsHTML;
             })
             .catch((error) => {
-                console.error(`Error loading component details for ${modelo}:`, error);
+                console.error(`Error loading details for ${modelo}:`, error);
                 details.innerHTML = '<p class="text-red-500 dark:text-red-400">Error al cargar detalles.</p>';
             });
     });
 
-    listElement.appendChild(fragment); // Append all items at once
+    listElement.appendChild(fragment);
 }
 
 export function updateSimpleComponentList(type, data, listId) {
@@ -328,6 +349,8 @@ export function updateConfigSelect(configurations, configSelect) {
     // Try to restore previous selection
     if (configSelect.querySelector(`option[value="${currentVal}"]`)) {
         configSelect.value = currentVal;
+        // Trigger change event to update details
+        configSelect.dispatchEvent(new Event("change", { bubbles: true }));
     } else if (configurations.length > 0 && !configSelect.value) {
         // If no value selected and there are options, select the first one
         // configSelect.value = configurations[0].id_configuraciones || configurations[0].id;
@@ -736,5 +759,161 @@ function updateChartPlaceholder(show = true) {
     if (canvas && placeholder) {
         canvas.style.display = show ? "none" : "block";
         placeholder.style.display = show ? "block" : "none";
+    }
+}
+
+async function handleDeleteComponent(type, model) {
+    if (!confirm(`¿Está seguro de que desea eliminar el componente ${model}?`)) {
+        return;
+    }
+
+    const errorMessageElement = document.getElementById("error-message");
+    const successMessageElement = document.getElementById("success-message");
+
+    try {
+        const response = await deleteComponent(type, model);
+        clearMessages(errorMessageElement, successMessageElement);
+        displaySuccess(
+            response.message || `Componente ${model} eliminado correctamente.`,
+            successMessageElement,
+            errorMessageElement,
+        );
+        // Refresh the component list
+        const componentListType = document.getElementById("component-list-type");
+        if (componentListType) {
+            const components = await fetchComponentsByType(componentListType.value);
+            updateDetailedComponentList(componentListType.value, components, `${componentListType.value}-list`);
+        }
+    } catch (error) {
+        console.error("Error deleting component:", error);
+        clearMessages(errorMessageElement, successMessageElement);
+        displayError(`Error al eliminar el componente: ${error.message}`, errorMessageElement, successMessageElement);
+    }
+}
+
+async function handleEditComponent(type, model) {
+    const errorMessageElement = document.getElementById("error-message");
+    const successMessageElement = document.getElementById("success-message");
+
+    try {
+        // Fetch current component data
+        const componentData = await fetchComponentsByModel(type, model);
+
+        // Create edit form
+        const form = document.createElement("form");
+        form.className = "space-y-4";
+        form.id = "edit-component-form";
+
+        // Add hidden fields for type and model
+        const typeInput = document.createElement("input");
+        typeInput.type = "hidden";
+        typeInput.name = "type";
+        typeInput.value = type;
+        form.appendChild(typeInput);
+
+        const modelInput = document.createElement("input");
+        modelInput.type = "hidden";
+        modelInput.name = "modelo";
+        modelInput.value = model;
+        form.appendChild(modelInput);
+
+        // Add cost field (common to all components)
+        const costField = document.createElement("div");
+        costField.innerHTML = `
+            <label for="costo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Costo (€)</label>
+            <input type="number" step="0.01" id="costo" name="costo" value="${componentData.costo}" required
+                class="block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-primary-400 dark:focus:ring-primary-400">
+        `;
+        form.appendChild(costField);
+
+        // Add component-specific fields dynamically
+        const fieldsContainer = document.createElement("div");
+        fieldsContainer.className = "space-y-4";
+
+        if (componentFields[type]) {
+            componentFields[type].forEach((field) => {
+                const fieldWrapper = document.createElement("div");
+                fieldWrapper.innerHTML = `
+                    <label for="${field.name}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">${field.label}</label>
+                    <input type="${field.type}" id="${field.name}" name="${field.name}" 
+                        value="${componentData[field.name]}" required
+                        ${field.step ? `step="${field.step}"` : ""}
+                        class="block w-full rounded-lg border-gray-300 bg-gray-50 shadow-sm transition focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-primary-400 dark:focus:ring-primary-400">
+                `;
+                fieldsContainer.appendChild(fieldWrapper);
+            });
+        }
+
+        form.appendChild(fieldsContainer);
+
+        // Add submit button
+        const submitButton = document.createElement("button");
+        submitButton.type = "submit";
+        submitButton.className =
+            "w-full bg-primary-600 hover:bg-primary-700 focus:ring-primary-500 dark:bg-primary-500 dark:hover:bg-primary-600 dark:focus:ring-primary-400 rounded-lg px-5 py-2.5 text-sm font-medium text-white shadow-md transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900";
+        submitButton.textContent = "Guardar Cambios";
+        form.appendChild(submitButton);
+
+        // Create modal
+        const modal = document.createElement("div");
+        modal.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+        modal.innerHTML = `
+            <div class="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Editar ${model}</h3>
+                    <button class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300" onclick="this.closest('.fixed').remove()">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // Add form to modal
+        modal.querySelector(".rounded-lg").appendChild(form);
+
+        // Add modal to document
+        document.body.appendChild(modal);
+
+        // Handle form submission
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            try {
+                const response = await updateComponent(type, model, formData);
+                clearMessages(errorMessageElement, successMessageElement);
+                displaySuccess(
+                    response.message || `Componente ${model} actualizado correctamente.`,
+                    successMessageElement,
+                    errorMessageElement,
+                );
+                modal.remove();
+
+                // Refresh the component list
+                const componentListType = document.getElementById("component-list-type");
+                if (componentListType) {
+                    const components = await fetchComponentsByType(componentListType.value);
+                    updateDetailedComponentList(componentListType.value, components, `${componentListType.value}-list`);
+                }
+            } catch (error) {
+                console.error("Error updating component:", error);
+                clearMessages(errorMessageElement, successMessageElement);
+                displayError(
+                    `Error al actualizar el componente: ${error.message}`,
+                    errorMessageElement,
+                    successMessageElement,
+                );
+            }
+        });
+    } catch (error) {
+        console.error("Error loading component data:", error);
+        clearMessages(errorMessageElement, successMessageElement);
+        displayError(
+            "Error al cargar los datos del componente. Por favor, intente de nuevo.",
+            errorMessageElement,
+            successMessageElement,
+        );
     }
 }

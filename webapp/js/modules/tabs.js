@@ -20,15 +20,15 @@ export function initTabs() {
 export function switchTab(tabId) {
     // Map mobile tab IDs to desktop tab IDs
     const mobileToDesktopMap = {
-        'config-tab-mobile': 'config-tab',
-        'components-tab-mobile': 'components-tab',
-        'simulation-tab-mobile': 'simulation-tab',
-        'results-tab-mobile': 'results-tab'
+        "config-tab-mobile": "config-tab",
+        "components-tab-mobile": "components-tab",
+        "simulation-tab-mobile": "simulation-tab",
+        "results-tab-mobile": "results-tab",
     };
-    
+
     // Get the corresponding desktop tab ID if this is a mobile tab
     const desktopTabId = mobileToDesktopMap[tabId] || tabId;
-    
+
     // Hide all tab contents
     const tabContents = document.querySelectorAll(".tab-content");
     tabContents.forEach((content) => {
@@ -66,11 +66,9 @@ export function switchTab(tabId) {
             "dark:hover:text-gray-300",
         );
     }
-    
+
     // Also activate the corresponding desktop/mobile button
-    const counterpartId = tabId.includes('-mobile') 
-        ? tabId.replace('-mobile', '') 
-        : tabId + '-mobile';
+    const counterpartId = tabId.includes("-mobile") ? tabId.replace("-mobile", "") : tabId + "-mobile";
     const counterpartButton = document.getElementById(counterpartId);
     if (counterpartButton) {
         counterpartButton.classList.add("active-tab", "border-blue-500", "text-blue-600", "dark:text-blue-400");

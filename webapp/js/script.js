@@ -229,6 +229,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         configSelect.addEventListener("change", () => {
             handleConfigurationChange(configSelect.value);
         });
+        // Add listener for the custom configurationChanged event
+        configSelect.addEventListener("configurationChanged", (event) => {
+            handleConfigurationChange(event.detail.configId);
+        });
     }
 
     // **Components Tab**
