@@ -346,3 +346,138 @@ export async function updateComponent(type, model, formData) {
         throw error;
     }
 }
+
+// Simulation History API Call
+export async function fetchSimulationHistory(idConfiguracion) {
+    try {
+        const url = new URL("history", window.location.href);
+        url.searchParams.append("id_configuraciones", idConfiguracion);
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error fetching simulation history:", errorData.error);
+            displayError(`Error al cargar el historial de simulaciones: ${errorData.error}`);
+            throw new Error(errorData.error || "Error al cargar el historial de simulaciones");
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching simulation history:", error);
+        displayError("Error al cargar el historial de simulaciones. Por favor, intente de nuevo.");
+        throw error;
+    }
+}
+
+export async function deleteSimulationHistory(idSimulacion) {
+    try {
+        const url = new URL("history", window.location.href);
+        url.searchParams.append("id_simulaciones", idSimulacion);
+
+        const response = await fetch(url, {
+            method: "DELETE",
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error deleting simulation history:", errorData.error);
+            displayError(`Error al eliminar la simulación: ${errorData.error}`);
+            throw new Error(errorData.error);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting simulation history:", error);
+        displayError("Error al eliminar la simulación. Por favor, intente de nuevo.");
+        throw error;
+    }
+}
+
+export async function saveSimulationHistory(simulationData) {
+    try {
+        const response = await fetch("history", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(simulationData),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Error al guardar la simulación");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error saving simulation history:", error);
+        throw error;
+    }
+}
+
+// Schematic API Calls
+export async function saveSchematicComponent(componentData) {
+    try {
+        const response = await fetch("schematic", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams(componentData).toString(),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error saving schematic component:", errorData.error);
+            displayError(`Error al guardar el componente: ${errorData.error}`);
+            throw new Error(errorData.error);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error saving schematic component:", error);
+        displayError("Error al guardar el componente. Por favor, intente de nuevo.");
+        throw error;
+    }
+}
+
+export async function loadSchematic(idSimulacion) {
+    try {
+        const url = new URL("schematic", window.location.href);
+        url.searchParams.append("id_simulaciones", idSimulacion);
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error loading schematic:", errorData.error);
+            displayError(`Error al cargar el esquemático: ${errorData.error}`);
+            throw new Error(errorData.error || "Error al cargar el esquemático");
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Error loading schematic:", error);
+        displayError("Error al cargar el esquemático. Por favor, intente de nuevo.");
+        throw error;
+    }
+}
+
+export async function deleteSchematicComponent(idEsquematico) {
+    try {
+        const url = new URL("schematic", window.location.href);
+        url.searchParams.append("id_esquematicos", idEsquematico);
+
+        const response = await fetch(url, {
+            method: "DELETE",
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error deleting schematic component:", errorData.error);
+            displayError(`Error al eliminar el componente: ${errorData.error}`);
+            throw new Error(errorData.error);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting schematic component:", error);
+        displayError("Error al eliminar el componente. Por favor, intente de nuevo.");
+        throw error;
+    }
+}

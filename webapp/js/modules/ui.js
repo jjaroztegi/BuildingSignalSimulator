@@ -161,7 +161,9 @@ export function updateDetailedComponentList(type, models, listId) {
 
                 let detailsHTML = `<div class="flex justify-between items-center">
                                     <span class="text-zinc-600 dark:text-zinc-400">Costo:</span>
-                                    <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.costo.toFixed(2)} €</span>
+                                    <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.costo.toFixed(
+                                        2
+                                    )} €</span>
                                   </div>`;
 
                 // Add component-specific properties using flex layout
@@ -169,61 +171,87 @@ export function updateDetailedComponentList(type, models, listId) {
                     case "coaxial":
                         detailsHTML += `<div class="flex justify-between items-center">
                                             <span class="text-zinc-600 dark:text-zinc-400">Aten. 470MHz:</span>
-                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.atenuacion_470mhz?.toFixed(2) ?? "-"} dB/100m</span>
+                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${
+                                                componentData.atenuacion_470mhz?.toFixed(2) ?? "-"
+                                            } dB/100m</span>
                                         </div>`;
                         detailsHTML += `<div class="flex justify-between items-center">
                                             <span class="text-zinc-600 dark:text-zinc-400">Aten. 694MHz:</span>
-                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.atenuacion_694mhz?.toFixed(2) ?? "-"} dB/100m</span>
+                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${
+                                                componentData.atenuacion_694mhz?.toFixed(2) ?? "-"
+                                            } dB/100m</span>
                                         </div>`;
                         break;
                     case "derivador":
                         detailsHTML += `<div class="flex justify-between items-center">
                                             <span class="text-zinc-600 dark:text-zinc-400">Aten. Deriv.:</span>
-                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.atenuacion_derivacion?.toFixed(1) ?? "-"} dB</span>
+                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${
+                                                componentData.atenuacion_derivacion?.toFixed(1) ?? "-"
+                                            } dB</span>
                                         </div>`;
                         detailsHTML += `<div class="flex justify-between items-center">
                                             <span class="text-zinc-600 dark:text-zinc-400">Aten. Paso:</span>
-                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.atenuacion_paso?.toFixed(1) ?? "-"} dB</span>
+                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${
+                                                componentData.atenuacion_paso?.toFixed(1) ?? "-"
+                                            } dB</span>
                                         </div>`;
                         detailsHTML += `<div class="flex justify-between items-center">
                                             <span class="text-zinc-600 dark:text-zinc-400">Directividad:</span>
-                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.directividad?.toFixed(1) ?? "-"} dB</span>
+                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${
+                                                componentData.directividad?.toFixed(1) ?? "-"
+                                            } dB</span>
                                         </div>`;
                         detailsHTML += `<div class="flex justify-between items-center">
                                             <span class="text-zinc-600 dark:text-zinc-400">Desacoplo:</span>
-                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.desacoplo?.toFixed(1) ?? "-"} dB</span>
+                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${
+                                                componentData.desacoplo?.toFixed(1) ?? "-"
+                                            } dB</span>
                                         </div>`;
                         detailsHTML += `<div class="flex justify-between items-center">
                                             <span class="text-zinc-600 dark:text-zinc-400">Pérd. Retorno:</span>
-                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.perdidas_retorno?.toFixed(1) ?? "-"} dB</span>
+                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${
+                                                componentData.perdidas_retorno?.toFixed(1) ?? "-"
+                                            } dB</span>
                                         </div>`;
                         break;
                     case "distribuidor":
                         detailsHTML += `<div class="flex justify-between items-center">
                                             <span class="text-zinc-600 dark:text-zinc-400">Nº Salidas:</span>
-                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.numero_salidas ?? "-"}</span>
+                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${
+                                                componentData.numero_salidas ?? "-"
+                                            }</span>
                                         </div>`;
                         detailsHTML += `<div class="flex justify-between items-center">
                                             <span class="text-zinc-600 dark:text-zinc-400">Aten. Distrib.:</span>
-                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.atenuacion_distribucion?.toFixed(1) ?? "-"} dB</span>
+                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${
+                                                componentData.atenuacion_distribucion?.toFixed(1) ?? "-"
+                                            } dB</span>
                                         </div>`;
                         detailsHTML += `<div class="flex justify-between items-center">
                                             <span class="text-zinc-600 dark:text-zinc-400">Desacoplo:</span>
-                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.desacoplo?.toFixed(1) ?? "-"} dB</span>
+                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${
+                                                componentData.desacoplo?.toFixed(1) ?? "-"
+                                            } dB</span>
                                         </div>`;
                         detailsHTML += `<div class="flex justify-between items-center">
                                             <span class="text-zinc-600 dark:text-zinc-400">Pérd. Retorno:</span>
-                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.perdidas_retorno?.toFixed(1) ?? "-"} dB</span>
+                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${
+                                                componentData.perdidas_retorno?.toFixed(1) ?? "-"
+                                            } dB</span>
                                         </div>`;
                         break;
                     case "toma":
                         detailsHTML += `<div class="flex justify-between items-center">
                                             <span class="text-zinc-600 dark:text-zinc-400">Atenuación:</span>
-                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.atenuacion?.toFixed(1) ?? "-"} dB</span>
+                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${
+                                                componentData.atenuacion?.toFixed(1) ?? "-"
+                                            } dB</span>
                                         </div>`;
                         detailsHTML += `<div class="flex justify-between items-center">
                                             <span class="text-zinc-600 dark:text-zinc-400">Desacoplo:</span>
-                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${componentData.desacoplo?.toFixed(1) ?? "-"} dB</span>
+                                            <span class="font-medium text-zinc-800 dark:text-zinc-200">${
+                                                componentData.desacoplo?.toFixed(1) ?? "-"
+                                            } dB</span>
                                         </div>`;
                         break;
                     default:
@@ -291,7 +319,7 @@ export function updateSimpleComponentList(type, data, listId) {
                         type: type,
                         model: modelo,
                     },
-                }),
+                })
             );
         });
 
@@ -368,7 +396,7 @@ export function updateSignalTypeSelect(signalTypes, signalTypeSelect) {
         signalTypes
             .map(
                 (typeObj) =>
-                    `<option value="${typeObj.type}" data-min="${typeObj.min}" data-max="${typeObj.max}">${typeObj.type} (${typeObj.min}-${typeObj.max} dB)</option>`,
+                    `<option value="${typeObj.type}" data-min="${typeObj.min}" data-max="${typeObj.max}">${typeObj.type} (${typeObj.min}-${typeObj.max} dB)</option>`
             )
             .join("");
 
@@ -429,7 +457,7 @@ export function updateSimulationResults(results) {
                 return `
                         <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-50/5 transition-colors duration-150">
                             <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-zinc-800 dark:text-zinc-200">${floor.floor}</td>
-                            <td class="px-4 py-2 whitespace-nowrap text-sm text-zinc-700 dark:text-zinc-300">${level} dBµV</td>
+                            <td class="px-4 py-2 whitespace-nowrap text-sm text-zinc-700 dark:text-zinc-300">${level} dBμV</td>
                             <td class="px-4 py-2 whitespace-nowrap text-center">
                                 <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">
                                     ${statusText}
@@ -449,11 +477,11 @@ export function updateSimulationResults(results) {
     simulationSummaryContainer.querySelector("p.text-xs")?.classList.add("hidden"); // Hide placeholder
 
     // Headend Level (comes from the simulation payload, which should include it)
-    headendLevelEl.textContent = results.nivel_cabecera ? `${results.nivel_cabecera.toFixed(1)} dBµV` : "-";
+    headendLevelEl.textContent = results.nivel_cabecera ? `${results.nivel_cabecera.toFixed(1)} dBμV` : "-";
 
     // Quality Margins (from results)
     qualityMarginsEl.textContent = results.margins
-        ? `${results.margins.min.toFixed(1)} - ${results.margins.max.toFixed(1)} dBµV`
+        ? `${results.margins.min.toFixed(1)} - ${results.margins.max.toFixed(1)} dBμV`
         : "-";
 
     // Total Cost (from results)
@@ -462,7 +490,9 @@ export function updateSimulationResults(results) {
     // Overall Status (derive from signal_levels)
     const allOk = results.signal_levels && results.signal_levels.every((f) => f.status === "ok");
     overallStatusEl.textContent = allOk ? "OK" : "Revisar";
-    overallStatusEl.className = `font-medium text-right ${allOk ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`;
+    overallStatusEl.className = `font-medium text-right ${
+        allOk ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
+    }`;
 
     // --- Update Chart ---
     // Basic Chart.js implementation (requires Chart.js library to be included)
@@ -498,7 +528,7 @@ export function updateSimulationResults(results) {
                 labels: floorLabels,
                 datasets: [
                     {
-                        label: "Nivel de Señal (dBµV)",
+                        label: "Nivel de Señal (dBμV)",
                         data: signalData,
                         borderColor: themeColors.pointColor,
                         backgroundColor: themeColors.pointColor + "33", // Semi-transparent fill
@@ -519,7 +549,7 @@ export function updateSimulationResults(results) {
                         ticks: { color: themeColors.textColor, padding: 10 },
                         title: {
                             display: true,
-                            text: "Nivel Señal (dBµV)",
+                            text: "Nivel Señal (dBμV)",
                             color: themeColors.textColor,
                             font: { size: 10 },
                         },
@@ -718,7 +748,9 @@ export function updateSelectedComponentsDisplay() {
 
             html += `
                 <div class="pl-4">
-                    <h4 class="mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">${getComponentTypeName(type)}</h4>
+                    <h4 class="mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">${getComponentTypeName(
+                        type
+                    )}</h4>
                     <ul class="space-y-1">
             `;
 
@@ -804,7 +836,7 @@ async function handleDeleteComponent(type, model) {
         displaySuccess(
             response.message || `Componente ${model} eliminado correctamente.`,
             successMessageElement,
-            errorMessageElement,
+            errorMessageElement
         );
         // Refresh the component list
         const componentListType = document.getElementById("component-list-type");
@@ -862,7 +894,9 @@ async function handleEditComponent(type, model) {
             componentFields[type].forEach((field) => {
                 const fieldWrapper = document.createElement("div");
                 fieldWrapper.innerHTML = `
-                    <label for="${field.name}" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">${field.label}</label>
+                    <label for="${
+                        field.name
+                    }" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">${field.label}</label>
                     <input type="${field.type}" id="${field.name}" name="${field.name}" 
                         value="${componentData[field.name]}" required
                         ${field.step ? `step="${field.step}"` : ""}
@@ -915,7 +949,7 @@ async function handleEditComponent(type, model) {
                 displaySuccess(
                     response.message || `Componente ${model} actualizado correctamente.`,
                     successMessageElement,
-                    errorMessageElement,
+                    errorMessageElement
                 );
                 modal.remove();
 
@@ -931,7 +965,7 @@ async function handleEditComponent(type, model) {
                 displayError(
                     `Error al actualizar el componente: ${error.message}`,
                     errorMessageElement,
-                    successMessageElement,
+                    successMessageElement
                 );
             }
         });
@@ -941,7 +975,62 @@ async function handleEditComponent(type, model) {
         displayError(
             "Error al cargar los datos del componente. Por favor, intente de nuevo.",
             errorMessageElement,
-            successMessageElement,
+            successMessageElement
         );
     }
+}
+
+export function updateSimulationHistoryTable(simulations) {
+    const tableBody = document.getElementById("simulation-history-table");
+    if (!tableBody) return;
+
+    if (!simulations || simulations.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="8" class="px-6 py-10 text-center text-sm text-zinc-500 dark:text-zinc-400">
+                    No hay simulaciones guardadas.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    let currentConfig = null;
+    let html = "";
+
+    simulations.forEach((simulation) => {
+        html += `
+            <tr class="border-b border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800">
+                <td class="px-4 py-2.5">${simulation.id_simulaciones || "-"}</td>
+                <td class="px-4 py-2.5">${simulation.nombre_edificio || "-"}</td>
+                <td class="px-4 py-2.5">${simulation.nivel_cabecera ? `${simulation.nivel_cabecera} dBμV` : "-"}</td>
+                <td class="px-4 py-2.5">${simulation.num_pisos || "-"}</td>
+                <td class="px-4 py-2.5">${simulation.frecuencia ? `${simulation.frecuencia} MHz` : "-"}</td>
+                <td class="px-4 py-2.5">${simulation.costo_total ? `€${simulation.costo_total}` : "-"}</td>
+                <td class="px-4 py-2.5">
+                    <span class="px-2 py-1 rounded-full text-xs ${
+                        simulation.estado === "Completado"
+                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                            : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                    }">
+                        ${simulation.estado || "-"}
+                    </span>
+                </td>
+                <td class="px-4 py-2.5">
+                    <div class="flex flex-col space-y-2">
+                        <button class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 load-schematic" 
+                                data-simulation-id="${simulation.id_simulaciones}">
+                            Cargar
+                        </button>
+                        <button class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 delete-simulation" 
+                                data-simulation-id="${simulation.id_simulaciones}">
+                            Eliminar
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+
+    tableBody.innerHTML = html;
 }

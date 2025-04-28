@@ -24,6 +24,7 @@ export function switchTab(tabId) {
         "components-tab-mobile": "components-tab",
         "simulation-tab-mobile": "simulation-tab",
         "results-tab-mobile": "results-tab",
+        "history-tab-mobile": "history-tab",
     };
 
     // Get the corresponding desktop tab ID if this is a mobile tab
@@ -44,7 +45,7 @@ export function switchTab(tabId) {
             "text-zinc-500",
             "dark:text-zinc-400",
             "hover:text-zinc-700",
-            "dark:hover:text-zinc-300",
+            "dark:hover:text-zinc-300"
         );
     });
 
@@ -63,7 +64,7 @@ export function switchTab(tabId) {
             "text-zinc-500",
             "dark:text-zinc-400",
             "hover:text-zinc-700",
-            "dark:hover:text-zinc-300",
+            "dark:hover:text-zinc-300"
         );
     }
 
@@ -77,7 +78,7 @@ export function switchTab(tabId) {
             "text-zinc-500",
             "dark:text-zinc-400",
             "hover:text-zinc-700",
-            "dark:hover:text-zinc-300",
+            "dark:hover:text-zinc-300"
         );
     }
 

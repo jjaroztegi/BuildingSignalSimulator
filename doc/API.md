@@ -383,6 +383,242 @@ Delete an existing configuration.
 }
 ```
 
+## Schematics
+
+### Get Schematic Components
+
+Get all schematic components for a specific simulation.
+
+**Endpoint:** `GET /schematic?id_simulaciones={id}`
+
+**Parameters:**
+
+-   `id_simulaciones` (required): ID of the simulation
+
+**Response:**
+
+```json
+[
+    {
+        "id_esquematicos": 1,
+        "id_simulaciones": 1,
+        "piso": 1,
+        "tipo_componente": "derivador",
+        "modelo_componente": "DER-2",
+        "posicion_x": 100,
+        "posicion_y": 200,
+        "cable_tipo": "RG-6"
+    }
+]
+```
+
+**Error Response:**
+
+```json
+{
+    "error": "Falta el ID de la simulacion"
+}
+```
+
+### Add Schematic Component
+
+Add a new schematic component to a simulation.
+
+**Endpoint:** `POST /schematic`
+
+**Parameters:**
+
+-   `id_simulaciones` (required): ID of the simulation
+-   `tipo` (required): Type of component (e.g., "derivador", "coaxial", "toma")
+-   `modelo` (required): Model name of the component
+-   `piso` (required): Floor number
+-   `posicion_x` (required): X position on the schematic
+-   `posicion_y` (required): Y position on the schematic
+-   `cable_tipo` (optional): Type of cable used
+
+**Response:**
+
+```json
+{
+    "success": "Componente guardado exitosamente",
+    "id": 1
+}
+```
+
+**Error Response:**
+
+```json
+{
+    "error": "Faltan parametros requeridos"
+}
+```
+
+### Update Schematic Component
+
+Update an existing schematic component.
+
+**Endpoint:** `PUT /schematic`
+
+**Parameters:**
+
+-   `id_esquematicos` (required): ID of the schematic component
+-   `piso` (required): Floor number
+-   `tipo_componente` (required): Type of component
+-   `modelo_componente` (required): Model name of the component
+-   `posicion_x` (required): X position on the schematic
+-   `posicion_y` (required): Y position on the schematic
+-   `cable_tipo` (required): Type of cable used
+
+**Response:**
+
+```json
+{
+    "success": "Componente actualizado exitosamente"
+}
+```
+
+**Error Response:**
+
+```json
+{
+    "error": "Faltan parametros requeridos"
+}
+```
+
+### Delete Schematic Component
+
+Delete a schematic component.
+
+**Endpoint:** `DELETE /schematic`
+
+**Parameters:**
+
+-   `id_esquematicos` (required): ID of the schematic component to delete
+
+**Response:**
+
+```json
+{
+    "success": "Componente eliminado exitosamente"
+}
+```
+
+**Error Response:**
+
+```json
+{
+    "error": "Falta el ID del componente"
+}
+```
+
+## History
+
+### Get Simulation History
+
+Get all simulations for a specific configuration.
+
+**Endpoint:** `GET /history?id_configuraciones={id}`
+
+**Parameters:**
+
+-   `id_configuraciones` (required): ID of the configuration
+
+**Response:**
+
+```json
+[
+    {
+        "id_simulaciones": 1,
+        "id_configuraciones": 1,
+        "frecuencia": 470,
+        "tipo_senal": "TDT",
+        "costo_total": 125.5,
+        "estado": "ok",
+        "fecha_simulacion": "2024-03-20 12:00:00",
+        "nombre_edificio": "Building Name",
+        "nivel_cabecera": 95.0,
+        "num_pisos": 5
+    }
+]
+```
+
+**Error Response:**
+
+```json
+{
+    "error": "Falta el ID de la configuracion"
+}
+```
+
+### Add Simulation to History
+
+Save a new simulation result to the history.
+
+**Endpoint:** `POST /history`
+
+**Request Body:**
+
+```json
+{
+    "id_configuraciones": 1,
+    "frecuencia": 470,
+    "tipo_senal": "TDT",
+    "costo_total": 125.5,
+    "estado": "ok"
+}
+```
+
+**Parameters:**
+
+-   `id_configuraciones` (required): ID of the configuration
+-   `frecuencia` (required): Signal frequency in MHz
+-   `tipo_senal` (required): Type of signal (e.g., "TDT")
+-   `costo_total` (required): Total cost of the simulation
+-   `estado` (required): Status of the simulation ("ok" or "error")
+
+**Response:**
+
+```json
+{
+    "success": "Simulacion guardada exitosamente",
+    "id": 1
+}
+```
+
+**Error Response:**
+
+```json
+{
+    "error": "Faltan parametros requeridos"
+}
+```
+
+### Delete Simulation from History
+
+Delete a simulation from the history. This will also delete all associated schematic components.
+
+**Endpoint:** `DELETE /history`
+
+**Parameters:**
+
+-   `id_simulaciones` (required): ID of the simulation to delete
+
+**Response:**
+
+```json
+{
+    "success": "Simulacion eliminada exitosamente"
+}
+```
+
+**Error Response:**
+
+```json
+{
+    "error": "Falta el ID de la simulacion"
+}
+```
+
 ## Signal Calculation
 
 ### Calculate Signal Levels

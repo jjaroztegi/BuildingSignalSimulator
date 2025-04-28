@@ -9,6 +9,12 @@ import {
     submitComponent,
     runSimulation,
     fetchComponentDetails,
+    fetchSimulationHistory,
+    deleteSimulationHistory,
+    saveSchematicComponent,
+    loadSchematic,
+    deleteSchematicComponent,
+    saveSimulationHistory,
 } from "./modules/servlet.js";
 import { displayError, displaySuccess, clearMessages, formatDate } from "./modules/utils.js";
 import {
@@ -17,6 +23,7 @@ import {
     updateFloorSelector,
     updateDetailedComponentList,
     updateSimulationResults,
+    updateSimulationHistoryTable,
 } from "./modules/ui.js";
 import { SchematicEditor } from "./modules/schematic.js";
 
@@ -54,7 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Simulation Tab Elements
     const simulationConfigSelect = document.getElementById("simulation-config");
     const signalTypeSelect = document.getElementById("signal-type");
-    const signalFrequencyInput = document.getElementById("signal-frequency"); // Needed for prepareSimulationData
+    const signalFrequencyInput = document.getElementById("signal-frequency");
     const simulationFloorSelect = document.getElementById("simulation-floor");
     const cableSelect = document.getElementById("cable-select");
     const runSimulationButton = document.getElementById("run-simulation");
@@ -63,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Results Tab Elements
 
     // --- Global State ---
-    let currentConfigurations = []; // Store fetched configurations
+    let currentConfigurations = [];
     let schematicEditor;
     let componentModels = {
         coaxial: [],
@@ -194,7 +201,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         displayError(
             "Error crítico al inicializar la aplicación. Por favor, recargue.",
             errorMessageElement,
-            successMessageElement,
+            successMessageElement
         );
         // Disable parts of the UI if initialization failed?
         runSimulationButton?.setAttribute("disabled", "true");
@@ -212,7 +219,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 initialConfigForm,
                 errorMessageElement,
                 successMessageElement,
-                configSelect,
+                configSelect
             );
             // After successful submission, re-fetch configurations and update UI
             try {
@@ -253,7 +260,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 displayError(
                     "Por favor complete los campos básicos (Tipo, Modelo, Costo).",
                     errorMessageElement,
-                    successMessageElement,
+                    successMessageElement
                 );
                 return;
             }
@@ -280,7 +287,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     displayError(
                         result.error || "Error al añadir el componente",
                         errorMessageElement,
-                        successMessageElement,
+                        successMessageElement
                     );
                 }
             } catch (error) {
@@ -288,7 +295,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 displayError(
                     `Error al añadir el componente: ${error.message || "Error desconocido"}`,
                     errorMessageElement,
-                    successMessageElement,
+                    successMessageElement
                 );
             }
         });
@@ -342,7 +349,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 displayError(
                     "El editor de esquemático no está inicializado.",
                     errorMessageElement,
-                    successMessageElement,
+                    successMessageElement
                 );
                 return;
             }
@@ -355,7 +362,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 displayError(
                     "Por favor, seleccione una configuración y tipo de señal.",
                     errorMessageElement,
-                    successMessageElement,
+                    successMessageElement
                 );
                 return;
             }
@@ -363,7 +370,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 displayError(
                     "Frecuencia inválida (debe ser entre 470 y 694 MHz).",
                     errorMessageElement,
-                    successMessageElement,
+                    successMessageElement
                 );
                 return;
             }
@@ -375,7 +382,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 displayError(
                     "No se han añadido componentes al diseño en el esquemático.",
                     errorMessageElement,
-                    successMessageElement,
+                    successMessageElement
                 );
                 return;
             }
@@ -384,7 +391,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             try {
                 // Find the full config data locally first
                 const selectedConfigData = currentConfigurations.find(
-                    (c) => (c.id_configuraciones || c.id) == selectedConfigId,
+                    (c) => (c.id_configuraciones || c.id) == selectedConfigId
                 );
                 if (!selectedConfigData) {
                     throw new Error("Configuración seleccionada no encontrada localmente.");
@@ -416,11 +423,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                             if (model) apiComponents.push({ type: "toma", model: model, floor: floorNum });
                         });
                     }
-                    // Add Coaxial Cable information (implicit based on schematic and API calculation logic)
-                    // We might need to pass the selected *cable model*.
-                    // Let's assume the backend primarily needs the *type* of cable used universally.
-                    // If specific lengths/models per connection are needed, the schematic/API interaction needs adjustment.
-                    // For now, ensure the selected cable model is available if needed, but don't add explicit 'coaxial' entries per floor here.
                 });
 
                 const simulationPayload = {
@@ -428,14 +430,87 @@ document.addEventListener("DOMContentLoaded", async () => {
                     nivel_cabecera: selectedConfigData.nivel_cabecera,
                     tipo_senal: selectedSignalType,
                     frequency: frequency,
-                    selected_cable_model: cableSelect.value, // Add the selected cable model
+                    selected_cable_model: cableSelect.value,
                     components: apiComponents,
                 };
 
                 // Run simulation API call
-                const results = await runSimulation(simulationPayload); // Pass the prepared data
-
+                const results = await runSimulation(simulationPayload);
                 results.nivel_cabecera = selectedConfigData.nivel_cabecera;
+
+                // Save simulation history
+                const simulationHistoryData = {
+                    id_configuraciones: selectedConfigId,
+                    frecuencia: frequency,
+                    tipo_senal: selectedSignalType,
+                    costo_total: results.total_cost,
+                    estado: results.signal_levels.every((f) => f.status === "ok") ? "ok" : "error",
+                };
+                const simulationResponse = await saveSimulationHistory(simulationHistoryData);
+                const idSimulacion = simulationResponse.id;
+
+                // Save schematic components regardless of simulation results
+                const schematicComponents = [];
+                Object.entries(componentsData.floors).forEach(([floorStr, floorComps]) => {
+                    const floorNum = parseInt(floorStr);
+
+                    // Add derivador if present (always centered)
+                    if (floorComps.derivador) {
+                        schematicComponents.push({
+                            id_simulaciones: idSimulacion,
+                            tipo: "derivador",
+                            modelo: floorComps.derivador,
+                            piso: floorNum,
+                            posicion_x: 0, // DE is always at center (0)
+                            posicion_y: 0, // Y position is handled by floor number
+                            cable_tipo: cableSelect.value,
+                        });
+                    }
+
+                    // Add right distribuidor if present
+                    if (Array.isArray(floorComps.distribuidores) && floorComps.distribuidores[1]) {
+                        schematicComponents.push({
+                            id_simulaciones: idSimulacion,
+                            tipo: "distribuidor",
+                            modelo: floorComps.distribuidores[1],
+                            piso: floorNum,
+                            posicion_x: 100, // Right DI is at +100 from center
+                            posicion_y: 0, // Y position is handled by floor number
+                            cable_tipo: cableSelect.value,
+                        });
+                    }
+
+                    // Add right tomas if present
+                    if (Array.isArray(floorComps.tomasRight)) {
+                        floorComps.tomasRight.forEach((toma, index) => {
+                            if (toma) {
+                                schematicComponents.push({
+                                    id_simulaciones: idSimulacion,
+                                    tipo: "toma",
+                                    modelo: toma,
+                                    piso: floorNum,
+                                    posicion_x: 180, // Right BT is at +180 from center (100 + 80)
+                                    posicion_y: index * 45, // Vertical spacing between tomas
+                                    // No cable_tipo for tomas
+                                });
+                            }
+                        });
+                    }
+                });
+
+                // Save all schematic components
+                for (const component of schematicComponents) {
+                    try {
+                        await saveSchematicComponent(component);
+                    } catch (error) {
+                        console.error("Error saving schematic component:", error);
+                        displayError(
+                            `Error al guardar componente: ${error.message || "Error desconocido"}`,
+                            errorMessageElement,
+                            successMessageElement
+                        );
+                    }
+                }
 
                 switchTab("results-tab");
                 updateSimulationResults(results);
@@ -445,7 +520,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 displayError(
                     `Error en simulación: ${error.message || "Error desconocido"}`,
                     errorMessageElement,
-                    successMessageElement,
+                    successMessageElement
                 );
             }
         });
@@ -462,14 +537,204 @@ document.addEventListener("DOMContentLoaded", async () => {
                 // Use requestAnimationFrame to allow layout adjustments before resizing
                 requestAnimationFrame(() => schematicEditor?.initializeCanvas());
             } else if (tabIdBase === "components-tab") {
-                // Refresh the component list *if needed* (optional, could rely on explicit user action)
-                // updateDetailedComponentView(componentListTypeSelect.value);
+                if (componentListTypeSelect.value) {
+                    updateDetailedComponentView(componentListTypeSelect.value);
+                }
             } else if (tabIdBase === "config-tab") {
                 // Ensure the displayed config details match the selection
                 if (configSelect.value) {
                     handleConfigurationChange(configSelect.value);
                 }
+            } else if (tabIdBase === "history-tab") {
+                // Load simulation history when switching to history tab
+                loadSimulationHistory();
             }
         });
     });
+
+    // Function to load simulation history
+    async function loadSimulationHistory() {
+        try {
+            // Get all configurations
+            const configurations = await fetchConfigurations();
+            if (!configurations || configurations.length === 0) {
+                displayError("No hay configuraciones disponibles", errorMessageElement, successMessageElement);
+                return;
+            }
+
+            // Fetch history for each configuration
+            const allSimulations = [];
+            for (const config of configurations) {
+                try {
+                    const configSimulations = await fetchSimulationHistory(config.id_configuraciones || config.id);
+                    if (configSimulations && configSimulations.length > 0) {
+                        // Add configuration name to each simulation
+                        const simulationsWithConfig = configSimulations.map((sim) => ({
+                            ...sim,
+                            config_name: config.nombre_edificio || config.nombre,
+                        }));
+                        allSimulations.push(...simulationsWithConfig);
+                    }
+                } catch (error) {
+                    console.error(
+                        `Error fetching history for config ${config.id_configuraciones || config.id}:`,
+                        error
+                    );
+                    // Continue with other configurations even if one fails
+                }
+            }
+
+            // Sort by configuration name and then by date
+            allSimulations.sort((a, b) => {
+                const configCompare = (a.config_name || "").localeCompare(b.config_name || "");
+                if (configCompare !== 0) return configCompare;
+                return new Date(b.fecha_creacion) - new Date(a.fecha_creacion);
+            });
+
+            updateSimulationHistoryTable(allSimulations);
+        } catch (error) {
+            console.error("Error loading simulation history:", error);
+            displayError("Error al cargar el historial de simulaciones", errorMessageElement, successMessageElement);
+        }
+    }
+
+    async function deleteSimulation(idSimulacion) {
+        if (!confirm("¿Está seguro de que desea eliminar esta simulación? Esta acción no se puede deshacer.")) {
+            return;
+        }
+
+        try {
+            // Delete schematic components first
+            const schematicComponents = await loadSchematic(idSimulacion);
+            if (schematicComponents && schematicComponents.length > 0) {
+                for (const component of schematicComponents) {
+                    await deleteSchematicComponent(component.id_esquematicos);
+                }
+            }
+
+            // Delete simulation history
+            await deleteSimulationHistory(idSimulacion);
+
+            // Reload the history table
+            await loadSimulationHistory();
+            displaySuccess("Simulación eliminada correctamente", successMessageElement, errorMessageElement);
+        } catch (error) {
+            console.error("Error deleting simulation:", error);
+            displayError("Error al eliminar la simulación", errorMessageElement, successMessageElement);
+        }
+    }
+
+    // Add event listeners for simulation history table
+    const simulationHistoryTable = document.getElementById("simulation-history-table");
+    if (simulationHistoryTable) {
+        simulationHistoryTable.addEventListener("click", async (event) => {
+            const target = event.target;
+            const simulationId = target.dataset.simulationId;
+
+            if (!simulationId) return;
+
+            if (target.classList.contains("load-schematic")) {
+                try {
+                    // Get the simulation row data
+                    const simulationRow = target.closest("tr");
+                    const buildingName = simulationRow.cells[1].textContent;
+                    const frequency = simulationRow.cells[4].textContent.replace(" MHz", "");
+
+                    // Find the matching configuration by building name
+                    const matchingConfig = currentConfigurations.find(
+                        (config) => (config.nombre_edificio || config.nombre) === buildingName
+                    );
+
+                    if (matchingConfig) {
+                        const configId = matchingConfig.id_configuraciones || matchingConfig.id;
+                        simulationConfigSelect.value = configId;
+                        handleConfigurationChange(configId);
+                    }
+
+                    // Now load the schematic components
+                    const components = await loadSchematic(simulationId);
+
+                    // Switch to simulation tab
+                    switchTab("simulation-tab");
+
+                    if (frequency) {
+                        signalFrequencyInput.value = frequency;
+                    }
+
+                    // Clear existing schematic
+                    schematicEditor?.clearSchematic();
+
+                    // Load each component into the schematic
+                    for (const component of components) {
+                        const floor = component.piso;
+                        const type = component.tipo_componente;
+                        const model = component.modelo_componente;
+                        const posX = component.posicion_x;
+                        const posY = component.posicion_y;
+
+                        // Set current floor
+                        schematicEditor?.setCurrentFloor(floor);
+
+                        // Add component based on type
+                        switch (type) {
+                            case "derivador":
+                                // DE is always at center (0,0) for each floor
+                                schematicEditor?._setComponentValue(floor, "DE", 0, model);
+                                break;
+                            case "distribuidor":
+                                // DI position is determined by posX
+                                const positionIndex = posX > 0 ? 1 : 0; // 1 for right, 0 for left
+                                schematicEditor?._setComponentValue(floor, "DI", positionIndex, model);
+                                break;
+                            case "toma":
+                                // BT position is determined by posX and posY
+                                const sideIndex = posX > 0 ? 1 : 0; // 1 for right, 0 for left
+                                const slotIndex = Math.floor(posY / 45); // Assuming 45px spacing between tomas
+                                schematicEditor?._setSingleTomaModel(floor, sideIndex, slotIndex, model);
+                                break;
+                        }
+                    }
+
+                    // Set cable type if specified
+                    if (components[0]?.cable_tipo) {
+                        cableSelect.value = components[0].cable_tipo;
+                        schematicEditor?.setCableType(components[0].cable_tipo);
+                    }
+
+                    displaySuccess("Esquemático cargado correctamente", successMessageElement, errorMessageElement);
+                } catch (error) {
+                    console.error("Error loading schematic:", error);
+                    displayError(
+                        "Error al cargar el esquemático: " + error.message,
+                        errorMessageElement,
+                        successMessageElement
+                    );
+                }
+            } else if (target.classList.contains("delete-simulation")) {
+                if (!confirm("¿Está seguro de que desea eliminar esta simulación? Esta acción no se puede deshacer.")) {
+                    return;
+                }
+
+                try {
+                    // Delete schematic components first
+                    const schematicComponents = await loadSchematic(simulationId);
+                    if (schematicComponents && schematicComponents.length > 0) {
+                        for (const component of schematicComponents) {
+                            await deleteSchematicComponent(component.id_esquematicos);
+                        }
+                    }
+
+                    // Delete simulation history
+                    await deleteSimulationHistory(simulationId);
+
+                    // Reload the history table
+                    await loadSimulationHistory();
+                    displaySuccess("Simulación eliminada correctamente", successMessageElement, errorMessageElement);
+                } catch (error) {
+                    console.error("Error deleting simulation:", error);
+                    displayError("Error al eliminar la simulación", errorMessageElement, successMessageElement);
+                }
+            }
+        });
+    }
 }); // End DOMContentLoaded

@@ -40,4 +40,23 @@
         <url-pattern>/signal-types</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>SimulationHistoryServlet</servlet-name>
+        <servlet-class>com.signalapp.servlets.SimulationHistoryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SimulationHistoryServlet</servlet-name>
+        <url-pattern>/history</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>SchematicServlet</servlet-name>
+        <servlet-class>com.signalapp.servlets.SchematicServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SchematicServlet</servlet-name>
+        <url-pattern>/schematic</url-pattern>
+    </servlet-mapping>
+
+
 </web-app>
