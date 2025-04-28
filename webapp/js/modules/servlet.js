@@ -27,6 +27,56 @@ export async function fetchConfigurations() {
     }
 }
 
+export async function updateConfiguration(configId, formData) {
+    try {
+        const response = await fetch("configurations", {
+            method: "PUT",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+                id_configuraciones: configId,
+                ...Object.fromEntries(formData),
+            }).toString(),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error updating configuration:", errorData.error);
+            displayError(errorData.error);
+            throw new Error(errorData.error);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating configuration:", error);
+        displayError("Error al actualizar la configuración. Por favor, intente de nuevo.");
+        throw error;
+    }
+}
+
+export async function deleteConfiguration(configId) {
+    try {
+        const url = new URL("configurations", window.location.href);
+        url.searchParams.append("id_configuraciones", configId);
+
+        const response = await fetch(url, {
+            method: "DELETE",
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error deleting configuration:", errorData.error);
+            displayError(errorData.error);
+            throw new Error(errorData.error);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting configuration:", error);
+        displayError("Error al eliminar la configuración. Por favor, intente de nuevo.");
+        throw error;
+    }
+}
+
 export async function fetchInitialData(configSelect) {
     try {
         const configurations = await fetchConfigurations();

@@ -8,10 +8,13 @@ import javax.servlet.http.HttpServletResponse;
 import com.signalapp.dao.*;
 import com.signalapp.models.*;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
+import java.net.URLDecoder;
+import java.io.UnsupportedEncodingException;
 
 public class ConfigurationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -136,10 +139,51 @@ public class ConfigurationServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
 
-        String idConfiguracion = request.getParameter("id_configuraciones");
-        String nombre = request.getParameter("nombre");
-        String nivelCabecera = request.getParameter("nivel_cabecera");
-        String numPisos = request.getParameter("num_pisos");
+        // Read the request body
+        StringBuilder requestBody = new StringBuilder();
+        String line;
+        try (BufferedReader reader = request.getReader()) {
+            while ((line = reader.readLine()) != null) {
+                requestBody.append(line);
+            }
+        }
+
+        // Parse the URL-encoded parameters from the body
+        String idConfiguracion = null;
+        String nombre = null;
+        String nivelCabecera = null;
+        String numPisos = null;
+
+        String[] pairs = requestBody.toString().split("&");
+        for (String pair : pairs) {
+            String[] keyValue = pair.split("=", 2); // Limit split to 2
+            if (keyValue.length == 2) {
+                try {
+                    String key = URLDecoder.decode(keyValue[0], "UTF-8");
+                    String value = URLDecoder.decode(keyValue[1], "UTF-8");
+
+                    switch (key) {
+                        case "id_configuraciones":
+                            idConfiguracion = value;
+                            break;
+                        case "nombre":
+                            nombre = value;
+                            break;
+                        case "nivel_cabecera":
+                            nivelCabecera = value;
+                            break;
+                        case "num_pisos":
+                            numPisos = value;
+                            break;
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    out.write(
+                            "{\"error\":\"Error al decodificar los parametros: " + escapeJson(e.getMessage()) + "\"}");
+                    return;
+                }
+            }
+        }
 
         if (idConfiguracion == null || nombre == null || nivelCabecera == null || numPisos == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -148,16 +192,51 @@ public class ConfigurationServlet extends HttpServlet {
         }
 
         try {
-            Configuracion configuracion = new Configuracion();
-            configuracion.setId_configuraciones(Integer.parseInt(idConfiguracion));
-            configuracion.setNombre(nombre);
-            configuracion.setNivel_cabecera(Double.parseDouble(nivelCabecera));
-            configuracion.setNum_pisos(Integer.parseInt(numPisos));
+            // Validate number of floors
+            int numPisosInt = Integer.parseInt(numPisos);
+            if (numPisosInt < 1 || numPisosInt > 50) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.write("{\"error\":\"El número de pisos debe estar entre 1 y 50\"}");
+                return;
+            }
 
             ConfiguracionDAO configuracionDAO = new ConfiguracionDAO();
-            configuracionDAO.update(configuracion, Integer.parseInt(idConfiguracion));
+
+            // First, get the existing configuration to preserve its data
+            int id = Integer.parseInt(idConfiguracion);
+            Configuracion existingConfig = configuracionDAO.findById(id);
+
+            if (existingConfig == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                out.write("{\"error\":\"Configuración no encontrada\"}");
+                return;
+            }
+
+            // Check if another configuration with the same name exists (excluding current
+            // config)
+            if (!nombre.equals(existingConfig.getNombre()) && configuracionDAO.existsByName(nombre)) {
+                response.setStatus(HttpServletResponse.SC_CONFLICT);
+                out.write("{\"error\":\"Ya existe una configuracion con ese nombre\"}");
+                return;
+            }
+
+            // Update only the fields that should change
+            existingConfig.setNombre(nombre);
+            existingConfig.setNivel_cabecera(Double.parseDouble(nivelCabecera));
+            existingConfig.setNum_pisos(numPisosInt);
+
+            // Update modification tracking
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String currentDate = sdf.format(new java.util.Date());
+            existingConfig.setFecha_modificacion(currentDate);
+            existingConfig.setUsuario_modificacion("admin");
+
+            configuracionDAO.update(existingConfig, id);
 
             out.write("{\"success\":\"Configuracion actualizada exitosamente\"}");
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.write("{\"error\":\"Formato de número inválido\"}");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\":\"" + escapeJson(e.getMessage()) + "\"}");

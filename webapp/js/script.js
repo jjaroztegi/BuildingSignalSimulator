@@ -15,6 +15,8 @@ import {
     loadSchematic,
     deleteSchematicComponent,
     saveSimulationHistory,
+    updateConfiguration,
+    deleteConfiguration,
 } from "./modules/servlet.js";
 import { displayError, displaySuccess, clearMessages, formatDate } from "./modules/utils.js";
 import {
@@ -24,6 +26,7 @@ import {
     updateDetailedComponentList,
     updateSimulationResults,
     updateSimulationHistoryTable,
+    handleEditConfiguration,
 } from "./modules/ui.js";
 import { SchematicEditor } from "./modules/schematic.js";
 
@@ -201,7 +204,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         displayError(
             "Error crítico al inicializar la aplicación. Por favor, recargue.",
             errorMessageElement,
-            successMessageElement
+            successMessageElement,
         );
         // Disable parts of the UI if initialization failed?
         runSimulationButton?.setAttribute("disabled", "true");
@@ -219,7 +222,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 initialConfigForm,
                 errorMessageElement,
                 successMessageElement,
-                configSelect
+                configSelect,
             );
             // After successful submission, re-fetch configurations and update UI
             try {
@@ -228,6 +231,73 @@ document.addEventListener("DOMContentLoaded", async () => {
                 updateConfigSelect(currentConfigurations, simulationConfigSelect);
             } catch (error) {
                 console.error("Error refetching configurations after submit:", error);
+            }
+        });
+    }
+
+    // Add event listeners for edit and delete configuration buttons
+    const editConfigButton = document.getElementById("edit-config");
+    const deleteConfigButton = document.getElementById("delete-config");
+
+    if (editConfigButton) {
+        editConfigButton.addEventListener("click", async () => {
+            const selectedConfigId = configSelect.value;
+            if (!selectedConfigId) return;
+
+            const selectedConfig = currentConfigurations.find(
+                (c) => (c.id_configuraciones || c.id) == selectedConfigId,
+            );
+            if (!selectedConfig) return;
+
+            // Use the UI handler with a callback for the update operation
+            await handleEditConfiguration(selectedConfigId, selectedConfig, async (configId, formData) => {
+                const response = await updateConfiguration(selectedConfigId, formData);
+                displaySuccess(
+                    response.success || "Configuración actualizada correctamente",
+                    successMessageElement,
+                    errorMessageElement,
+                );
+
+                // Refresh configurations and update UI
+                currentConfigurations = await fetchConfigurations();
+                updateConfigSelect(currentConfigurations, configSelect);
+                updateConfigSelect(currentConfigurations, simulationConfigSelect);
+                handleConfigurationChange(selectedConfigId);
+            });
+        });
+    }
+
+    if (deleteConfigButton) {
+        deleteConfigButton.addEventListener("click", async () => {
+            const selectedConfigId = configSelect.value;
+            if (!selectedConfigId) return;
+
+            const selectedConfig = currentConfigurations.find(
+                (c) => (c.id_configuraciones || c.id) == selectedConfigId,
+            );
+            if (!selectedConfig) return;
+
+            if (!confirm(`¿Está seguro de que desea eliminar la configuración "${selectedConfig.nombre}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await deleteConfiguration(selectedConfigId);
+                displaySuccess(
+                    response.success || "Configuración eliminada correctamente",
+                    successMessageElement,
+                    errorMessageElement,
+                );
+
+                // Refresh configurations and update UI
+                currentConfigurations = await fetchConfigurations();
+                updateConfigSelect(currentConfigurations, configSelect);
+                updateConfigSelect(currentConfigurations, simulationConfigSelect);
+
+                // Hide details since the configuration was deleted
+                if (configDetailsDiv) configDetailsDiv.classList.add("hidden");
+            } catch (error) {
+                console.error("Error deleting configuration:", error);
             }
         });
     }
@@ -260,7 +330,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 displayError(
                     "Por favor complete los campos básicos (Tipo, Modelo, Costo).",
                     errorMessageElement,
-                    successMessageElement
+                    successMessageElement,
                 );
                 return;
             }
@@ -287,7 +357,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     displayError(
                         result.error || "Error al añadir el componente",
                         errorMessageElement,
-                        successMessageElement
+                        successMessageElement,
                     );
                 }
             } catch (error) {
@@ -295,7 +365,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 displayError(
                     `Error al añadir el componente: ${error.message || "Error desconocido"}`,
                     errorMessageElement,
-                    successMessageElement
+                    successMessageElement,
                 );
             }
         });
@@ -349,7 +419,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 displayError(
                     "El editor de esquemático no está inicializado.",
                     errorMessageElement,
-                    successMessageElement
+                    successMessageElement,
                 );
                 return;
             }
@@ -362,7 +432,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 displayError(
                     "Por favor, seleccione una configuración y tipo de señal.",
                     errorMessageElement,
-                    successMessageElement
+                    successMessageElement,
                 );
                 return;
             }
@@ -370,7 +440,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 displayError(
                     "Frecuencia inválida (debe ser entre 470 y 694 MHz).",
                     errorMessageElement,
-                    successMessageElement
+                    successMessageElement,
                 );
                 return;
             }
@@ -382,7 +452,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 displayError(
                     "No se han añadido componentes al diseño en el esquemático.",
                     errorMessageElement,
-                    successMessageElement
+                    successMessageElement,
                 );
                 return;
             }
@@ -391,7 +461,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             try {
                 // Find the full config data locally first
                 const selectedConfigData = currentConfigurations.find(
-                    (c) => (c.id_configuraciones || c.id) == selectedConfigId
+                    (c) => (c.id_configuraciones || c.id) == selectedConfigId,
                 );
                 if (!selectedConfigData) {
                     throw new Error("Configuración seleccionada no encontrada localmente.");
@@ -507,7 +577,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         displayError(
                             `Error al guardar componente: ${error.message || "Error desconocido"}`,
                             errorMessageElement,
-                            successMessageElement
+                            successMessageElement,
                         );
                     }
                 }
@@ -520,7 +590,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 displayError(
                     `Error en simulación: ${error.message || "Error desconocido"}`,
                     errorMessageElement,
-                    successMessageElement
+                    successMessageElement,
                 );
             }
         });
@@ -578,7 +648,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 } catch (error) {
                     console.error(
                         `Error fetching history for config ${config.id_configuraciones || config.id}:`,
-                        error
+                        error,
                     );
                     // Continue with other configurations even if one fails
                 }
@@ -642,7 +712,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                     // Find the matching configuration by building name
                     const matchingConfig = currentConfigurations.find(
-                        (config) => (config.nombre_edificio || config.nombre) === buildingName
+                        (config) => (config.nombre_edificio || config.nombre) === buildingName,
                     );
 
                     if (matchingConfig) {
@@ -707,7 +777,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     displayError(
                         "Error al cargar el esquemático: " + error.message,
                         errorMessageElement,
-                        successMessageElement
+                        successMessageElement,
                     );
                 }
             } else if (target.classList.contains("delete-simulation")) {
