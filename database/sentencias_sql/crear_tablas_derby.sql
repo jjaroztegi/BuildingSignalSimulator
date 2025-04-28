@@ -5,6 +5,27 @@ CREATE TABLE tipos_componente (
     descripcion VARCHAR(255)
 );
 
+-- Create configuraciones table (independent table)
+CREATE TABLE configuraciones (
+    id_configuraciones INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    nivel_cabecera DOUBLE NOT NULL,
+    num_pisos INTEGER NOT NULL,
+    costo_total DECIMAL(10,2) NOT NULL,
+    fecha_creacion TIMESTAMP NOT NULL,
+    usuario_creacion VARCHAR(50) NOT NULL,
+    fecha_modificacion TIMESTAMP,
+    usuario_modificacion VARCHAR(50)
+);
+
+-- Create margenes_calidad table (independent table)
+CREATE TABLE margenes_calidad (
+    id_margenes_calidad INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    tipo_senal VARCHAR(50) NOT NULL,
+    nivel_minimo DOUBLE NOT NULL,
+    nivel_maximo DOUBLE NOT NULL
+);
+
 -- Create componentes table (depends on tipos_componente)
 CREATE TABLE componentes (
     id_componentes INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -65,30 +86,44 @@ CREATE TABLE tomas (
     REFERENCES componentes(id_componentes)
 );
 
--- Create configuraciones table (independent table)
-CREATE TABLE configuraciones (
-    id_configuraciones INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL UNIQUE,
-    nivel_cabecera DOUBLE NOT NULL,
-    num_pisos INTEGER NOT NULL,
-    costo_total DECIMAL(10,2) NOT NULL,
-    fecha_creacion TIMESTAMP NOT NULL,
-    usuario_creacion VARCHAR(50) NOT NULL,
-    fecha_modificacion TIMESTAMP,
-    usuario_modificacion VARCHAR(50)
-);
-
--- Create margenes_calidad table (independent table)
-CREATE TABLE margenes_calidad (
-    id_margenes_calidad INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+-- Create simulaciones table (depends on configuraciones)
+CREATE TABLE simulaciones (
+    id_simulaciones INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_configuraciones INTEGER NOT NULL,
+    frecuencia INTEGER NOT NULL,
     tipo_senal VARCHAR(50) NOT NULL,
-    nivel_minimo DOUBLE NOT NULL,
-    nivel_maximo DOUBLE NOT NULL
+    costo_total DECIMAL(10,2) NOT NULL,
+    estado VARCHAR(20) NOT NULL,
+    fecha_simulacion TIMESTAMP NOT NULL,
+    CONSTRAINT fk_simulaciones_configuraciones 
+    FOREIGN KEY (id_configuraciones) 
+    REFERENCES configuraciones(id_configuraciones)
 );
 
--- Create indexes for better performance
+-- Create esquematicos table (depends on simulaciones and componentes)
+CREATE TABLE esquematicos (
+    id_esquematicos INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_simulaciones INTEGER NOT NULL,
+    piso INTEGER NOT NULL,
+    tipo_componente VARCHAR(20) NOT NULL,
+    modelo_componente VARCHAR(100) NOT NULL,
+    posicion_x INTEGER NOT NULL,
+    posicion_y INTEGER NOT NULL,
+    cable_tipo VARCHAR(100),
+    CONSTRAINT fk_esquematicos_simulaciones 
+    FOREIGN KEY (id_simulaciones) 
+    REFERENCES simulaciones(id_simulaciones),
+    CONSTRAINT fk_esquematicos_componentes
+    FOREIGN KEY (modelo_componente)
+    REFERENCES componentes(modelo)
+);
+
+-- Create all indexes
 CREATE INDEX idx_componentes_tipo ON componentes(id_tipos_componente);
 CREATE INDEX idx_coaxiales_componente ON coaxiales(id_componentes);
 CREATE INDEX idx_derivadores_componente ON derivadores(id_componentes);
 CREATE INDEX idx_distribuidores_componente ON distribuidores(id_componentes);
-CREATE INDEX idx_tomas_componente ON tomas(id_componentes); 
+CREATE INDEX idx_tomas_componente ON tomas(id_componentes);
+CREATE INDEX idx_simulaciones_config ON simulaciones(id_configuraciones);
+CREATE INDEX idx_esquematicos_simulacion ON esquematicos(id_simulaciones);
+CREATE INDEX idx_esquematicos_piso ON esquematicos(piso);
