@@ -100,6 +100,19 @@ CREATE TABLE simulaciones (
     REFERENCES configuraciones(id_configuraciones)
 );
 
+-- Create resultados_simulacion table (depends on simulaciones)
+CREATE TABLE resultados_simulacion (
+    id_resultados_simulacion INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_simulaciones INTEGER NOT NULL,
+    piso INTEGER NOT NULL,
+    nivel_senal DOUBLE NOT NULL,
+    costo_piso DECIMAL(10,2) NOT NULL,
+    estado VARCHAR(20) NOT NULL,
+    CONSTRAINT fk_resultados_simulaciones 
+    FOREIGN KEY (id_simulaciones) 
+    REFERENCES simulaciones(id_simulaciones)
+);
+
 -- Create esquematicos table (depends on simulaciones and componentes)
 CREATE TABLE esquematicos (
     id_esquematicos INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -127,3 +140,5 @@ CREATE INDEX idx_tomas_componente ON tomas(id_componentes);
 CREATE INDEX idx_simulaciones_config ON simulaciones(id_configuraciones);
 CREATE INDEX idx_esquematicos_simulacion ON esquematicos(id_simulaciones);
 CREATE INDEX idx_esquematicos_piso ON esquematicos(piso);
+CREATE INDEX idx_resultados_simulacion ON resultados_simulacion(id_simulaciones);
+CREATE INDEX idx_resultados_piso ON resultados_simulacion(piso);
