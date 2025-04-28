@@ -531,3 +531,76 @@ export async function deleteSchematicComponent(idEsquematico) {
         throw error;
     }
 }
+
+// Results API Calls
+export async function saveSimulationResults(simulationId, results) {
+    try {
+        const response = await fetch("results", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                id_simulaciones: simulationId,
+                results: results,
+            }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error saving simulation results:", errorData.error);
+            displayError(errorData.error);
+            throw new Error(errorData.error);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error saving simulation results:", error);
+        displayError("Error al guardar los resultados de la simulación. Por favor, intente de nuevo.");
+        throw error;
+    }
+}
+
+export async function loadSimulationResults(idSimulacion) {
+    try {
+        const url = new URL("results", window.location.href);
+        url.searchParams.append("id_simulaciones", idSimulacion);
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error loading simulation results:", errorData.error);
+            displayError(`Error al cargar los resultados de la simulación: ${errorData.error}`);
+            throw new Error(errorData.error || "Error al cargar los resultados de la simulación");
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Error loading simulation results:", error);
+        displayError("Error al cargar los resultados de la simulación. Por favor, intente de nuevo.");
+        throw error;
+    }
+}
+
+export async function deleteSimulationResults(idSimulacion) {
+    try {
+        const url = new URL("results", window.location.href);
+        url.searchParams.append("id_simulaciones", idSimulacion);
+
+        const response = await fetch(url, {
+            method: "DELETE",
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error deleting simulation results:", errorData.error);
+            displayError(`Error al eliminar los resultados de la simulación: ${errorData.error}`);
+            throw new Error(errorData.error);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting simulation results:", error);
+        displayError("Error al eliminar los resultados de la simulación. Por favor, intente de nuevo.");
+        throw error;
+    }
+}

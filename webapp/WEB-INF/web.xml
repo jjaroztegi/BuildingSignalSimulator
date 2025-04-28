@@ -58,5 +58,13 @@
         <url-pattern>/schematic</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>SimulationResultsServlet</servlet-name>
+        <servlet-class>com.signalapp.servlets.SimulationResultsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SimulationResultsServlet</servlet-name>
+        <url-pattern>/results</url-pattern>
+    </servlet-mapping>
 
 </web-app>

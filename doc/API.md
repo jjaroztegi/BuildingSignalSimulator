@@ -38,7 +38,7 @@ Get a list of component models for a specific type.
 
 **Parameters:**
 
--   `type` (required): One of `coaxial`, `derivador`, `distribuidor`, or `toma`
+- `type` (required): One of `coaxial`, `derivador`, `distribuidor`, or `toma`
 
 **Response:**
 
@@ -62,8 +62,8 @@ Get detailed information about a specific component.
 
 **Parameters:**
 
--   `type` (required): One of `coaxial`, `derivador`, `distribuidor`, or `toma`
--   `model` (required): The model name of the component
+- `type` (required): One of `coaxial`, `derivador`, `distribuidor`, or `toma`
+- `model` (required): The model name of the component
 
 **Response by Type:**
 
@@ -140,10 +140,10 @@ Add a new component to the system.
 
 **Parameters:**
 
--   `type` (required): One of `coaxial`, `derivador`, `distribuidor`, or `toma`
--   `modelo` (required): Model name/identifier
--   `costo` (required): Cost of the component
--   `properties` (required): JSON object containing component-specific properties
+- `type` (required): One of `coaxial`, `derivador`, `distribuidor`, or `toma`
+- `modelo` (required): Model name/identifier
+- `costo` (required): Cost of the component
+- `properties` (required): JSON object containing component-specific properties
 
 **Component-Specific Properties:**
 
@@ -212,10 +212,10 @@ Update an existing component in the system.
 
 **Parameters:**
 
--   `type` (required): One of `coaxial`, `derivador`, `distribuidor`, or `toma`
--   `modelo` (required): Model name/identifier
--   `costo` (required): Cost of the component
--   `properties` (required): JSON object containing component-specific properties
+- `type` (required): One of `coaxial`, `derivador`, `distribuidor`, or `toma`
+- `modelo` (required): Model name/identifier
+- `costo` (required): Cost of the component
+- `properties` (required): JSON object containing component-specific properties
 
 **Component-Specific Properties:**
 
@@ -251,8 +251,8 @@ Delete a component from the system.
 
 **Parameters:**
 
--   `type` (required): One of `coaxial`, `derivador`, `distribuidor`, or `toma`
--   `modelo` (required): Model name/identifier
+- `type` (required): One of `coaxial`, `derivador`, `distribuidor`, or `toma`
+- `modelo` (required): Model name/identifier
 
 **Response:**
 
@@ -307,9 +307,9 @@ Create a new configuration.
 
 **Parameters:**
 
--   `nombre` (required): Name of the configuration
--   `nivel_cabecera` (required): Head-end level in dBμV
--   `num_pisos` (required): Number of floors
+- `nombre` (required): Name of the configuration
+- `nivel_cabecera` (required): Head-end level in dBμV
+- `num_pisos` (required): Number of floors
 
 **Response:**
 
@@ -336,10 +336,10 @@ Update an existing configuration.
 
 **Parameters:**
 
--   `id_configuraciones` (required): Configuration ID
--   `nombre` (required): Name of the configuration
--   `nivel_cabecera` (required): Head-end level in dBμV
--   `num_pisos` (required): Number of floors
+- `id_configuraciones` (required): Configuration ID
+- `nombre` (required): Name of the configuration
+- `nivel_cabecera` (required): Head-end level in dBμV
+- `num_pisos` (required): Number of floors
 
 **Response:**
 
@@ -365,7 +365,7 @@ Delete an existing configuration.
 
 **Parameters:**
 
--   `id_configuraciones` (required): Configuration ID to delete
+- `id_configuraciones` (required): Configuration ID to delete
 
 **Response:**
 
@@ -393,7 +393,7 @@ Get all schematic components for a specific simulation.
 
 **Parameters:**
 
--   `id_simulaciones` (required): ID of the simulation
+- `id_simulaciones` (required): ID of the simulation
 
 **Response:**
 
@@ -428,13 +428,13 @@ Add a new schematic component to a simulation.
 
 **Parameters:**
 
--   `id_simulaciones` (required): ID of the simulation
--   `tipo` (required): Type of component (e.g., "derivador", "coaxial", "toma")
--   `modelo` (required): Model name of the component
--   `piso` (required): Floor number
--   `posicion_x` (required): X position on the schematic
--   `posicion_y` (required): Y position on the schematic
--   `cable_tipo` (optional): Type of cable used
+- `id_simulaciones` (required): ID of the simulation
+- `tipo` (required): Type of component (e.g., "derivador", "coaxial", "toma")
+- `modelo` (required): Model name of the component
+- `piso` (required): Floor number
+- `posicion_x` (required): X position on the schematic
+- `posicion_y` (required): Y position on the schematic
+- `cable_tipo` (optional): Type of cable used
 
 **Response:**
 
@@ -461,13 +461,13 @@ Update an existing schematic component.
 
 **Parameters:**
 
--   `id_esquematicos` (required): ID of the schematic component
--   `piso` (required): Floor number
--   `tipo_componente` (required): Type of component
--   `modelo_componente` (required): Model name of the component
--   `posicion_x` (required): X position on the schematic
--   `posicion_y` (required): Y position on the schematic
--   `cable_tipo` (required): Type of cable used
+- `id_esquematicos` (required): ID of the schematic component
+- `piso` (required): Floor number
+- `tipo_componente` (required): Type of component
+- `modelo_componente` (required): Model name of the component
+- `posicion_x` (required): X position on the schematic
+- `posicion_y` (required): Y position on the schematic
+- `cable_tipo` (required): Type of cable used
 
 **Response:**
 
@@ -493,7 +493,7 @@ Delete a schematic component.
 
 **Parameters:**
 
--   `id_esquematicos` (required): ID of the schematic component to delete
+- `id_esquematicos` (required): ID of the schematic component to delete
 
 **Response:**
 
@@ -521,7 +521,7 @@ Get all simulations for a specific configuration.
 
 **Parameters:**
 
--   `id_configuraciones` (required): ID of the configuration
+- `id_configuraciones` (required): ID of the configuration
 
 **Response:**
 
@@ -570,11 +570,11 @@ Save a new simulation result to the history.
 
 **Parameters:**
 
--   `id_configuraciones` (required): ID of the configuration
--   `frecuencia` (required): Signal frequency in MHz
--   `tipo_senal` (required): Type of signal (e.g., "TDT")
--   `costo_total` (required): Total cost of the simulation
--   `estado` (required): Status of the simulation ("ok" or "error")
+- `id_configuraciones` (required): ID of the configuration
+- `frecuencia` (required): Signal frequency in MHz
+- `tipo_senal` (required): Type of signal (e.g., "TDT")
+- `costo_total` (required): Total cost of the simulation
+- `estado` (required): Status of the simulation ("ok" or "error")
 
 **Response:**
 
@@ -601,7 +601,7 @@ Delete a simulation from the history. This will also delete all associated schem
 
 **Parameters:**
 
--   `id_simulaciones` (required): ID of the simulation to delete
+- `id_simulaciones` (required): ID of the simulation to delete
 
 **Response:**
 
@@ -658,15 +658,15 @@ Calculate and validate signal levels for each floor based on components and conf
 
 **Parameters:**
 
--   `num_pisos` (required): Number of floors in the building
--   `nivel_cabecera` (required): Initial signal level at the head-end (dBμV)
--   `tipo_senal` (required): Type of signal to validate against quality margins
--   `frequency` (required): Signal frequency in MHz (e.g., 470 or 694)
--   `selected_cable_model` (required): Model of coaxial cable to use for calculations
--   `components` (required): Array of components with their placement
-    -   `type`: Component type (`coaxial`, `derivador`, `distribuidor`, or `toma`)
-    -   `model`: Model name of the component
-    -   `floor`: Floor number where the component is installed
+- `num_pisos` (required): Number of floors in the building
+- `nivel_cabecera` (required): Initial signal level at the head-end (dBμV)
+- `tipo_senal` (required): Type of signal to validate against quality margins
+- `frequency` (required): Signal frequency in MHz (e.g., 470 or 694)
+- `selected_cable_model` (required): Model of coaxial cable to use for calculations
+- `components` (required): Array of components with their placement
+    - `type`: Component type (`coaxial`, `derivador`, `distribuidor`, or `toma`)
+    - `model`: Model name of the component
+    - `floor`: Floor number where the component is installed
 
 **Component Processing Order:**
 
@@ -676,13 +676,13 @@ Calculate and validate signal levels for each floor based on components and conf
 
 **Component Placement Rules:**
 
--   Each floor can have multiple components
--   Components are processed in the order specified above
--   Restrictions per floor:
-    -   Maximum one derivador
-    -   Maximum two distribuidores
-    -   Cannot have both derivador and distribuidor on the same floor
-    -   Must have 2, 4, 6, or 8 tomas per floor
+- Each floor can have multiple components
+- Components are processed in the order specified above
+- Restrictions per floor:
+    - Maximum one derivador
+    - Maximum two distribuidores
+    - Cannot have both derivador and distribuidor on the same floor
+    - Must have 2, 4, 6, or 8 tomas per floor
 
 **Response:**
 
@@ -759,5 +759,113 @@ Calculate and validate signal levels for each floor based on components and conf
 ```json
 {
     "error": "Tipo de componente no válido: X"
+}
+```
+
+## Simulation Results
+
+### Get Simulation Results
+
+Get all results for a specific simulation.
+
+**Endpoint:** `GET /results?id_simulaciones={id}`
+
+**Parameters:**
+
+- `id_simulaciones` (required): ID of the simulation
+
+**Response:**
+
+```json
+[
+    {
+        "id_resultados_simulacion": 1,
+        "id_simulaciones": 1,
+        "piso": 1,
+        "nivel_senal": 85.5,
+        "costo_piso": 125.5,
+        "estado": "ok"
+    }
+]
+```
+
+**Error Response:**
+
+```json
+{
+    "error": "Falta el ID de la simulación"
+}
+```
+
+### Save Simulation Results
+
+Save results for a specific simulation.
+
+**Endpoint:** `POST /results`
+
+**Request Body:**
+
+```json
+{
+    "id_simulaciones": 1,
+    "results": [
+        {
+            "floor": 1,
+            "level": 85.5,
+            "floor_cost": 125.5,
+            "status": "ok"
+        }
+    ]
+}
+```
+
+**Parameters:**
+
+- `id_simulaciones` (required): ID of the simulation
+- `results` (required): Array of result objects
+    - `floor`: Floor number
+    - `level`: Signal level in dBμV
+    - `floor_cost`: Cost for this floor
+    - `status`: Status of the floor ("ok" or "error")
+
+**Response:**
+
+```json
+{
+    "success": "Resultados guardados exitosamente"
+}
+```
+
+**Error Response:**
+
+```json
+{
+    "error": "Faltan los resultados de la simulación"
+}
+```
+
+### Delete Simulation Results
+
+Delete all results for a specific simulation.
+
+**Endpoint:** `DELETE /results?id_simulaciones={id}`
+
+**Parameters:**
+
+- `id_simulaciones` (required): ID of the simulation
+
+**Response:**
+
+```json
+{
+    "success": "Resultados eliminados exitosamente"
+}
+```
+
+**Error Response:**
+
+```json
+{
+    "error": "Falta el ID de la simulación"
 }
 ```

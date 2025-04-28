@@ -17,6 +17,9 @@ import {
     saveSimulationHistory,
     updateConfiguration,
     deleteConfiguration,
+    saveSimulationResults,
+    loadSimulationResults,
+    deleteSimulationResults,
 } from "./modules/servlet.js";
 import { displayError, displaySuccess, clearMessages, formatDate } from "./modules/utils.js";
 import {
@@ -519,7 +522,27 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const simulationResponse = await saveSimulationHistory(simulationHistoryData);
                 const idSimulacion = simulationResponse.id;
 
-                // Save schematic components regardless of simulation results
+                // Save simulation results
+                try {
+                    await saveSimulationResults(
+                        idSimulacion,
+                        results.signal_levels.map((level) => ({
+                            floor: level.floor,
+                            level: level.level,
+                            floor_cost: level.floor_cost,
+                            status: level.status,
+                        })),
+                    );
+                } catch (error) {
+                    console.error("Error saving simulation results:", error);
+                    displayError(
+                        `Error al guardar los resultados: ${error.message || "Error desconocido"}`,
+                        errorMessageElement,
+                        successMessageElement,
+                    );
+                }
+
+                // Save schematic components
                 const schematicComponents = [];
                 Object.entries(componentsData.floors).forEach(([floorStr, floorComps]) => {
                     const floorNum = parseInt(floorStr);
@@ -668,35 +691,41 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    async function deleteSimulation(idSimulacion) {
-        if (!confirm("¿Está seguro de que desea eliminar esta simulación? Esta acción no se puede deshacer.")) {
-            return;
-        }
-
-        try {
-            // Delete schematic components first
-            const schematicComponents = await loadSchematic(idSimulacion);
-            if (schematicComponents && schematicComponents.length > 0) {
-                for (const component of schematicComponents) {
-                    await deleteSchematicComponent(component.id_esquematicos);
-                }
-            }
-
-            // Delete simulation history
-            await deleteSimulationHistory(idSimulacion);
-
-            // Reload the history table
-            await loadSimulationHistory();
-            displaySuccess("Simulación eliminada correctamente", successMessageElement, errorMessageElement);
-        } catch (error) {
-            console.error("Error deleting simulation:", error);
-            displayError("Error al eliminar la simulación", errorMessageElement, successMessageElement);
-        }
-    }
-
     // Add event listeners for simulation history table
     const simulationHistoryTable = document.getElementById("simulation-history-table");
     if (simulationHistoryTable) {
+        // Shared function to load and display results
+        async function loadAndDisplayResults(simulationId, simulationRow, shouldSwitchTab = false) {
+            const nivel_cabecera = parseFloat(simulationRow.cells[2].textContent);
+            const total_cost = parseFloat(simulationRow.cells[5].textContent.slice(1));
+            const minLevel = 45;
+            const maxLevel = 70;
+
+            const results = await loadSimulationResults(simulationId);
+
+            // Only switch to results tab if explicitly requested
+            if (shouldSwitchTab) {
+                switchTab("results-tab");
+            }
+
+            updateSimulationResults({
+                nivel_cabecera: nivel_cabecera,
+                signal_levels: results.map((r) => ({
+                    floor: r.piso,
+                    level: r.nivel_senal,
+                    status: r.estado,
+                    floor_cost: r.costo_piso,
+                })),
+                total_cost: total_cost,
+                margins: {
+                    min: minLevel,
+                    max: maxLevel,
+                },
+            });
+
+            displaySuccess("Resultados cargados correctamente", successMessageElement, errorMessageElement);
+        }
+
         simulationHistoryTable.addEventListener("click", async (event) => {
             const target = event.target;
             const simulationId = target.dataset.simulationId;
@@ -721,10 +750,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                         handleConfigurationChange(configId);
                     }
 
-                    // Now load the schematic components
+                    // Load schematic components
                     const components = await loadSchematic(simulationId);
 
-                    // Switch to simulation tab
+                    // Switch to simulation tab first
                     switchTab("simulation-tab");
 
                     if (frequency) {
@@ -748,18 +777,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                         // Add component based on type
                         switch (type) {
                             case "derivador":
-                                // DE is always at center (0,0) for each floor
                                 schematicEditor?._setComponentValue(floor, "DE", 0, model);
                                 break;
                             case "distribuidor":
-                                // DI position is determined by posX
-                                const positionIndex = posX > 0 ? 1 : 0; // 1 for right, 0 for left
+                                const positionIndex = posX > 0 ? 1 : 0;
                                 schematicEditor?._setComponentValue(floor, "DI", positionIndex, model);
                                 break;
                             case "toma":
-                                // BT position is determined by posX and posY
-                                const sideIndex = posX > 0 ? 1 : 0; // 1 for right, 0 for left
-                                const slotIndex = Math.floor(posY / 45); // Assuming 45px spacing between tomas
+                                const sideIndex = posX > 0 ? 1 : 0;
+                                const slotIndex = Math.floor(posY / 45);
                                 schematicEditor?._setSingleTomaModel(floor, sideIndex, slotIndex, model);
                                 break;
                         }
@@ -771,11 +797,26 @@ document.addEventListener("DOMContentLoaded", async () => {
                         schematicEditor?.setCableType(components[0].cable_tipo);
                     }
 
+                    // Also load and display results (without switching tab)
+                    await loadAndDisplayResults(simulationId, simulationRow, false);
+
                     displaySuccess("Esquemático cargado correctamente", successMessageElement, errorMessageElement);
                 } catch (error) {
                     console.error("Error loading schematic:", error);
                     displayError(
                         "Error al cargar el esquemático: " + error.message,
+                        errorMessageElement,
+                        successMessageElement,
+                    );
+                }
+            } else if (target.classList.contains("load-results")) {
+                try {
+                    const simulationRow = target.closest("tr");
+                    await loadAndDisplayResults(simulationId, simulationRow, true);
+                } catch (error) {
+                    console.error("Error loading results:", error);
+                    displayError(
+                        "Error al cargar los resultados: " + error.message,
                         errorMessageElement,
                         successMessageElement,
                     );
@@ -786,15 +827,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
 
                 try {
-                    // Delete schematic components first
-                    const schematicComponents = await loadSchematic(simulationId);
-                    if (schematicComponents && schematicComponents.length > 0) {
-                        for (const component of schematicComponents) {
-                            await deleteSchematicComponent(component.id_esquematicos);
-                        }
-                    }
-
-                    // Delete simulation history
+                    // 1. First delete results (they reference simulation)
+                    await deleteSimulationResults(simulationId);
+                    // 2. Then delete schematic components (they reference simulation)
+                    await deleteSchematicComponent(simulationId);
+                    // 3. Finally delete the simulation itself
                     await deleteSimulationHistory(simulationId);
 
                     // Reload the history table

@@ -969,7 +969,11 @@ export function updateSimulationHistoryTable(simulations) {
                     <div class="flex flex-col space-y-2">
                         <button class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 load-schematic" 
                                 data-simulation-id="${simulation.id_simulaciones}">
-                            Cargar
+                            Ver Esquemático
+                        </button>
+                        <button class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 load-results" 
+                                data-simulation-id="${simulation.id_simulaciones}">
+                            Ver Resultados
                         </button>
                         <button class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 delete-simulation" 
                                 data-simulation-id="${simulation.id_simulaciones}">
