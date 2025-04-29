@@ -1,3 +1,4 @@
+# For local development
 services:
   building-signal-simulator:
     build:
@@ -9,3 +10,12 @@ services:
     environment:
       - JAVA_OPTS=-Xmx512m
     restart: unless-stopped 
+
+# For production
+# services:
+#   building-signal-simulator:
+#     image: ghcr.io/jjaroztegi/building-signal-simulator:latest
+#     container_name: building_signal_simulator
+#     ports:
+#       - "1313:8080"
+#     restart: unless-stopped 
