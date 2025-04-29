@@ -45,7 +45,7 @@ export function switchTab(tabId) {
             "text-zinc-500",
             "dark:text-zinc-400",
             "hover:text-zinc-700",
-            "dark:hover:text-zinc-300"
+            "dark:hover:text-zinc-300",
         );
     });
 
@@ -64,7 +64,7 @@ export function switchTab(tabId) {
             "text-zinc-500",
             "dark:text-zinc-400",
             "hover:text-zinc-700",
-            "dark:hover:text-zinc-300"
+            "dark:hover:text-zinc-300",
         );
     }
 
@@ -78,7 +78,7 @@ export function switchTab(tabId) {
             "text-zinc-500",
             "dark:text-zinc-400",
             "hover:text-zinc-700",
-            "dark:hover:text-zinc-300"
+            "dark:hover:text-zinc-300",
         );
     }
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es" class="dark">
     <head>
         <meta charset="UTF-8" />
@@ -340,13 +340,13 @@
                                         <div class="mt-4 flex justify-end space-x-2">
                                             <button
                                                 id="edit-config"
-                                                class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 px-2 py-1 rounded-md text-sm"
+                                                class="rounded-md px-2 py-1 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                                             >
                                                 Editar
                                             </button>
                                             <button
                                                 id="delete-config"
-                                                class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 px-2 py-1 rounded-md text-sm"
+                                                class="rounded-md px-2 py-1 text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                                             >
                                                 Eliminar
                                             </button>
@@ -897,11 +897,22 @@
             </main>
 
             <!-- Message Area -->
-            <div class="fixed bottom-4 right-4 z-50 w-full max-w-xs sm:max-w-sm">
+            <div class="fixed bottom-8 right-2 z-50 w-full max-w-xs sm:max-w-sm">
                 <div
                     id="success-message"
-                    class="mb-2 hidden items-center gap-3 rounded-lg border border-green-300 bg-green-100 p-3 text-sm font-medium text-green-800 shadow-lg backdrop-blur-sm dark:border-green-700 dark:bg-green-900/70 dark:text-green-200"
+                    class="relative mb-2 flex hidden items-center gap-3 rounded-lg border border-green-300 bg-green-100 p-3 text-sm font-medium text-green-800 shadow-lg backdrop-blur-sm dark:border-green-700 dark:bg-green-900/70 dark:text-green-200"
                 >
+                    <button
+                        class="message-close absolute right-1 top-1 rounded-md p-1 text-green-800 hover:bg-green-200 dark:text-green-200 dark:hover:bg-green-800/50"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path
+                                fill-rule="evenodd"
+                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                    </button>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         class="h-5 w-5 flex-shrink-0"
@@ -914,12 +925,23 @@
                             clip-rule="evenodd"
                         />
                     </svg>
-                    <span><!-- Message here --></span>
+                    <span class="flex-1 pr-4 text-left"><!-- Message here --></span>
                 </div>
                 <div
                     id="error-message"
-                    class="mb-2 hidden items-center gap-3 rounded-lg border border-red-300 bg-red-100 p-3 text-sm font-medium text-red-800 shadow-lg backdrop-blur-sm dark:border-red-700 dark:bg-red-900/70 dark:text-red-200"
+                    class="relative mb-2 flex hidden items-center gap-3 rounded-lg border border-red-300 bg-red-100 p-3 text-sm font-medium text-red-800 shadow-lg backdrop-blur-sm dark:border-red-700 dark:bg-red-900/70 dark:text-red-200"
                 >
+                    <button
+                        class="message-close absolute right-1 top-1 rounded-md p-1 text-red-800 hover:bg-red-200 dark:text-red-200 dark:hover:bg-red-800/50"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path
+                                fill-rule="evenodd"
+                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                    </button>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         class="h-5 w-5 flex-shrink-0"
@@ -932,7 +954,7 @@
                             clip-rule="evenodd"
                         />
                     </svg>
-                    <span><!-- Message here --></span>
+                    <span class="flex-1 pr-4 text-left"><!-- Message here --></span>
                 </div>
             </div>
 

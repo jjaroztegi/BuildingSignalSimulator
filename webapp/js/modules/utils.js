@@ -10,7 +10,12 @@ export function setLoadingState(button, isLoading) {
 // Message display functions
 export function displayError(message, errorElement, successElement) {
     if (errorElement) {
-        errorElement.textContent = message;
+        const messageSpan = errorElement.querySelector("span");
+        if (messageSpan) {
+            messageSpan.textContent = message;
+        } else {
+            errorElement.textContent = message;
+        }
         errorElement.classList.remove("hidden");
     }
     if (successElement) {
@@ -20,7 +25,12 @@ export function displayError(message, errorElement, successElement) {
 
 export function displaySuccess(message, successElement, errorElement) {
     if (successElement) {
-        successElement.textContent = message;
+        const messageSpan = successElement.querySelector("span");
+        if (messageSpan) {
+            messageSpan.textContent = message;
+        } else {
+            successElement.textContent = message;
+        }
         successElement.classList.remove("hidden");
     }
     if (errorElement) {
@@ -31,11 +41,17 @@ export function displaySuccess(message, successElement, errorElement) {
 export function clearMessages(errorElement, successElement) {
     if (errorElement) {
         errorElement.classList.add("hidden");
-        errorElement.textContent = "";
+        const messageSpan = errorElement.querySelector("span");
+        if (messageSpan) {
+            messageSpan.textContent = "";
+        }
     }
     if (successElement) {
         successElement.classList.add("hidden");
-        successElement.textContent = "";
+        const messageSpan = successElement.querySelector("span");
+        if (messageSpan) {
+            messageSpan.textContent = "";
+        }
     }
 }
 

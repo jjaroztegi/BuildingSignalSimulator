@@ -42,6 +42,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     const errorMessageElement = document.getElementById("error-message");
     const successMessageElement = document.getElementById("success-message");
 
+    // Add event listeners for message close buttons
+    document.querySelectorAll(".message-close").forEach((button) => {
+        button.addEventListener("click", () => {
+            const messageElement = button.closest("#error-message, #success-message");
+            if (messageElement) {
+                messageElement.classList.add("hidden");
+            }
+        });
+    });
+
     // Configuration Tab Elements
     const initialConfigForm = document.getElementById("initial-config-form");
     const configSelect = document.getElementById("id_configuraciones");
@@ -280,11 +290,22 @@ document.addEventListener("DOMContentLoaded", async () => {
             );
             if (!selectedConfig) return;
 
-            if (!confirm(`¿Está seguro de que desea eliminar la configuración "${selectedConfig.nombre}"?`)) {
-                return;
-            }
-
             try {
+                // First check if this configuration has any simulations
+                const simulations = await fetchSimulationHistory(selectedConfigId);
+                if (simulations && simulations.length > 0) {
+                    displayError(
+                        "No se puede eliminar esta configuración porque tiene simulaciones asociadas. Por favor, elimine primero las simulaciones.",
+                        errorMessageElement,
+                        successMessageElement,
+                    );
+                    return;
+                }
+
+                if (!confirm(`¿Está seguro de que desea eliminar la configuración "${selectedConfig.nombre}"?`)) {
+                    return;
+                }
+
                 const response = await deleteConfiguration(selectedConfigId);
                 displaySuccess(
                     response.success || "Configuración eliminada correctamente",
@@ -301,6 +322,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (configDetailsDiv) configDetailsDiv.classList.add("hidden");
             } catch (error) {
                 console.error("Error deleting configuration:", error);
+                displayError(
+                    "Error al eliminar la configuración. Por favor, intente de nuevo.",
+                    errorMessageElement,
+                    successMessageElement,
+                );
             }
         });
     }
@@ -678,7 +704,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (tabIdBase === "simulation-tab") {
                 // Ensure canvas is sized correctly when switching *to* simulation tab
                 // Use requestAnimationFrame to allow layout adjustments before resizing
-                requestAnimationFrame(() => schematicEditor?.initializeCanvas());
+                requestAnimationFrame(() => {
+                    schematicEditor?.initializeCanvas();
+                    // If a configuration is already selected, reset the view to show all content
+                    const simulationConfigSelect = document.getElementById("simulation-config");
+                    if (simulationConfigSelect && simulationConfigSelect.value) {
+                        schematicEditor?.resetView();
+                    }
+                });
             } else if (tabIdBase === "components-tab") {
                 if (componentListTypeSelect.value) {
                     updateDetailedComponentView(componentListTypeSelect.value);

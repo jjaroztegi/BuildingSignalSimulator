@@ -715,9 +715,14 @@ export class SchematicEditor {
         popup.id = "component-selector-popup";
         popup.className =
             "fixed z-50 p-4 bg-zinc-200 rounded-lg shadow-xl dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700";
-        popup.style.left = `${event.clientX + 10}px`;
-        popup.style.top = `${event.clientY + 5}px`;
+
+        // Center the popup on the canvas
+        const canvasRect = this.canvas.getBoundingClientRect();
+        popup.style.left = `${canvasRect.left + (canvasRect.width - 200) / 2}px`;
+        popup.style.top = `${canvasRect.top + (canvasRect.height - 300) / 2}px`;
         popup.style.minWidth = "200px";
+        popup.style.maxHeight = "80vh";
+        popup.style.overflowY = "auto";
 
         let titleText = "";
         let models = [];
@@ -877,9 +882,12 @@ export class SchematicEditor {
         const popup = document.createElement("div");
         popup.id = "toma-quantity-selector";
         popup.className =
-            "fixed z-50 p-4 bg-zinc-200 rounded-lg shadow-xl dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700";
-        popup.style.left = `${event.clientX + 10}px`;
-        popup.style.top = `${event.clientY + 5}px`;
+            "fixed z-[55] p-4 bg-zinc-200 rounded-lg shadow-xl dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700";
+
+        // Center the popup on the canvas
+        const canvasRect = this.canvas.getBoundingClientRect();
+        popup.style.left = `${canvasRect.left + (canvasRect.width - 200) / 2}px`;
+        popup.style.top = `${canvasRect.top + (canvasRect.height - 200) / 2}px`;
         popup.style.minWidth = "200px";
 
         const title = document.createElement("h3");
@@ -962,11 +970,12 @@ export class SchematicEditor {
         const detailsPopup = document.createElement("div");
         detailsPopup.id = "component-details-popup";
         detailsPopup.className =
-            "fixed z-50 p-4 bg-zinc-200 rounded-lg shadow-xl dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700";
+            "fixed z-[60] p-4 bg-zinc-200 rounded-lg shadow-xl dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700";
 
-        // Position the popup to the right of the info button
-        detailsPopup.style.left = `${event.clientX + 30}px`;
-        detailsPopup.style.top = `${event.clientY - 10}px`;
+        // Center the popup on the canvas, slightly offset from the component selector
+        const canvasRect = this.canvas.getBoundingClientRect();
+        detailsPopup.style.left = `${canvasRect.left + (canvasRect.width - 220) / 2}px`;
+        detailsPopup.style.top = `${canvasRect.top + (canvasRect.height - 300) / 2 - 20}px`;
         detailsPopup.style.minWidth = "220px";
 
         // Title
