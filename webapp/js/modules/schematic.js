@@ -375,11 +375,54 @@ export class SchematicEditor {
     /** Resets the view (zoom and pan) to the default centered state. */
     resetView() {
         if (!this.canvas) return;
-        this.scale = 1;
+
         const rect = this.canvas.getBoundingClientRect();
-        // Center horizontally, position vertically near the top
+        const sortedFloors = this._getSortedFloorNumbers();
+
+        // If no floors, use default centering
+        if (sortedFloors.length === 0) {
+            this.scale = 1;
+            this.offsetX = rect.width / 2;
+            this.offsetY = rect.height * 0.4;
+            this.render();
+            return;
+        }
+
+        // Calculate the total height needed for all floors
+        const totalFloors = sortedFloors.length;
+        const totalHeight = totalFloors * this.LAYOUT.FLOOR_SPACING;
+
+        // Add padding
+        const padding = this.LAYOUT.COMPONENT_SIZE * 2;
+        const requiredHeight = totalHeight + padding;
+
+        // Calculate the scale needed to fit all floors vertically
+        const heightScale = rect.height / requiredHeight;
+
+        // Calculate the width needed for the components
+        const rightmostX = this._getBtGroupX(1) + this.LAYOUT.COMPONENT_SIZE;
+        const leftmostX = this._getDiX(0) - this.LAYOUT.COMPONENT_SIZE;
+        const requiredWidth = rightmostX - leftmostX + padding;
+
+        // Calculate the scale needed to fit all components horizontally
+        const widthScale = rect.width / requiredWidth;
+
+        // Use the smaller scale to ensure everything fits
+        this.scale = Math.min(heightScale, widthScale, 1); // Cap at 1 to prevent zooming in
+
+        // Center the view horizontally
         this.offsetX = rect.width / 2;
-        this.offsetY = this.LAYOUT.COMPONENT_SIZE * 2; // Initial vertical offset
+
+        // Position vertically to show all floors
+        const firstFloorY = this._getFloorCenterY(totalFloors - 1);
+        const lastFloorY = this._getFloorCenterY(0);
+
+        // Calculate the center point between the first and last floor
+        const centerY = (firstFloorY + lastFloorY) / 2;
+
+        // Set the offset to center the floors vertically
+        this.offsetY = rect.height / 2 - centerY * this.scale;
+
         this.render();
     }
 
@@ -596,8 +639,9 @@ export class SchematicEditor {
 
     /** Gets the Y coordinate for the center of a floor based on its index. */
     _getFloorCenterY(index) {
-        // Ensure floors are drawn top-down, index 0 is the highest floor visually
-        return index * this.LAYOUT.FLOOR_SPACING;
+        // Ensure floors are drawn down to up
+        const totalFloors = this._getSortedFloorNumbers().length;
+        return (totalFloors - 1 - index) * this.LAYOUT.FLOOR_SPACING;
     }
 
     /** Gets the X coordinate for DI components. */
@@ -1229,19 +1273,27 @@ export class SchematicEditor {
         const { DE_X, COMPONENT_SIZE, CABLE_INTERFLOOR } = this.LAYOUT;
         const halfSize = COMPONENT_SIZE / 2;
 
-        for (let i = 0; i < sortedFloorNumbers.length - 1; i++) {
-            const floor1 = sortedFloorNumbers[i];
-            const floor2 = sortedFloorNumbers[i + 1];
-            const floorData1 = this.floorComponents.get(floor1);
-            const floorData2 = this.floorComponents.get(floor2);
+        // Sort floors numerically to ensure proper adjacency checking
+        const sortedFloors = [...sortedFloorNumbers].sort((a, b) => a - b);
 
-            // Only draw if both floors have a DE
-            if (floorData1?.derivador && floorData2?.derivador) {
-                const y1 = this._getFloorCenterY(i); // Center Y of floor at index i
-                const y2 = this._getFloorCenterY(i + 1); // Center Y of floor at index i+1
+        for (let i = 0; i < sortedFloors.length - 1; i++) {
+            const floor1 = sortedFloors[i];
+            const floor2 = sortedFloors[i + 1];
 
-                // Connect bottom of DE on floor i to top of DE on floor i+1
-                this._drawCable(DE_X, y1 + halfSize, DE_X, y2 - halfSize, CABLE_INTERFLOOR, true); // Dashed line
+            // Only connect if floors are numerically adjacent (differ by 1)
+            if (floor2 - floor1 === 1) {
+                const floorData1 = this.floorComponents.get(floor1);
+                const floorData2 = this.floorComponents.get(floor2);
+
+                // Only draw if both floors have a DE
+                if (floorData1?.derivador && floorData2?.derivador) {
+                    // Get the visual indices
+                    const y1 = this._getFloorCenterY(i);
+                    const y2 = this._getFloorCenterY(i + 1);
+
+                    // Connect bottom of DE on floor i to top of DE on floor i+1
+                    this._drawCable(DE_X, y1 - halfSize, DE_X, y2 + halfSize, CABLE_INTERFLOOR, true); // Dashed line
+                }
             }
         }
     }
@@ -1351,7 +1403,7 @@ export class SchematicEditor {
 
         const lastFloorIndex = sortedFloors.length - 1;
         const lastFloorY = this._getFloorCenterY(lastFloorIndex);
-        const nextFloorY = lastFloorY + this.LAYOUT.FLOOR_SPACING;
+        const nextFloorY = lastFloorY - this.LAYOUT.FLOOR_SPACING;
         const { DE_X, COMPONENT_SIZE } = this.LAYOUT;
         const halfSize = COMPONENT_SIZE / 2;
 
@@ -1379,9 +1431,9 @@ export class SchematicEditor {
         this.ctx.fillText("+", DE_X, nextFloorY);
         this.ctx.globalAlpha = 1.0;
 
-        // Draw "Añadir Piso" text below
+        // Draw "Añadir Piso" text above
         this.ctx.font = `${this.LAYOUT.FONT_SIZE_LABEL / this.scale}px sans-serif`;
-        this.ctx.fillText("Añadir Piso", DE_X, nextFloorY + halfSize + 15 / this.scale);
+        this.ctx.fillText("Añadir Piso", DE_X, nextFloorY - halfSize - 15 / this.scale);
 
         this.ctx.restore();
 

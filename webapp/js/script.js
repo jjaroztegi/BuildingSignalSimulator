@@ -696,8 +696,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (simulationHistoryTable) {
         // Shared function to load and display results
         async function loadAndDisplayResults(simulationId, simulationRow, shouldSwitchTab = false) {
-            const nivel_cabecera = parseFloat(simulationRow.cells[2].textContent);
-            const total_cost = parseFloat(simulationRow.cells[5].textContent.slice(1));
+            const nivel_cabecera = parseFloat(simulationRow.cells[1].textContent);
+            const total_cost = parseFloat(simulationRow.cells[4].textContent.slice(1));
             const minLevel = 45;
             const maxLevel = 70;
 
@@ -732,12 +732,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             if (!simulationId) return;
 
-            if (target.classList.contains("load-schematic")) {
+            if (target.classList.contains("load-schematic") || target.classList.contains("load-results")) {
                 try {
                     // Get the simulation row data
                     const simulationRow = target.closest("tr");
-                    const buildingName = simulationRow.cells[1].textContent;
-                    const frequency = simulationRow.cells[4].textContent.replace(" MHz", "");
+                    const buildingName = simulationRow.cells[0].textContent;
+                    const frequency = simulationRow.cells[3].textContent.replace(" MHz", "");
+                    const isLoadSchematic = target.classList.contains("load-schematic");
+                    const targetTab = isLoadSchematic ? "simulation-tab" : "results-tab";
 
                     // Find the matching configuration by building name
                     const matchingConfig = currentConfigurations.find(
@@ -753,8 +755,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                     // Load schematic components
                     const components = await loadSchematic(simulationId);
 
-                    // Switch to simulation tab first
-                    switchTab("simulation-tab");
+                    // Switch to the appropriate tab
+                    switchTab(targetTab);
 
                     if (frequency) {
                         signalFrequencyInput.value = frequency;
@@ -797,26 +799,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                         schematicEditor?.setCableType(components[0].cable_tipo);
                     }
 
-                    // Also load and display results (without switching tab)
-                    await loadAndDisplayResults(simulationId, simulationRow, false);
+                    // Load and display results
+                    await loadAndDisplayResults(simulationId, simulationRow, !isLoadSchematic);
 
-                    displaySuccess("Esquemático cargado correctamente", successMessageElement, errorMessageElement);
-                } catch (error) {
-                    console.error("Error loading schematic:", error);
-                    displayError(
-                        "Error al cargar el esquemático: " + error.message,
-                        errorMessageElement,
+                    displaySuccess(
+                        isLoadSchematic ? "Esquemático cargado correctamente" : "Resultados cargados correctamente",
                         successMessageElement,
+                        errorMessageElement,
                     );
-                }
-            } else if (target.classList.contains("load-results")) {
-                try {
-                    const simulationRow = target.closest("tr");
-                    await loadAndDisplayResults(simulationId, simulationRow, true);
                 } catch (error) {
-                    console.error("Error loading results:", error);
+                    console.error("Error loading simulation data:", error);
                     displayError(
-                        "Error al cargar los resultados: " + error.message,
+                        `Error al cargar los datos: ${error.message}`,
                         errorMessageElement,
                         successMessageElement,
                     );

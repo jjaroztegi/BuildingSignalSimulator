@@ -936,7 +936,7 @@ export function updateSimulationHistoryTable(simulations) {
     if (!simulations || simulations.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="8" class="px-6 py-10 text-center text-sm text-zinc-500 dark:text-zinc-400">
+                <td colspan="7" class="px-6 py-10 text-center text-sm text-zinc-500 dark:text-zinc-400">
                     No hay simulaciones guardadas.
                 </td>
             </tr>
@@ -950,7 +950,6 @@ export function updateSimulationHistoryTable(simulations) {
     simulations.forEach((simulation) => {
         html += `
             <tr class="border-b border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800">
-                <td class="px-4 py-2.5">${simulation.id_simulaciones || "-"}</td>
                 <td class="px-4 py-2.5">${simulation.nombre_edificio || "-"}</td>
                 <td class="px-4 py-2.5">${simulation.nivel_cabecera ? `${simulation.nivel_cabecera} dBμV` : "-"}</td>
                 <td class="px-4 py-2.5">${simulation.num_pisos || "-"}</td>
