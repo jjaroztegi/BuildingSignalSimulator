@@ -117,7 +117,7 @@ export function updateComponentForm(type) {
         }
         // Apply consistent input styling
         input.className =
-            "block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-primary-400 dark:focus:ring-primary-400";
+            "block w-full rounded-lg border-zinc-300 bg-zinc-200 shadow-sm transition focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-primary-400 dark:focus:ring-primary-400";
 
         fieldWrapper.appendChild(label);
         fieldWrapper.appendChild(input);

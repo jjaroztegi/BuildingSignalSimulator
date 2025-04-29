@@ -714,7 +714,7 @@ export class SchematicEditor {
         const popup = document.createElement("div");
         popup.id = "component-selector-popup";
         popup.className =
-            "fixed z-50 p-4 bg-zinc-50 rounded-lg shadow-xl dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700";
+            "fixed z-50 p-4 bg-zinc-200 rounded-lg shadow-xl dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700";
         popup.style.left = `${event.clientX + 10}px`;
         popup.style.top = `${event.clientY + 5}px`;
         popup.style.minWidth = "200px";
@@ -877,7 +877,7 @@ export class SchematicEditor {
         const popup = document.createElement("div");
         popup.id = "toma-quantity-selector";
         popup.className =
-            "fixed z-50 p-4 bg-zinc-50 rounded-lg shadow-xl dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700";
+            "fixed z-50 p-4 bg-zinc-200 rounded-lg shadow-xl dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700";
         popup.style.left = `${event.clientX + 10}px`;
         popup.style.top = `${event.clientY + 5}px`;
         popup.style.minWidth = "200px";
@@ -962,7 +962,7 @@ export class SchematicEditor {
         const detailsPopup = document.createElement("div");
         detailsPopup.id = "component-details-popup";
         detailsPopup.className =
-            "fixed z-50 p-4 bg-zinc-50 rounded-lg shadow-xl dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700";
+            "fixed z-50 p-4 bg-zinc-200 rounded-lg shadow-xl dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700";
 
         // Position the popup to the right of the info button
         detailsPopup.style.left = `${event.clientX + 30}px`;

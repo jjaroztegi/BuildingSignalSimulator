@@ -149,7 +149,7 @@ export function updateDetailedComponentList(type, models, listId) {
         const item = document.createElement("li");
         // Apply card styling to each list item
         item.className =
-            "bg-zinc-50 dark:bg-zinc-800/50 rounded-lg shadow border border-zinc-200 dark:border-zinc-700 p-4";
+            "bg-zinc-200 dark:bg-zinc-800/50 rounded-lg shadow border border-zinc-200 dark:border-zinc-700 p-4";
         item.dataset.modelo = modelo;
 
         const content = document.createElement("div");
@@ -233,7 +233,7 @@ export function updateSimpleComponentList(type, data, listId) {
     data.forEach((modelo) => {
         const item = document.createElement("li");
         item.className =
-            "p-2 bg-zinc-50 dark:bg-zinc-800 rounded-lg shadow-2xs hover:shadow-md transition-shadow cursor-pointer";
+            "p-2 bg-zinc-200 dark:bg-zinc-800 rounded-lg shadow-2xs hover:shadow-md transition-shadow cursor-pointer";
         item.dataset.modelo = modelo;
 
         const content = document.createElement("div");
@@ -831,7 +831,7 @@ async function handleEditComponent(type, model) {
         costField.innerHTML = `
             <label for="costo" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Costo (€)</label>
             <input type="number" step="0.01" id="costo" name="costo" value="${componentData.costo}" required
-                class="block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-primary-400 dark:focus:ring-primary-400">
+                class="block w-full rounded-lg border-zinc-300 bg-zinc-200 shadow-sm transition focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-primary-400 dark:focus:ring-primary-400">
         `;
         form.appendChild(costField);
 
@@ -849,7 +849,7 @@ async function handleEditComponent(type, model) {
                     <input type="${field.type}" id="${field.name}" name="${field.name}" 
                         value="${componentData[field.name]}" required
                         ${field.step ? `step="${field.step}"` : ""}
-                        class="block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-primary-400 dark:focus:ring-primary-400">
+                        class="block w-full rounded-lg border-zinc-300 bg-zinc-200 shadow-sm transition focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-primary-400 dark:focus:ring-primary-400">
                 `;
                 fieldsContainer.appendChild(fieldWrapper);
             });
@@ -1033,7 +1033,7 @@ function generateConfigFormFields(configData) {
                    ${field.min !== undefined ? `min="${field.min}"` : ""}
                    ${field.max !== undefined ? `max="${field.max}"` : ""}
                    ${field.step !== undefined ? `step="${field.step}"` : ""}
-                   class="block w-full rounded-lg border-zinc-300 bg-zinc-50 shadow-sm transition focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-primary-400 dark:focus:ring-primary-400">
+                   class="block w-full rounded-lg border-zinc-300 bg-zinc-200 shadow-sm transition focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-primary-400 dark:focus:ring-primary-400">
         </div>
     `,
         )
