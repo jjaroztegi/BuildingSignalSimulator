@@ -1398,8 +1398,11 @@ export class SchematicEditor {
         const configData = JSON.parse(selectedOption.dataset.config || "{}");
         const maxFloors = configData.num_pisos || 0;
 
+        // Calculate the next floor number
+        const nextFloor = Math.max(...sortedFloors) + 1;
+
         // Don't show placeholder if we've reached the limit
-        if (sortedFloors.length >= maxFloors) return;
+        if (nextFloor > maxFloors) return;
 
         const lastFloorIndex = sortedFloors.length - 1;
         const lastFloorY = this._getFloorCenterY(lastFloorIndex);

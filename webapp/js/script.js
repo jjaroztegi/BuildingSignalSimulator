@@ -470,7 +470,57 @@ document.addEventListener("DOMContentLoaded", async () => {
                     throw new Error("Configuración seleccionada no encontrada localmente.");
                 }
 
-                // Flatten component data for the API request
+                // Validate component hierarchy for each floor
+                for (const [floorStr, floorComps] of Object.entries(componentsData.floors)) {
+                    const floorNum = parseInt(floorStr);
+
+                    // Check component presence
+                    const hasTomas =
+                        (Array.isArray(floorComps.tomasLeft) && floorComps.tomasLeft.some((model) => model)) ||
+                        (Array.isArray(floorComps.tomasRight) && floorComps.tomasRight.some((model) => model));
+                    const hasDistribuidor =
+                        Array.isArray(floorComps.distribuidores) && floorComps.distribuidores.some((model) => model);
+                    const hasDerivador = floorComps.derivador !== undefined && floorComps.derivador !== null;
+
+                    // Validate component hierarchy
+                    if (hasTomas && !hasDistribuidor) {
+                        displayError(
+                            `El piso ${floorNum} tiene tomas pero no tiene distribuidor. Debe añadir un distribuidor antes de añadir tomas.`,
+                            errorMessageElement,
+                            successMessageElement,
+                        );
+                        return;
+                    }
+
+                    if (hasDistribuidor && !hasDerivador) {
+                        displayError(
+                            `El piso ${floorNum} tiene distribuidor pero no tiene derivador. Debe añadir un derivador antes de añadir distribuidores.`,
+                            errorMessageElement,
+                            successMessageElement,
+                        );
+                        return;
+                    }
+
+                    if (hasDistribuidor && !hasTomas) {
+                        displayError(
+                            `El piso ${floorNum} tiene distribuidor pero no tiene tomas. Debe añadir tomas cuando hay un distribuidor.`,
+                            errorMessageElement,
+                            successMessageElement,
+                        );
+                        return;
+                    }
+
+                    if (hasDerivador && !hasDistribuidor && !hasTomas) {
+                        displayError(
+                            `El piso ${floorNum} tiene solo un derivador. Debe añadir al menos un distribuidor o tomas.`,
+                            errorMessageElement,
+                            successMessageElement,
+                        );
+                        return;
+                    }
+                }
+
+                // If validation passes, populate the apiComponents array
                 const apiComponents = [];
                 Object.entries(componentsData.floors).forEach(([floorStr, floorComps]) => {
                     const floorNum = parseInt(floorStr);

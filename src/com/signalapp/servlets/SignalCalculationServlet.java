@@ -166,6 +166,9 @@ public class SignalCalculationServlet extends HttpServlet {
 
         for (Map.Entry<Integer, List<ComponentConfig>> entry : componentsByFloor.entrySet()) {
             List<ComponentConfig> floorComponents = entry.getValue();
+            int floorNum = entry.getKey();
+
+            // Count components by type
             long derivadores = floorComponents.stream()
                     .filter(c -> c.type.equalsIgnoreCase("derivador"))
                     .count();
@@ -176,14 +179,41 @@ public class SignalCalculationServlet extends HttpServlet {
                     .filter(c -> c.type.equalsIgnoreCase("toma"))
                     .count();
 
+            // Check component limits
             if (derivadores > 1) {
-                throw new SQLException("No se permite más de un derivador en el piso " + entry.getKey());
+                throw new SQLException("No se permite más de un derivador en el piso " + floorNum);
             }
             if (distribuidores > 2) {
-                throw new SQLException("No se permite más de un distribuidor en el piso " + entry.getKey());
+                throw new SQLException("No se permite más de un distribuidor en el piso " + floorNum);
             }
             if (tomas != 2 && tomas != 4 && tomas != 6 && tomas != 8) {
-                throw new SQLException("El piso " + entry.getKey() + " debe tener 2 o 4 tomas por cada lado");
+                throw new SQLException("El piso " + floorNum + " debe tener 2 o 4 tomas por cada lado");
+            }
+
+            // Check component hierarchy
+            boolean hasDerivador = derivadores > 0;
+            boolean hasDistribuidor = distribuidores > 0;
+            boolean hasTomas = tomas > 0;
+
+            // Validate component relationships
+            if (hasTomas && !hasDistribuidor) {
+                throw new SQLException("El piso " + floorNum
+                        + " tiene tomas pero no tiene distribuidor. Debe añadir un distribuidor antes de añadir tomas.");
+            }
+
+            if (hasDistribuidor && !hasDerivador) {
+                throw new SQLException("El piso " + floorNum
+                        + " tiene distribuidor pero no tiene derivador. Debe añadir un derivador antes de añadir distribuidores.");
+            }
+
+            if (hasDistribuidor && !hasTomas) {
+                throw new SQLException("El piso " + floorNum
+                        + " tiene distribuidor pero no tiene tomas. Debe añadir tomas cuando hay un distribuidor.");
+            }
+
+            if (hasDerivador && !hasDistribuidor && !hasTomas) {
+                throw new SQLException("El piso " + floorNum
+                        + " tiene solo un derivador. Debe añadir al menos un distribuidor o tomas.");
             }
         }
     }
@@ -249,7 +279,7 @@ public class SignalCalculationServlet extends HttpServlet {
                     .collect(Collectors.toList());
 
             double signalAfterDistribuidor = signalToStay;
-            
+
             // Apply attenuation only from first distributor
             if (!distribuidores.isEmpty()) {
                 ComponentConfig firstDistribuidor = distribuidores.get(0);
@@ -261,7 +291,7 @@ public class SignalCalculationServlet extends HttpServlet {
                         distribInfo.attenuation,
                         distribInfo.cost));
             }
-            
+
             // Count costs for all distributors
             for (ComponentConfig distribuidor : distribuidores) {
                 ComponentInfo distribInfo = getComponentInfo(distribuidor, frequency);
