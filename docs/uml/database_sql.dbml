@@ -1,0 +1,200 @@
+// Building Signal Simulator Database Schema - SQL Version
+
+Project BuildingSignalSimulator {
+  database_type: 'Generic SQL'
+  Note: '''
+  # Building Signal Simulator Database
+  
+  This database stores information about signal distribution components and configurations
+  for building signal simulation. It tracks components, their technical specifications,
+  and how they are used in different building configurations.
+  '''
+}
+
+// Main tables
+Table tipos_componente {
+  id_tipos_componente int [pk, increment]
+  nombre varchar(50) [not null]
+  descripcion varchar(255)
+  
+  indexes {
+    nombre [unique]
+  }
+  
+  Note: "Defines the component types: Cable Coaxial, Base de Toma, Derivador, Distribuidor"
+}
+
+Table componentes {
+  id_componentes int [pk, increment]
+  id_tipos_componente int [ref: > tipos_componente.id_tipos_componente, not null]
+  modelo varchar(100) [not null]
+  costo decimal(10,2) [not null]
+  
+  indexes {
+    id_tipos_componente
+    modelo [unique]
+  }
+  
+  Note: "Central table that links to specific component tables based on type"
+}
+
+// Component-specific tables
+Table coaxiales {
+  id_coaxiales int [pk, increment]
+  id_componentes int [ref: - componentes.id_componentes, not null]
+  atenuacion_470mhz double [not null]
+  atenuacion_694mhz double [not null]
+  
+  indexes {
+    id_componentes [unique]
+  }
+  
+  Note: "Technical properties specific to coaxial cables"
+}
+
+Table derivadores {
+  id_derivadores int [pk, increment]
+  id_componentes int [ref: - componentes.id_componentes, not null]
+  atenuacion_derivacion double [not null]
+  atenuacion_paso double [not null]
+  directividad double [not null]
+  desacoplo double [not null]
+  perdidas_retorno double [not null]
+  
+  indexes {
+    id_componentes [unique]
+  }
+  
+  Note: "Characteristics of signal derivators"
+}
+
+Table distribuidores {
+  id_distribuidores int [pk, increment]
+  id_componentes int [ref: - componentes.id_componentes, not null]
+  numero_salidas int [not null]
+  atenuacion_distribucion double [not null]
+  desacoplo double [not null]
+  perdidas_retorno double [not null]
+  
+  indexes {
+    id_componentes [unique]
+  }
+  
+  Note: "Data for signal distributors (splitters)"
+}
+
+Table tomas {
+  id_tomas int [pk, increment]
+  id_componentes int [ref: - componentes.id_componentes, not null]
+  atenuacion double [not null]
+  desacoplo double [not null]
+  
+  indexes {
+    id_componentes [unique]
+  }
+  
+  Note: "Technical characteristics of signal outlets"
+}
+
+// Configuration and simulation tables
+Table configuraciones {
+  id_configuraciones int [pk, increment]
+  nombre varchar(100) [not null]
+  nivel_cabecera double [not null]
+  num_pisos int [not null]
+  costo_total decimal(10,2) [not null]
+  fecha_creacion timestamp [not null]
+  usuario_creacion varchar(50) [not null]
+  fecha_modificacion timestamp
+  usuario_modificacion varchar(50)
+  
+  indexes {
+    nombre [unique]
+  }
+  
+  Note: "General configurations created by users"
+}
+
+Table margenes_calidad {
+  id_margenes_calidad int [pk, increment]
+  tipo_senal varchar(50) [not null]
+  nivel_minimo double [not null]
+  nivel_maximo double [not null]
+  
+  indexes {
+    tipo_senal [unique]
+  }
+  
+  Note: "Defines acceptable quality margins for signals (e.g., TDT)"
+}
+
+Table simulaciones {
+  id_simulaciones int [pk, increment]
+  id_configuraciones int [ref: > configuraciones.id_configuraciones, not null]
+  frecuencia int [not null]
+  tipo_senal varchar(50) [not null]
+  costo_total decimal(10,2) [not null]
+  estado varchar(20) [not null]
+  fecha_simulacion timestamp [not null]
+  
+  indexes {
+    id_configuraciones
+  }
+  
+  Note: "Stores simulation runs for configurations"
+}
+
+Table resultados_simulacion {
+  id_resultados_simulacion int [pk, increment]
+  id_simulaciones int [ref: > simulaciones.id_simulaciones, not null]
+  piso int [not null]
+  nivel_senal double [not null]
+  costo_piso decimal(10,2) [not null]
+  estado varchar(20) [not null]
+  
+  indexes {
+    id_simulaciones
+    piso
+  }
+  
+  Note: "Results for each floor in a simulation"
+}
+
+Table esquematicos {
+  id_esquematicos int [pk, increment]
+  id_simulaciones int [ref: > simulaciones.id_simulaciones, not null]
+  piso int [not null]
+  tipo_componente varchar(20) [not null]
+  modelo_componente varchar(100) [ref: > componentes.modelo, not null]
+  posicion_x int [not null]
+  posicion_y int [not null]
+  cable_tipo varchar(100)
+  
+  indexes {
+    id_simulaciones
+    piso
+  }
+  
+  Note: "Schematic layout information for simulations"
+}
+
+// Table groups for better organization
+TableGroup ComponentesTables {
+  tipos_componente
+  componentes
+  coaxiales
+  derivadores
+  distribuidores
+  tomas
+}
+
+TableGroup ConfiguracionesTables {
+  configuraciones
+  margenes_calidad
+}
+
+TableGroup SimulacionTables {
+  simulaciones
+  resultados_simulacion
+  esquematicos
+}
