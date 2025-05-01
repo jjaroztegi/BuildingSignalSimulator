@@ -1,6 +1,11 @@
 #!/bin/bash
 
 # --- Configuration ---
+BUILD_TESTS=0
+if [ "$1" = "--with-tests" ]; then
+    BUILD_TESTS=1
+fi
+
 TOMCAT_WEBAPPS="/opt/homebrew/opt/tomcat/libexec/webapps"
 APP_NAME="BuildingSignalSimulator"
 PACKAGE_NAME="com/signalapp"
@@ -20,19 +25,30 @@ done
 echo "Compiling Java files..."
 mkdir -p "build/classes"
 
-# Compile Java files dynamically based on the package name
+# Compile Java files dynamically based on the package name, excluding tests by default
 find "src/$PACKAGE_NAME" -name "*.java" | while read -r file; do
-    # echo "Compiling $(basename "$file")..."
-    javac --release 8 -Xlint:-options -d build/classes -cp "$CLASSPATH" "$file"
+    if [ $BUILD_TESTS -eq 0 ]; then
+        if [[ "$file" != *"/tests/"* ]]; then
+            # echo "Compiling $(basename "$file")..."
+            javac --release 8 -Xlint:-options -d build/classes -cp "$CLASSPATH" "$file"
+        fi
+    else
+        # echo "Compiling $(basename "$file")..."
+        javac --release 8 -Xlint:-options -d build/classes -cp "$CLASSPATH" "$file"
+    fi
 done
 
-# --- Run AccessConnection test ---
-# echo "Testing database connection..."
-# java -cp "$CLASSPATH:build/classes" com.signalapp.tests.AccessTest
+# --- Run tests if enabled ---
+if [ $BUILD_TESTS -eq 1 ]; then
+    echo "Running tests..."
+    # --- Run AccessConnection test ---
+    echo "Testing database connection..."
+    java -cp "$CLASSPATH:build/classes" com.signalapp.tests.AccessTest
 
-# --- Run DerbyConnection test ---
-# echo "Testing database connection..."
-# java -cp "$CLASSPATH:build/classes" com.signalapp.tests.DerbyTest
+    # --- Run DerbyConnection test ---
+    echo "Testing database connection..."
+    java -cp "$CLASSPATH:build/classes" com.signalapp.tests.DerbyTest
+fi
 
 # --- Deployment ---
 echo "Deploying to Tomcat..."
@@ -45,6 +61,9 @@ mkdir -p "$TOMCAT_WEBAPPS/$APP_NAME"
 
 # Copy webapp folder content
 cp -R webapp/* "$TOMCAT_WEBAPPS/$APP_NAME/"
+if [ -f "$TOMCAT_WEBAPPS/$APP_NAME/css/input.css" ]; then
+    rm "$TOMCAT_WEBAPPS/$APP_NAME/css/input.css"
+fi
 
 # Create WEB-INF/classes directories
 mkdir -p "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/classes/$PACKAGE_NAME"
@@ -53,15 +72,20 @@ mkdir -p "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/classes/$PACKAGE_NAME"
 cp -R build/classes/* "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/classes/"
 
 # Copy the source .java files
-rsync -av --include='*/' --include='*.java' --exclude='*' "src/$PACKAGE_NAME/" "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/classes/$PACKAGE_NAME/" > /dev/null
+echo "Copying source files..."
+SRC_DIR="src/$PACKAGE_NAME"
+DST_DIR="$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/classes/$PACKAGE_NAME"
 
-# Copy lib folder with all JARs
+if [ $BUILD_TESTS -eq 0 ]; then
+    rsync -a --include='*/' --include='*.java' --exclude='*Test.java' --exclude='tests/' --exclude='*' "$SRC_DIR/" "$DST_DIR/" >/dev/null
+else
+    rsync -a --include='*/' --include='*.java' --exclude='*' "$SRC_DIR/" "$DST_DIR/" >/dev/null
+fi
+
+# Copy Derby JAR
+echo "Copying Derby JAR..."
 mkdir -p "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/lib"
-cp lib/*.jar "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/lib/"
-
-# # Copy access database
-# mkdir -p "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/database"
-# cp database/*.accdb "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/database/"
+cp lib/derby.jar "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/lib/"
 
 # Copy derby database
 mkdir -p "$TOMCAT_WEBAPPS/$APP_NAME/WEB-INF/database/DistribucionDeSenal"
@@ -75,7 +99,7 @@ jar -cf "$SCRIPT_DIR/$WAR_ORIG" .
 echo "Running Jakarta EE Migration Tool..."
 java -jar "$JAKARTA_MIGRATOR" \
     -profile=EE \
-    "$SCRIPT_DIR/$WAR_ORIG" "$SCRIPT_DIR/$WAR_MIGRATED" > /dev/null 2>&1
+    "$SCRIPT_DIR/$WAR_ORIG" "$SCRIPT_DIR/$WAR_MIGRATED" >/dev/null 2>&1
 
 echo "Deploying migrated WAR to Tomcat..."
 rm -rf "$TOMCAT_WEBAPPS/$APP_NAME"

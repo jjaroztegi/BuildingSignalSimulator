@@ -132,7 +132,7 @@ The application features an intuitive web interface with a powerful schematic ed
 3. Build and start the container:
 
     ```bash
-    docker compose up -d
+    docker compose up -d --build
     ```
 
 4. Access the application at: http://localhost:1313/BuildingSignalSimulator
@@ -197,7 +197,7 @@ The application uses an Apache Derby database with the following key tables:
 
 ## Documentation
 
-Detailed documentation available in `doc/` directory:
+Detailed documentation available in [docs/](docs/) directory:
 
 -   [Database Schema](docs/Database.md)
 -   [Structure Details](docs/Estructura.md)

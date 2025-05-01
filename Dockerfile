@@ -4,38 +4,35 @@ FROM tomcat:9.0.104-jdk8-corretto
 ENV CATALINA_HOME=/usr/local/tomcat
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto
 ENV APP_NAME=BuildingSignalSimulator
+ENV PACKAGE_NAME=com/signalapp
 
 # Create application directory
 RUN mkdir -p ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/classes
 RUN mkdir -p ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/lib
 RUN mkdir -p ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/database
-RUN mkdir -p /tmp/src/com/signalapp
-
-# # Copy the MS Access database
-# COPY database/DistribucionDeSenal.accdb ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/database/
+RUN mkdir -p /tmp/src/${PACKAGE_NAME}
 
 # Copy the Derby database
 COPY database/DistribucionDeSenal/ ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/database/DistribucionDeSenal/
 
-# Copy the JAR dependencies
-COPY lib/*.jar ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/lib/
+# Copy only the Derby JAR
+COPY lib/derby.jar ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/lib/
+
+# Copy source files for compilation
+COPY src/${PACKAGE_NAME}/ /tmp/src/${PACKAGE_NAME}/
 
 # Copy the web application files
-COPY webapp/* ${CATALINA_HOME}/webapps/${APP_NAME}/
-COPY webapp/WEB-INF/* ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/
-COPY webapp/js ${CATALINA_HOME}/webapps/${APP_NAME}/js/
-COPY webapp/css ${CATALINA_HOME}/webapps/${APP_NAME}/css/
-COPY webapp/img ${CATALINA_HOME}/webapps/${APP_NAME}/img/
+COPY webapp/ ${CATALINA_HOME}/webapps/${APP_NAME}/
 
-# Copy Java source files
-COPY src/com/signalapp /tmp/src/com/signalapp/
+# Remove input.css
+RUN rm -f ${CATALINA_HOME}/webapps/${APP_NAME}/css/input.css
 
 # Create classpath for compilation
-RUN echo -n "." > /tmp/classpath.txt && \
+RUN echo -n ".:${CATALINA_HOME}/lib/servlet-api.jar" > /tmp/classpath.txt && \
     find ${CATALINA_HOME}/webapps/${APP_NAME}/WEB-INF/lib -name "*.jar" -exec printf ":%s" {} \; >> /tmp/classpath.txt
 
-# List all Java files to compile
-RUN find /tmp/src -name "*.java" > /tmp/sources.txt
+# List all Java files to compile, excluding tests
+RUN find /tmp/src/${PACKAGE_NAME} -name "*.java" ! -path "*/tests/*" > /tmp/sources.txt
 
 # Compile Java classes
 RUN javac -cp $(cat /tmp/classpath.txt) \

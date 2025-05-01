@@ -3,6 +3,9 @@
 setlocal EnableDelayedExpansion
 
 REM --- Configuration ---
+set "BUILD_TESTS=0"
+if "%1"=="--with-tests" set "BUILD_TESTS=1"
+
 set "CATALINA_BASE=C:\Temp\Tomcat"
 set "CATALINA_HOME=C:\Programs\JavaStack\apache-tomcat-9.0.89"
 set "CATALINA_TMPDIR=C:\Temp\Tomcat\temp"
@@ -25,19 +28,32 @@ echo Compiling Java files...
 if exist "build\classes" rd /s /q "build\classes"
 mkdir "build\classes"
 
-REM Compile Java files dynamically based on the package name
+REM Compile Java files dynamically based on the package name, excluding tests by default
 for /R "src\%PACKAGE_NAME%" %%f in (*.java) do (
-    @REM echo Compiling %%~nxf...
-    "%JAVA_HOME%\bin\javac" -d build\classes -cp "%CLASSPATH%" "%%f"
+    set "FILE=%%f"
+    if !BUILD_TESTS!==0 (
+        echo !FILE! | findstr /i "\tests\\" > nul
+        if errorlevel 1 (
+            @REM echo Compiling %%~nxf...
+            "%JAVA_HOME%\bin\javac" -d build\classes -cp "%CLASSPATH%" "%%f"
+        )
+    ) else (
+        @REM echo Compiling %%~nxf...
+        "%JAVA_HOME%\bin\javac" -d build\classes -cp "%CLASSPATH%" "%%f"
+    )
 )
 
-REM --- Run AccessConnection test ---
-@REM echo Testing database connection...
-@REM java -cp "%CLASSPATH%;build\classes" %PACKAGE_NAME:\=.%.tests.AccessTest
+REM --- Run tests if enabled ---
+if !BUILD_TESTS!==1 (
+    echo Running tests...
+    REM --- Run AccessConnection test ---
+    echo Testing database connection...
+    java -cp "%CLASSPATH%;build\classes" %PACKAGE_NAME:\=.%.tests.AccessTest
 
-REM --- Run DerbyConnection test ---
-@REM echo Testing database connection...
-@REM java -cp "%CLASSPATH%;build\classes" %PACKAGE_NAME:\=.%.tests.DerbyTest
+    REM --- Run DerbyConnection test ---
+    echo Testing database connection...
+    java -cp "%CLASSPATH%;build\classes" %PACKAGE_NAME:\=.%.tests.DerbyTest
+)
 
 REM --- Deployment ---
 echo Deploying to Tomcat...
@@ -64,6 +80,7 @@ mkdir "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\database"
 REM Copy webapp folder content
 echo Copying webapp files...
 xcopy /E /I /Y "webapp\*" "%TOMCAT_WEBAPPS%\%APP_NAME%\" > NUL
+if exist "%TOMCAT_WEBAPPS%\%APP_NAME%\css\input.css" del "%TOMCAT_WEBAPPS%\%APP_NAME%\css\input.css"
 
 REM Copy the compiled class files
 echo Copying compiled classes...
@@ -71,25 +88,28 @@ xcopy /E /I /Y "build\classes\*" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\" 
 
 REM Copy the source .java files
 echo Copying source files...
-xcopy /E /I /Y "src\%PACKAGE_NAME%\*.java" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\%PACKAGE_NAME%" > NUL
+set "SRC_DIR=src\%PACKAGE_NAME%"
+set "DST_DIR=%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\classes\%PACKAGE_NAME%"
 
-REM Copy lib folder with all JARs
-echo Copying library files...
+if !BUILD_TESTS!==0 (
+    robocopy "%SRC_DIR%" "%DST_DIR%" *.java /S /XF *Test.java /XD tests > NUL
+) else (
+    robocopy "%SRC_DIR%" "%DST_DIR%" *.java /S > NUL
+)
+
+REM Copy Derby JAR
+echo Copying Derby JAR...
 xcopy /Y "lib\derby.jar" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\lib\" > NUL
 
-@REM REM Copy access database
-@REM echo Copying database files...
-@REM xcopy /Y "database\*.accdb" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\database\" > NUL
-
 REM Copy derby database
-echo Copying database files...
+echo Copying derby database...
 xcopy /Y /E /I "database\DistribucionDeSenal\*" "%TOMCAT_WEBAPPS%\%APP_NAME%\WEB-INF\database\DistribucionDeSenal\" > NUL
 
 echo Deployment complete.
 
-echo Creating WAR file with compression...
+echo Creating WAR file...
 "%JAVA_HOME%\bin\jar" -cf BuildingSignalSimulator.war -C "%TOMCAT_WEBAPPS%\%APP_NAME%" . > NUL
-echo WAR file created successfully with compression.
+echo WAR file created successfully.
 
 REM --- Start Tomcat ---
 echo Starting Tomcat...

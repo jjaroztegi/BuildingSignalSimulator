@@ -4,7 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: building-signal-simulator:latest
+    image: building-signal-simulator
+    container_name: building_signal_simulator
     ports:
       - "1313:8080"
     environment:
