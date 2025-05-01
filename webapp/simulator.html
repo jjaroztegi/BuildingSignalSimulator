@@ -5,76 +5,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" type="image/x-icon" href="favicon.ico" />
         <title>Simulador de Distribución de Señales en Edificios</title>
-        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="css/tailwind.css" />
         <!-- Chart.js and plugins -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
-        <script>
-            tailwind.config = {
-                darkMode: "class",
-                theme: {
-                    extend: {
-                        colors: {
-                            primary: {
-                                50: "#fafafa",
-                                100: "#f4f4f5",
-                                200: "#e4e4e7",
-                                300: "#d4d4d8",
-                                400: "#a1a1aa",
-                                500: "#71717a",
-                                600: "#52525b",
-                                700: "#3f3f46",
-                                800: "#27272a",
-                                900: "#18181b",
-                                950: "#09090b",
-                            },
-                            gray: {
-                                50: "#f9fafb",
-                                100: "#f3f4f6",
-                                200: "#e5e7eb",
-                                300: "#d1d5db",
-                                400: "#9ca3af",
-                                500: "#6b7280",
-                                600: "#4b5563",
-                                700: "#374151",
-                                800: "#1f2937",
-                                900: "#11182c",
-                                950: "#030712",
-                            },
-                        },
-                    },
-                },
-            };
-        </script>
         <script type="module" src="js/script.js"></script>
-        <style>
-            /* Custom scrollbar for WebKit browsers */
-            .custom-scrollbar::-webkit-scrollbar {
-                width: 8px;
-            }
-            .custom-scrollbar::-webkit-scrollbar-track {
-                background: transparent;
-            }
-            .custom-scrollbar::-webkit-scrollbar-thumb {
-                background-color: rgba(156, 163, 175, 0.5);
-                border-radius: 10px;
-                border: 2px solid transparent;
-                background-clip: content-box;
-            }
-            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                background-color: rgba(107, 114, 128, 0.7);
-            }
-            /* Apply custom scrollbar to specific elements */
-            .scrollable-panel {
-                @apply custom-scrollbar overflow-y-auto;
-            }
-            .active-tab {
-                @apply text-primary-600 dark:text-primary-400 border-primary-500 dark:border-primary-400;
-            }
-            .inactive-tab {
-                @apply border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-300;
-            }
-        </style>
     </head>
     <body class="min-h-screen bg-zinc-100 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-200">
         <div class="flex min-h-screen flex-col overflow-y-auto">
@@ -94,31 +29,31 @@
                         <nav class="hidden border-b-2 border-transparent md:flex">
                             <button
                                 id="config-tab"
-                                class="tab-button inactive-tab border-b-2 px-3 py-2.5 text-sm font-medium transition-colors duration-150 ease-in-out"
+                                class="tab-button inactive-tab"
                             >
                                 Configuración
                             </button>
                             <button
                                 id="components-tab"
-                                class="tab-button inactive-tab border-b-2 px-3 py-2.5 text-sm font-medium transition-colors duration-150 ease-in-out"
+                                class="tab-button inactive-tab"
                             >
                                 Componentes
                             </button>
                             <button
                                 id="simulation-tab"
-                                class="tab-button inactive-tab border-b-2 px-3 py-2.5 text-sm font-medium transition-colors duration-150 ease-in-out"
+                                class="tab-button inactive-tab"
                             >
                                 Simulación
                             </button>
                             <button
                                 id="results-tab"
-                                class="tab-button inactive-tab border-b-2 px-3 py-2.5 text-sm font-medium transition-colors duration-150 ease-in-out"
+                                class="tab-button inactive-tab"
                             >
                                 Resultados
                             </button>
                             <button
                                 id="history-tab"
-                                class="tab-button inactive-tab border-b-2 px-3 py-2.5 text-sm font-medium transition-colors duration-150 ease-in-out"
+                                class="tab-button inactive-tab"
                             >
                                 Historial
                             </button>
@@ -149,35 +84,35 @@
                 <nav class="mt-1 flex border-t border-zinc-200 md:hidden dark:border-zinc-700">
                     <button
                         id="config-tab-mobile"
-                        class="tab-button inactive-tab flex-1 border-t-2 px-2 py-2.5 text-center text-xs font-medium transition-colors duration-150 ease-in-out"
+                        class="tab-button inactive-tab flex-1"
                         data-target="config-tab"
                     >
                         Config.
                     </button>
                     <button
                         id="components-tab-mobile"
-                        class="tab-button inactive-tab flex-1 border-t-2 px-2 py-2.5 text-center text-xs font-medium transition-colors duration-150 ease-in-out"
+                        class="tab-button inactive-tab flex-1"
                         data-target="components-tab"
                     >
                         Compon.
                     </button>
                     <button
                         id="simulation-tab-mobile"
-                        class="tab-button inactive-tab flex-1 border-t-2 px-2 py-2.5 text-center text-xs font-medium transition-colors duration-150 ease-in-out"
+                        class="tab-button inactive-tab flex-1"
                         data-target="simulation-tab"
                     >
                         Simulac.
                     </button>
                     <button
                         id="results-tab-mobile"
-                        class="tab-button inactive-tab flex-1 border-t-2 px-2 py-2.5 text-center text-xs font-medium transition-colors duration-150 ease-in-out"
+                        class="tab-button inactive-tab flex-1"
                         data-target="results-tab"
                     >
                         Result.
                     </button>
                     <button
                         id="history-tab-mobile"
-                        class="tab-button inactive-tab flex-1 border-t-2 px-2 py-2.5 text-center text-xs font-medium transition-colors duration-150 ease-in-out"
+                        class="tab-button inactive-tab flex-1"
                         data-target="history-tab"
                     >
                         Hist.

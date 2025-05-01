@@ -36,17 +36,11 @@ export function switchTab(tabId) {
         content.classList.add("hidden");
     });
 
-    // Remove active class from all tab buttons
+    // Remove active class and add inactive class to all tab buttons
     const tabButtons = document.querySelectorAll(".tab-button");
     tabButtons.forEach((button) => {
-        button.classList.remove("active-tab", "border-blue-500", "text-blue-600", "dark:text-blue-400");
-        button.classList.add(
-            "border-transparent",
-            "text-zinc-500",
-            "dark:text-zinc-400",
-            "hover:text-zinc-700",
-            "dark:hover:text-zinc-300",
-        );
+        button.classList.remove("active-tab");
+        button.classList.add("inactive-tab");
     });
 
     // Show the selected tab content
@@ -55,31 +49,19 @@ export function switchTab(tabId) {
         selectedContent.classList.remove("hidden");
     }
 
-    // Add active class to the selected tab button and its mobile/desktop counterpart
+    // Add active class and remove inactive class from the selected tab button
     const selectedButton = document.getElementById(tabId);
     if (selectedButton) {
-        selectedButton.classList.add("active-tab", "border-blue-500", "text-blue-600", "dark:text-blue-400");
-        selectedButton.classList.remove(
-            "border-transparent",
-            "text-zinc-500",
-            "dark:text-zinc-400",
-            "hover:text-zinc-700",
-            "dark:hover:text-zinc-300",
-        );
+        selectedButton.classList.add("active-tab");
+        selectedButton.classList.remove("inactive-tab");
     }
 
-    // Also activate the corresponding desktop/mobile button
+    // Also update the corresponding desktop/mobile button
     const counterpartId = tabId.includes("-mobile") ? tabId.replace("-mobile", "") : tabId + "-mobile";
     const counterpartButton = document.getElementById(counterpartId);
     if (counterpartButton) {
-        counterpartButton.classList.add("active-tab", "border-blue-500", "text-blue-600", "dark:text-blue-400");
-        counterpartButton.classList.remove(
-            "border-transparent",
-            "text-zinc-500",
-            "dark:text-zinc-400",
-            "hover:text-zinc-700",
-            "dark:hover:text-zinc-300",
-        );
+        counterpartButton.classList.add("active-tab");
+        counterpartButton.classList.remove("inactive-tab");
     }
 
     // Trigger component list update

@@ -23,3 +23,7 @@ build/
 # Deployment directories
 webapp/WEB-INF/classes/
 webapp/WEB-INF/lib/
+
+# Node modules
+node_modules/
+package-lock.json
