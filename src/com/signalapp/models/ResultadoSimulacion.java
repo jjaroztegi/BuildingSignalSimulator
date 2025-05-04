@@ -1,14 +1,24 @@
 package com.signalapp.models;
 
+/**
+ * Represents the calculated results for a single floor within a specific simulation run. Stores the
+ * final signal level, cost for that floor, and the status (e.g., "ok", "error"). Corresponds to the
+ * 'ResultadosSimulacion' table.
+ */
 public class ResultadoSimulacion {
-    private int id_resultados_simulacion;
-    private int id_simulaciones;
-    private int piso;
-    private double nivel_senal;
-    private double costo_piso;
-    private String estado;
+    private int id_resultados_simulacion; // Primary key
+    private int id_simulaciones; // Foreign key referencing Simulaciones table
+    private int piso; // Floor number these results apply to
+    private double nivel_senal; // Calculated signal level at the outlets on this floor (dBµV)
+    private double costo_piso; // Calculated cost of components on this floor
+    private String estado; // Status of the results (e.g., "ok", "error" based on margins)
 
-    // Getters and Setters
+    // Default constructor is implicitly provided if no other constructors are defined.
+    // Add one explicitly if needed for frameworks or specific instantiation patterns.
+    // public ResultadoSimulacion() {}
+
+    // --- Getters and Setters ---
+
     public int getId_resultados_simulacion() {
         return id_resultados_simulacion;
     }
@@ -59,13 +69,8 @@ public class ResultadoSimulacion {
 
     @Override
     public String toString() {
-        return "ResultadoSimulacion{" +
-                "id_resultados_simulacion=" + id_resultados_simulacion +
-                ", id_simulaciones=" + id_simulaciones +
-                ", piso=" + piso +
-                ", nivel_senal=" + nivel_senal +
-                ", costo_piso=" + costo_piso +
-                ", estado='" + estado + '\'' +
-                '}';
+        return "ResultadoSimulacion{" + "id_resultados_simulacion=" + id_resultados_simulacion
+                + ", id_simulaciones=" + id_simulaciones + ", piso=" + piso + ", nivel_senal="
+                + nivel_senal + ", costo_piso=" + costo_piso + ", estado='" + estado + '\'' + '}';
     }
 }

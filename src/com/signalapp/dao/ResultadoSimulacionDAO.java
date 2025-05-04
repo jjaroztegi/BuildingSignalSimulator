@@ -9,6 +9,10 @@ import java.util.List;
 
 import com.signalapp.models.ResultadoSimulacion;
 
+/**
+ * Data Access Object for the ResultadosSimulacion table Handles database operations for simulation
+ * result entities
+ */
 public class ResultadoSimulacionDAO extends BaseDAO<ResultadoSimulacion> {
 
     @Override
@@ -18,14 +22,8 @@ public class ResultadoSimulacionDAO extends BaseDAO<ResultadoSimulacion> {
 
     @Override
     protected String[] getColumnNames() {
-        return new String[] {
-                "id_resultados_simulacion",
-                "id_simulaciones",
-                "piso",
-                "nivel_senal",
-                "costo_piso",
-                "estado"
-        };
+        return new String[] {"id_resultados_simulacion", "id_simulaciones", "piso", "nivel_senal",
+                "costo_piso", "estado"};
     }
 
     @Override
@@ -41,7 +39,8 @@ public class ResultadoSimulacionDAO extends BaseDAO<ResultadoSimulacion> {
     }
 
     @Override
-    protected void setPreparedStatementParams(PreparedStatement stmt, ResultadoSimulacion entity) throws SQLException {
+    protected void setPreparedStatementParams(PreparedStatement stmt, ResultadoSimulacion entity)
+            throws SQLException {
         stmt.setInt(1, entity.getId_simulaciones());
         stmt.setInt(2, entity.getPiso());
         stmt.setDouble(3, entity.getNivel_senal());

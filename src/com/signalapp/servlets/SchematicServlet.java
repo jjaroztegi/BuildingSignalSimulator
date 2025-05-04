@@ -13,13 +13,16 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Servlet for handling schematic component operations (GET, POST, PUT, DELETE). Provides endpoints
+ * to retrieve, create, update, and delete schematic components for a simulation.
+ */
 public class SchematicServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Handles GET requests for schematic data
-     * Retrieves all schematic components for a specific simulation and returns them
-     * as JSON
+     * Handles GET requests for schematic data Retrieves all schematic components for a specific
+     * simulation and returns them as JSON
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -37,7 +40,8 @@ public class SchematicServlet extends HttpServlet {
 
         try {
             EsquematicoDAO esquematicoDAO = new EsquematicoDAO();
-            List<Esquematico> componentes = esquematicoDAO.getBySimulacion(Integer.parseInt(idSimulacion));
+            List<Esquematico> componentes =
+                    esquematicoDAO.getBySimulacion(Integer.parseInt(idSimulacion));
 
             StringBuilder jsonBuilder = new StringBuilder("[");
             boolean first = true;
@@ -49,16 +53,21 @@ public class SchematicServlet extends HttpServlet {
 
                 // Build JSON object with proper escaping
                 jsonBuilder.append("{");
-                jsonBuilder.append("\"id_esquematicos\":").append(componente.getId_esquematicos()).append(",");
-                jsonBuilder.append("\"id_simulaciones\":").append(componente.getId_simulaciones()).append(",");
+                jsonBuilder.append("\"id_esquematicos\":").append(componente.getId_esquematicos())
+                        .append(",");
+                jsonBuilder.append("\"id_simulaciones\":").append(componente.getId_simulaciones())
+                        .append(",");
                 jsonBuilder.append("\"piso\":").append(componente.getPiso()).append(",");
-                jsonBuilder.append("\"tipo_componente\":\"").append(escapeJson(componente.getTipo_componente()))
-                        .append("\",");
-                jsonBuilder.append("\"modelo_componente\":\"").append(escapeJson(componente.getModelo_componente()))
-                        .append("\",");
-                jsonBuilder.append("\"posicion_x\":").append(componente.getPosicion_x()).append(",");
-                jsonBuilder.append("\"posicion_y\":").append(componente.getPosicion_y()).append(",");
-                jsonBuilder.append("\"cable_tipo\":\"").append(escapeJson(componente.getCable_tipo())).append("\"");
+                jsonBuilder.append("\"tipo_componente\":\"")
+                        .append(escapeJson(componente.getTipo_componente())).append("\",");
+                jsonBuilder.append("\"modelo_componente\":\"")
+                        .append(escapeJson(componente.getModelo_componente())).append("\",");
+                jsonBuilder.append("\"posicion_x\":").append(componente.getPosicion_x())
+                        .append(",");
+                jsonBuilder.append("\"posicion_y\":").append(componente.getPosicion_y())
+                        .append(",");
+                jsonBuilder.append("\"cable_tipo\":\"")
+                        .append(escapeJson(componente.getCable_tipo())).append("\"");
                 jsonBuilder.append("}");
             }
             jsonBuilder.append("]");
@@ -70,8 +79,8 @@ public class SchematicServlet extends HttpServlet {
     }
 
     /**
-     * Handles POST requests to save schematic components
-     * Creates new schematic components for a simulation
+     * Handles POST requests to save schematic components Creates new schematic components for a
+     * simulation
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -91,8 +100,8 @@ public class SchematicServlet extends HttpServlet {
             String cableTipo = request.getParameter("cable_tipo"); // Optional
 
             // Validate required parameters
-            if (idSimulacion == null || tipoComponente == null || modeloComponente == null ||
-                piso == null || posicionX == null || posicionY == null) {
+            if (idSimulacion == null || tipoComponente == null || modeloComponente == null
+                    || piso == null || posicionX == null || posicionY == null) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 out.write("{\"error\":\"Faltan parametros requeridos\"}");
                 return;
@@ -116,7 +125,8 @@ public class SchematicServlet extends HttpServlet {
                 throw new SQLException("No se pudo obtener el ID del componente");
             }
 
-            out.write("{\"success\":\"Componente guardado exitosamente\",\"id\":" + idEsquematico + "}");
+            out.write("{\"success\":\"Componente guardado exitosamente\",\"id\":" + idEsquematico
+                    + "}");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\":\"" + escapeJson(e.getMessage()) + "\"}");
@@ -124,8 +134,7 @@ public class SchematicServlet extends HttpServlet {
     }
 
     /**
-     * Handles PUT requests to update schematic components
-     * Updates an existing schematic component
+     * Handles PUT requests to update schematic components Updates an existing schematic component
      */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
@@ -142,9 +151,9 @@ public class SchematicServlet extends HttpServlet {
         String posicionY = request.getParameter("posicion_y");
         String cableTipo = request.getParameter("cable_tipo");
 
-        if (idEsquematico == null || piso == null || tipoComponente == null ||
-                modeloComponente == null || posicionX == null || posicionY == null ||
-                cableTipo == null) {
+        if (idEsquematico == null || piso == null || tipoComponente == null
+                || modeloComponente == null || posicionX == null || posicionY == null
+                || cableTipo == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error\":\"Faltan parametros requeridos\"}");
             return;
@@ -171,8 +180,8 @@ public class SchematicServlet extends HttpServlet {
     }
 
     /**
-     * Handles DELETE requests to remove schematic components
-     * Deletes a schematic component with the specified ID
+     * Handles DELETE requests to remove schematic components Deletes a schematic component with the
+     * specified ID
      */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
@@ -208,12 +217,8 @@ public class SchematicServlet extends HttpServlet {
     private String escapeJson(String input) {
         if (input == null)
             return "";
-        return input.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\b", "\\b")
-                .replace("\f", "\\f")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
+        return input.replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b")
+                .replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r")
                 .replace("\t", "\\t");
     }
 }

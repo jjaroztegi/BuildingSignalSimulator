@@ -5,8 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Singleton class that manages the connection to the MS Access database
- * Provides methods to get and close database connections
+ * Singleton class that manages the connection to the MS Access database Provides methods to get and
+ * close database connections
  */
 public class AccessConnection {
     static String root = "";
@@ -15,7 +15,7 @@ public class AccessConnection {
 
         if (os.contains("win")) {
             root = "C:/Temp/Tomcat/webapps/BuildingSignalSimulator/WEB-INF/";
-        // Mac os
+            // Mac os
         } else if (os.contains("mac")) {
             root = "/opt/homebrew/opt/tomcat/libexec/webapps/BuildingSignalSimulator/WEB-INF/";
         }
@@ -25,14 +25,14 @@ public class AccessConnection {
         }
     }
 
-    private static final String DB_URL = "jdbc:ucanaccess://" + root + "database/DistribucionDeSenal.accdb";
+    private static final String DB_URL =
+            "jdbc:ucanaccess://" + root + "database/DistribucionDeSenal.accdb";
     private static Connection connection;
     private static AccessConnection instance;
     private static final Object LOCK = new Object();
 
     /**
-     * Private constructor to prevent instantiation
-     * Initializes the database connection
+     * Private constructor to prevent instantiation Initializes the database connection
      * 
      * @throws SQLException if a database error occurs
      */
@@ -55,9 +55,8 @@ public class AccessConnection {
     }
 
     /**
-     * Gets a connection to the database
-     * Creates a new connection if one doesn't exist or if the existing one is
-     * closed
+     * Gets a connection to the database Creates a new connection if one doesn't exist or if the
+     * existing one is closed
      * 
      * @return A Connection object to the database
      * @throws SQLException if a database error occurs

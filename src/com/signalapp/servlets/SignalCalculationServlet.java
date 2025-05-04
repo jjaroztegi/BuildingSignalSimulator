@@ -15,8 +15,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Servlet to handle signal calculations and validation for building
- * configurations
+ * Servlet to handle signal calculations and validation for building configurations. Provides an
+ * endpoint to calculate signal levels and validate them against quality margins.
  */
 public class SignalCalculationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -47,12 +47,13 @@ public class SignalCalculationServlet extends HttpServlet {
             validateConfiguration(components);
 
             // Calculate signal levels and validate against margins
-            Map<Integer, FloorSignalInfo> signalLevels = calculateSignalLevels(numPisos, nivelCabecera, components,
-                    frequency, selectedCableModel);
+            Map<Integer, FloorSignalInfo> signalLevels = calculateSignalLevels(numPisos,
+                    nivelCabecera, components, frequency, selectedCableModel);
             MargenCalidad margen = getMargenCalidad(tipoSenal);
 
             // Build and send response
-            String jsonResponse = buildJsonResponse(signalLevels, margen, calculateTotalCost(signalLevels));
+            String jsonResponse =
+                    buildJsonResponse(signalLevels, margen, calculateTotalCost(signalLevels));
             out.write(jsonResponse);
 
         } catch (Exception e) {
@@ -79,27 +80,24 @@ public class SignalCalculationServlet extends HttpServlet {
     private MargenCalidad getMargenCalidad(String tipoSenal) throws SQLException {
         MargenCalidadDAO margenDAO = new MargenCalidadDAO();
         List<MargenCalidad> margenes = margenDAO.findAll();
-        return margenes.stream()
-                .filter(m -> m.getTipo_senal().equals(tipoSenal))
-                .findFirst()
+        return margenes.stream().filter(m -> m.getTipo_senal().equals(tipoSenal)).findFirst()
                 .orElseThrow(() -> new SQLException(
-                        "No se encontraron márgenes de calidad para el tipo de señal: " + tipoSenal));
+                        "No se encontraron márgenes de calidad para el tipo de señal: "
+                                + tipoSenal));
     }
 
     /**
      * Calculates total cost from all floor costs
      */
     private double calculateTotalCost(Map<Integer, FloorSignalInfo> signalLevels) {
-        return signalLevels.values().stream()
-                .mapToDouble(info -> info.floorCost)
-                .sum();
+        return signalLevels.values().stream().mapToDouble(info -> info.floorCost).sum();
     }
 
     /**
      * Builds JSON response with signal levels, margins and costs
      */
-    private String buildJsonResponse(Map<Integer, FloorSignalInfo> signalLevels, MargenCalidad margen,
-            double totalCost) {
+    private String buildJsonResponse(Map<Integer, FloorSignalInfo> signalLevels,
+            MargenCalidad margen, double totalCost) {
         StringBuilder jsonBuilder = new StringBuilder();
         jsonBuilder.append("{\"signal_levels\":[");
 
@@ -110,8 +108,8 @@ public class SignalCalculationServlet extends HttpServlet {
             first = false;
 
             FloorSignalInfo info = entry.getValue();
-            String status = (info.finalLevel >= margen.getNivel_minimo() &&
-                    info.finalLevel <= margen.getNivel_maximo()) ? "ok" : "error";
+            String status = (info.finalLevel >= margen.getNivel_minimo()
+                    && info.finalLevel <= margen.getNivel_maximo()) ? "ok" : "error";
 
             // Build JSON object with proper escaping
             jsonBuilder.append("{");
@@ -170,24 +168,23 @@ public class SignalCalculationServlet extends HttpServlet {
 
             // Count components by type
             long derivadores = floorComponents.stream()
-                    .filter(c -> c.type.equalsIgnoreCase("derivador"))
-                    .count();
+                    .filter(c -> c.type.equalsIgnoreCase("derivador")).count();
             long distribuidores = floorComponents.stream()
-                    .filter(c -> c.type.equalsIgnoreCase("distribuidor"))
-                    .count();
-            long tomas = floorComponents.stream()
-                    .filter(c -> c.type.equalsIgnoreCase("toma"))
-                    .count();
+                    .filter(c -> c.type.equalsIgnoreCase("distribuidor")).count();
+            long tomas =
+                    floorComponents.stream().filter(c -> c.type.equalsIgnoreCase("toma")).count();
 
             // Check component limits
             if (derivadores > 1) {
                 throw new SQLException("No se permite más de un derivador en el piso " + floorNum);
             }
             if (distribuidores > 2) {
-                throw new SQLException("No se permite más de un distribuidor en el piso " + floorNum);
+                throw new SQLException(
+                        "No se permite más de un distribuidor en el piso " + floorNum);
             }
             if (tomas != 2 && tomas != 4 && tomas != 6 && tomas != 8) {
-                throw new SQLException("El piso " + floorNum + " debe tener 2 o 4 tomas por cada lado");
+                throw new SQLException(
+                        "El piso " + floorNum + " debe tener 2 o 4 tomas por cada lado");
             }
 
             // Check component hierarchy
@@ -222,7 +219,8 @@ public class SignalCalculationServlet extends HttpServlet {
      * Calculates signal levels for each floor based on components and initial level
      */
     private Map<Integer, FloorSignalInfo> calculateSignalLevels(int numPisos, double nivelCabecera,
-            List<ComponentConfig> components, int frequency, String selectedCableModel) throws SQLException {
+            List<ComponentConfig> components, int frequency, String selectedCableModel)
+            throws SQLException {
         Map<Integer, FloorSignalInfo> levels = new HashMap<>();
         ComponenteDAO componenteDAO = new ComponenteDAO();
 
@@ -236,47 +234,43 @@ public class SignalCalculationServlet extends HttpServlet {
 
         // Process floors from top to bottom
         for (int floor = numPisos; floor >= 1; floor--) {
-            List<ComponentConfig> floorComponents = componentsByFloor.getOrDefault(floor, new ArrayList<>());
+            List<ComponentConfig> floorComponents =
+                    componentsByFloor.getOrDefault(floor, new ArrayList<>());
             FloorSignalInfo info = new FloorSignalInfo(signalDownward);
             double floorCost = 0.0;
             double signalToStay = signalDownward;
 
             // Find derivador if present
             Optional<ComponentConfig> derivadorOpt = floorComponents.stream()
-                    .filter(c -> c.type.equalsIgnoreCase("derivador"))
-                    .findFirst();
+                    .filter(c -> c.type.equalsIgnoreCase("derivador")).findFirst();
 
             // Apply derivación attenuation (signal staying in this floor)
             if (derivadorOpt.isPresent()) {
                 ComponentInfo derivacionInfo = getComponentInfo(derivadorOpt.get(), frequency);
                 signalToStay -= derivacionInfo.attenuation;
                 floorCost += derivacionInfo.cost;
-                info.componentEffects.add(new ComponentEffect(
-                        "derivacion",
-                        derivadorOpt.get().model,
-                        derivacionInfo.attenuation,
-                        derivacionInfo.cost));
+                info.componentEffects.add(new ComponentEffect("derivacion",
+                        derivadorOpt.get().model, derivacionInfo.attenuation, derivacionInfo.cost));
             }
 
             // Apply 15m coaxial attenuation within floor using the selected cable model
-            if (selectedCableModel != null && !selectedCableModel.isEmpty() && !floorComponents.isEmpty()) {
-                ComponentConfig cableConfig = new ComponentConfig("coaxial", selectedCableModel, floor);
+            if (selectedCableModel != null && !selectedCableModel.isEmpty()
+                    && !floorComponents.isEmpty()) {
+                ComponentConfig cableConfig =
+                        new ComponentConfig("coaxial", selectedCableModel, floor);
                 ComponentInfo coaxInfo = getCoaxialInfoByFrequency(cableConfig, frequency);
                 double atenuacion15m = (coaxInfo.attenuation / 100.0) * 15.0; // 15m of cable
                 signalToStay -= atenuacion15m;
                 double cableCost15m = coaxInfo.cost * 15.0; // Cost per meter * 15 meters
                 floorCost += cableCost15m;
-                info.componentEffects.add(new ComponentEffect(
-                        "coaxial_en_planta_15m",
-                        selectedCableModel,
-                        atenuacion15m,
-                        cableCost15m));
+                info.componentEffects.add(new ComponentEffect("coaxial_en_planta_15m",
+                        selectedCableModel, atenuacion15m, cableCost15m));
             }
 
             // Apply distribuidor attenuation first
-            List<ComponentConfig> distribuidores = floorComponents.stream()
-                    .filter(c -> c.type.equalsIgnoreCase("distribuidor"))
-                    .collect(Collectors.toList());
+            List<ComponentConfig> distribuidores =
+                    floorComponents.stream().filter(c -> c.type.equalsIgnoreCase("distribuidor"))
+                            .collect(Collectors.toList());
 
             double signalAfterDistribuidor = signalToStay;
 
@@ -285,11 +279,8 @@ public class SignalCalculationServlet extends HttpServlet {
                 ComponentConfig firstDistribuidor = distribuidores.get(0);
                 ComponentInfo distribInfo = getComponentInfo(firstDistribuidor, frequency);
                 signalAfterDistribuidor -= distribInfo.attenuation;
-                info.componentEffects.add(new ComponentEffect(
-                        "distribuidor",
-                        firstDistribuidor.model,
-                        distribInfo.attenuation,
-                        distribInfo.cost));
+                info.componentEffects.add(new ComponentEffect("distribuidor",
+                        firstDistribuidor.model, distribInfo.attenuation, distribInfo.cost));
             }
 
             // Count costs for all distributors
@@ -301,30 +292,24 @@ public class SignalCalculationServlet extends HttpServlet {
             // Apply toma attenuation (only once per floor since all tomas have same model)
             double signalAfterToma = signalAfterDistribuidor;
             Optional<ComponentConfig> firstToma = floorComponents.stream()
-                    .filter(c -> c.type.equalsIgnoreCase("toma"))
-                    .findFirst();
+                    .filter(c -> c.type.equalsIgnoreCase("toma")).findFirst();
 
             if (firstToma.isPresent()) {
                 ComponentInfo tomaInfo = getComponentInfo(firstToma.get(), frequency);
                 signalAfterToma -= tomaInfo.attenuation;
-                info.componentEffects.add(new ComponentEffect(
-                        "toma",
-                        firstToma.get().model,
-                        tomaInfo.attenuation,
-                        tomaInfo.cost));
+                info.componentEffects.add(new ComponentEffect("toma", firstToma.get().model,
+                        tomaInfo.attenuation, tomaInfo.cost));
             }
 
             // Calculate total cost for all tomas
-            double tomaCosts = floorComponents.stream()
-                    .filter(c -> c.type.equalsIgnoreCase("toma"))
+            double tomaCosts = floorComponents.stream().filter(c -> c.type.equalsIgnoreCase("toma"))
                     .mapToDouble(toma -> {
                         try {
                             return getComponentInfo(toma, frequency).cost;
                         } catch (SQLException e) {
                             throw new RuntimeException("Error calculating toma cost", e);
                         }
-                    })
-                    .sum();
+                    }).sum();
             floorCost += tomaCosts;
 
             info.finalLevel = signalAfterToma;
@@ -338,24 +323,22 @@ public class SignalCalculationServlet extends HttpServlet {
                 // Apply paso attenuation if derivador present
                 if (derivadorOpt.isPresent()) {
                     DerivadorDAO derivadorDAO = new DerivadorDAO();
-                    Derivador derivador = derivadorDAO.findByComponenteId(
-                            componenteDAO.findByModelo(derivadorOpt.get().model).getId_componentes());
+                    Derivador derivador = derivadorDAO.findByComponenteId(componenteDAO
+                            .findByModelo(derivadorOpt.get().model).getId_componentes());
                     nextSignal -= derivador.getAtenuacion_paso();
                 }
 
                 // Apply 3m coaxial attenuation between floors using the selected cable model
                 if (selectedCableModel != null && !selectedCableModel.isEmpty()) {
-                    ComponentConfig cableConfig = new ComponentConfig("coaxial", selectedCableModel, floor);
+                    ComponentConfig cableConfig =
+                            new ComponentConfig("coaxial", selectedCableModel, floor);
                     ComponentInfo coaxInfo = getCoaxialInfoByFrequency(cableConfig, frequency);
                     double atenuacion3m = (coaxInfo.attenuation / 100.0) * 3.0; // 3m between floors
                     nextSignal -= atenuacion3m;
                     double cableCost3m = coaxInfo.cost * 3.0; // Cost per meter * 3 meters
                     floorCost += cableCost3m;
-                    info.componentEffects.add(new ComponentEffect(
-                            "coaxial_entre_pisos_3m",
-                            selectedCableModel,
-                            atenuacion3m,
-                            cableCost3m));
+                    info.componentEffects.add(new ComponentEffect("coaxial_entre_pisos_3m",
+                            selectedCableModel, atenuacion3m, cableCost3m));
                 }
 
                 signalDownward = nextSignal;
@@ -368,7 +351,8 @@ public class SignalCalculationServlet extends HttpServlet {
     /**
      * Gets component information with interpolated attenuation for coaxial cables
      */
-    private ComponentInfo getCoaxialInfoByFrequency(ComponentConfig config, int frequency) throws SQLException {
+    private ComponentInfo getCoaxialInfoByFrequency(ComponentConfig config, int frequency)
+            throws SQLException {
         ComponenteDAO componenteDAO = new ComponenteDAO();
         Componente componente = componenteDAO.findByModelo(config.model);
         if (componente == null) {
@@ -395,7 +379,8 @@ public class SignalCalculationServlet extends HttpServlet {
     /**
      * Gets component information for non-coaxial components
      */
-    private ComponentInfo getComponentInfo(ComponentConfig config, int frequency) throws SQLException {
+    private ComponentInfo getComponentInfo(ComponentConfig config, int frequency)
+            throws SQLException {
         if (config.type.equalsIgnoreCase("coaxial")) {
             return getCoaxialInfoByFrequency(config, frequency);
         }
@@ -411,13 +396,15 @@ public class SignalCalculationServlet extends HttpServlet {
         switch (config.type.toLowerCase()) {
             case "derivador":
                 DerivadorDAO derivadorDAO = new DerivadorDAO();
-                Derivador derivador = derivadorDAO.findByComponenteId(componente.getId_componentes());
+                Derivador derivador =
+                        derivadorDAO.findByComponenteId(componente.getId_componentes());
                 attenuation = derivador.getAtenuacion_derivacion();
                 break;
 
             case "distribuidor":
                 DistribuidorDAO distribuidorDAO = new DistribuidorDAO();
-                Distribuidor distribuidor = distribuidorDAO.findByComponenteId(componente.getId_componentes());
+                Distribuidor distribuidor =
+                        distribuidorDAO.findByComponenteId(componente.getId_componentes());
                 attenuation = distribuidor.getAtenuacion_distribucion();
                 break;
 
@@ -513,7 +500,8 @@ public class SignalCalculationServlet extends HttpServlet {
         if (isString) {
             end = json.indexOf("\"", start);
         } else {
-            while (end < json.length() && (Character.isDigit(json.charAt(end)) || json.charAt(end) == '.'))
+            while (end < json.length()
+                    && (Character.isDigit(json.charAt(end)) || json.charAt(end) == '.'))
                 end++;
         }
 
@@ -545,8 +533,7 @@ public class SignalCalculationServlet extends HttpServlet {
             if (depth == 0 && component.length() > 0) {
                 String componentJson = component.toString().trim();
                 if (componentJson.startsWith("{") && componentJson.endsWith("}")) {
-                    components.add(new ComponentConfig(
-                            extractStringValue(componentJson, "type"),
+                    components.add(new ComponentConfig(extractStringValue(componentJson, "type"),
                             extractStringValue(componentJson, "model"),
                             extractIntValue(componentJson, "floor")));
                 }
@@ -560,12 +547,8 @@ public class SignalCalculationServlet extends HttpServlet {
     private String escapeJson(String input) {
         if (input == null)
             return "";
-        return input.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\b", "\\b")
-                .replace("\f", "\\f")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
+        return input.replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b")
+                .replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r")
                 .replace("\t", "\\t");
     }
 }

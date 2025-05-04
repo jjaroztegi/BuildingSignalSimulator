@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Data Access Object for the Distribuidores table
- * Handles database operations for splitter/distributor entities
+ * Data Access Object for the Distribuidores table Handles database operations for
+ * splitter/distributor entities
  */
 public class DistribuidorDAO extends BaseDAO<Distribuidor> {
 
@@ -28,10 +28,8 @@ public class DistribuidorDAO extends BaseDAO<Distribuidor> {
      */
     @Override
     protected String[] getColumnNames() {
-        return new String[] {
-                "id_distribuidores", "id_componentes", "numero_salidas", "atenuacion_distribucion",
-                "desacoplo", "perdidas_retorno"
-        };
+        return new String[] {"id_distribuidores", "id_componentes", "numero_salidas",
+                "atenuacion_distribucion", "desacoplo", "perdidas_retorno"};
     }
 
     /**
@@ -43,24 +41,21 @@ public class DistribuidorDAO extends BaseDAO<Distribuidor> {
      */
     @Override
     protected Distribuidor mapResultSetToEntity(ResultSet rs) throws SQLException {
-        return new Distribuidor(
-                rs.getInt("id_distribuidores"),
-                rs.getInt("id_componentes"),
-                rs.getInt("numero_salidas"),
-                rs.getDouble("atenuacion_distribucion"),
-                rs.getDouble("desacoplo"),
-                rs.getDouble("perdidas_retorno"));
+        return new Distribuidor(rs.getInt("id_distribuidores"), rs.getInt("id_componentes"),
+                rs.getInt("numero_salidas"), rs.getDouble("atenuacion_distribucion"),
+                rs.getDouble("desacoplo"), rs.getDouble("perdidas_retorno"));
     }
 
     /**
      * Sets the parameters for a PreparedStatement based on Distribuidor properties
      * 
-     * @param ps     The PreparedStatement to set parameters for
+     * @param ps The PreparedStatement to set parameters for
      * @param entity The Distribuidor entity containing the values to set
      * @throws SQLException if a database error occurs
      */
     @Override
-    protected void setPreparedStatementParams(PreparedStatement ps, Distribuidor entity) throws SQLException {
+    protected void setPreparedStatementParams(PreparedStatement ps, Distribuidor entity)
+            throws SQLException {
         ps.setInt(1, entity.getId_componentes());
         ps.setInt(2, entity.getNumero_salidas());
         ps.setDouble(3, entity.getAtenuacion_distribucion());

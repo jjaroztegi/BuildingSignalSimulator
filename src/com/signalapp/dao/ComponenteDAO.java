@@ -6,8 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Data Access Object for the Componentes table
- * Handles database operations for component entities
+ * Data Access Object for the Componentes table Handles database operations for component entities
  */
 public class ComponenteDAO extends BaseDAO<Componente> {
 
@@ -28,9 +27,7 @@ public class ComponenteDAO extends BaseDAO<Componente> {
      */
     @Override
     protected String[] getColumnNames() {
-        return new String[] {
-                "id_componentes", "id_tipos_componente", "modelo", "costo"
-        };
+        return new String[] {"id_componentes", "id_tipos_componente", "modelo", "costo"};
     }
 
     /**
@@ -42,22 +39,20 @@ public class ComponenteDAO extends BaseDAO<Componente> {
      */
     @Override
     protected Componente mapResultSetToEntity(ResultSet rs) throws SQLException {
-        return new Componente(
-                rs.getInt("id_componentes"),
-                rs.getInt("id_tipos_componente"),
-                rs.getString("modelo"),
-                rs.getDouble("costo"));
+        return new Componente(rs.getInt("id_componentes"), rs.getInt("id_tipos_componente"),
+                rs.getString("modelo"), rs.getDouble("costo"));
     }
 
     /**
      * Sets the parameters for a PreparedStatement based on Componente properties
      * 
-     * @param ps     The PreparedStatement to set parameters for
+     * @param ps The PreparedStatement to set parameters for
      * @param entity The Componente entity containing the values to set
      * @throws SQLException if a database error occurs
      */
     @Override
-    protected void setPreparedStatementParams(PreparedStatement ps, Componente entity) throws SQLException {
+    protected void setPreparedStatementParams(PreparedStatement ps, Componente entity)
+            throws SQLException {
         ps.setInt(1, entity.getId_tipos_componente());
         ps.setString(2, entity.getModelo());
         ps.setDouble(3, entity.getCosto());

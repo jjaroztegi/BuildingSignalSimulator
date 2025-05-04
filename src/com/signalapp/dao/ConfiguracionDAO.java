@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Data Access Object for the Configuraciones table
- * Handles database operations for configuration entities
+ * Data Access Object for the Configuraciones table Handles database operations for configuration
+ * entities
  */
 public class ConfiguracionDAO extends BaseDAO<Configuracion> {
 
@@ -28,10 +28,9 @@ public class ConfiguracionDAO extends BaseDAO<Configuracion> {
      */
     @Override
     protected String[] getColumnNames() {
-        return new String[] {
-                "id_configuraciones", "nombre", "nivel_cabecera", "num_pisos", "costo_total",
-                "fecha_creacion", "usuario_creacion", "fecha_modificacion", "usuario_modificacion"
-        };
+        return new String[] {"id_configuraciones", "nombre", "nivel_cabecera", "num_pisos",
+                "costo_total", "fecha_creacion", "usuario_creacion", "fecha_modificacion",
+                "usuario_modificacion"};
     }
 
     /**
@@ -43,27 +42,22 @@ public class ConfiguracionDAO extends BaseDAO<Configuracion> {
      */
     @Override
     protected Configuracion mapResultSetToEntity(ResultSet rs) throws SQLException {
-        return new Configuracion(
-                rs.getInt("id_configuraciones"),
-                rs.getString("nombre"),
-                rs.getDouble("nivel_cabecera"),
-                rs.getInt("num_pisos"),
-                rs.getDouble("costo_total"),
-                rs.getString("fecha_creacion"),
-                rs.getString("usuario_creacion"),
-                rs.getString("fecha_modificacion"),
-                rs.getString("usuario_modificacion"));
+        return new Configuracion(rs.getInt("id_configuraciones"), rs.getString("nombre"),
+                rs.getDouble("nivel_cabecera"), rs.getInt("num_pisos"), rs.getDouble("costo_total"),
+                rs.getString("fecha_creacion"), rs.getString("usuario_creacion"),
+                rs.getString("fecha_modificacion"), rs.getString("usuario_modificacion"));
     }
 
     /**
      * Sets the parameters for a PreparedStatement based on Configuracion properties
      * 
-     * @param ps     The PreparedStatement to set parameters for
+     * @param ps The PreparedStatement to set parameters for
      * @param entity The Configuracion entity containing the values to set
      * @throws SQLException if a database error occurs
      */
     @Override
-    protected void setPreparedStatementParams(PreparedStatement ps, Configuracion entity) throws SQLException {
+    protected void setPreparedStatementParams(PreparedStatement ps, Configuracion entity)
+            throws SQLException {
         ps.setString(1, entity.getNombre());
         ps.setDouble(2, entity.getNivel_cabecera());
         ps.setInt(3, entity.getNum_pisos());

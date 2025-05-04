@@ -6,8 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Data Access Object for the Tomas table
- * Handles database operations for outlet entities
+ * Data Access Object for the Tomas table Handles database operations for outlet entities
  */
 public class TomaDAO extends BaseDAO<Toma> {
 
@@ -28,9 +27,7 @@ public class TomaDAO extends BaseDAO<Toma> {
      */
     @Override
     protected String[] getColumnNames() {
-        return new String[] {
-                "id_tomas", "id_componentes", "atenuacion", "desacoplo"
-        };
+        return new String[] {"id_tomas", "id_componentes", "atenuacion", "desacoplo"};
     }
 
     /**
@@ -42,22 +39,20 @@ public class TomaDAO extends BaseDAO<Toma> {
      */
     @Override
     protected Toma mapResultSetToEntity(ResultSet rs) throws SQLException {
-        return new Toma(
-                rs.getInt("id_tomas"),
-                rs.getInt("id_componentes"),
-                rs.getDouble("atenuacion"),
-                rs.getDouble("desacoplo"));
+        return new Toma(rs.getInt("id_tomas"), rs.getInt("id_componentes"),
+                rs.getDouble("atenuacion"), rs.getDouble("desacoplo"));
     }
 
     /**
      * Sets the parameters for a PreparedStatement based on Toma properties
      * 
-     * @param ps     The PreparedStatement to set parameters for
+     * @param ps The PreparedStatement to set parameters for
      * @param entity The Toma entity containing the values to set
      * @throws SQLException if a database error occurs
      */
     @Override
-    protected void setPreparedStatementParams(PreparedStatement ps, Toma entity) throws SQLException {
+    protected void setPreparedStatementParams(PreparedStatement ps, Toma entity)
+            throws SQLException {
         ps.setInt(1, entity.getId_componentes());
         ps.setDouble(2, entity.getAtenuacion());
         ps.setDouble(3, entity.getDesacoplo());

@@ -13,12 +13,16 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Servlet for handling simulation results operations (GET, POST, DELETE). Provides endpoints to
+ * retrieve, save, and delete simulation results for a given simulation.
+ */
 public class SimulationResultsServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Handles GET requests for simulation results
-     * Retrieves all results for a specific simulation and returns them as JSON
+     * Handles GET requests for simulation results Retrieves all results for a specific simulation
+     * and returns them as JSON
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -36,7 +40,8 @@ public class SimulationResultsServlet extends HttpServlet {
 
         try {
             ResultadoSimulacionDAO resultadoDAO = new ResultadoSimulacionDAO();
-            List<ResultadoSimulacion> resultados = resultadoDAO.findBySimulacionId(Integer.parseInt(idSimulacion));
+            List<ResultadoSimulacion> resultados =
+                    resultadoDAO.findBySimulacionId(Integer.parseInt(idSimulacion));
 
             StringBuilder jsonBuilder = new StringBuilder("[");
             boolean first = true;
@@ -47,13 +52,16 @@ public class SimulationResultsServlet extends HttpServlet {
                 first = false;
 
                 jsonBuilder.append("{");
-                jsonBuilder.append("\"id_resultados_simulacion\":").append(resultado.getId_resultados_simulacion())
+                jsonBuilder.append("\"id_resultados_simulacion\":")
+                        .append(resultado.getId_resultados_simulacion()).append(",");
+                jsonBuilder.append("\"id_simulaciones\":").append(resultado.getId_simulaciones())
                         .append(",");
-                jsonBuilder.append("\"id_simulaciones\":").append(resultado.getId_simulaciones()).append(",");
                 jsonBuilder.append("\"piso\":").append(resultado.getPiso()).append(",");
-                jsonBuilder.append("\"nivel_senal\":").append(resultado.getNivel_senal()).append(",");
+                jsonBuilder.append("\"nivel_senal\":").append(resultado.getNivel_senal())
+                        .append(",");
                 jsonBuilder.append("\"costo_piso\":").append(resultado.getCosto_piso()).append(",");
-                jsonBuilder.append("\"estado\":\"").append(escapeJson(resultado.getEstado())).append("\"");
+                jsonBuilder.append("\"estado\":\"").append(escapeJson(resultado.getEstado()))
+                        .append("\"");
                 jsonBuilder.append("}");
             }
             jsonBuilder.append("]");
@@ -65,8 +73,7 @@ public class SimulationResultsServlet extends HttpServlet {
     }
 
     /**
-     * Handles POST requests to save simulation results
-     * Creates new result records for each floor
+     * Handles POST requests to save simulation results Creates new result records for each floor
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -126,8 +133,8 @@ public class SimulationResultsServlet extends HttpServlet {
     }
 
     /**
-     * Handles DELETE requests to remove simulation results
-     * Deletes all results for a specific simulation
+     * Handles DELETE requests to remove simulation results Deletes all results for a specific
+     * simulation
      */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
@@ -174,7 +181,8 @@ public class SimulationResultsServlet extends HttpServlet {
         if (isString) {
             end = json.indexOf("\"", start);
         } else {
-            while (end < json.length() && (Character.isDigit(json.charAt(end)) || json.charAt(end) == '.'))
+            while (end < json.length()
+                    && (Character.isDigit(json.charAt(end)) || json.charAt(end) == '.'))
                 end++;
         }
 
@@ -214,12 +222,8 @@ public class SimulationResultsServlet extends HttpServlet {
     private String escapeJson(String input) {
         if (input == null)
             return "";
-        return input.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\b", "\\b")
-                .replace("\f", "\\f")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
+        return input.replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b")
+                .replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r")
                 .replace("\t", "\\t");
     }
 }

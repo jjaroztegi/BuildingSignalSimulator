@@ -6,8 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Data Access Object for the Derivadores table
- * Handles database operations for tap/splitter entities
+ * Data Access Object for the Derivadores table Handles database operations for tap/splitter
+ * entities
  */
 public class DerivadorDAO extends BaseDAO<Derivador> {
 
@@ -28,10 +28,8 @@ public class DerivadorDAO extends BaseDAO<Derivador> {
      */
     @Override
     protected String[] getColumnNames() {
-        return new String[] {
-                "id_derivadores", "id_componentes", "atenuacion_derivacion", "atenuacion_paso",
-                "directividad", "desacoplo", "perdidas_retorno"
-        };
+        return new String[] {"id_derivadores", "id_componentes", "atenuacion_derivacion",
+                "atenuacion_paso", "directividad", "desacoplo", "perdidas_retorno"};
     }
 
     /**
@@ -43,25 +41,22 @@ public class DerivadorDAO extends BaseDAO<Derivador> {
      */
     @Override
     protected Derivador mapResultSetToEntity(ResultSet rs) throws SQLException {
-        return new Derivador(
-                rs.getInt("id_derivadores"),
-                rs.getInt("id_componentes"),
-                rs.getDouble("atenuacion_derivacion"),
-                rs.getDouble("atenuacion_paso"),
-                rs.getDouble("directividad"),
-                rs.getDouble("desacoplo"),
+        return new Derivador(rs.getInt("id_derivadores"), rs.getInt("id_componentes"),
+                rs.getDouble("atenuacion_derivacion"), rs.getDouble("atenuacion_paso"),
+                rs.getDouble("directividad"), rs.getDouble("desacoplo"),
                 rs.getDouble("perdidas_retorno"));
     }
 
     /**
      * Sets the parameters for a PreparedStatement based on Derivador properties
      * 
-     * @param ps     The PreparedStatement to set parameters for
+     * @param ps The PreparedStatement to set parameters for
      * @param entity The Derivador entity containing the values to set
      * @throws SQLException if a database error occurs
      */
     @Override
-    protected void setPreparedStatementParams(PreparedStatement ps, Derivador entity) throws SQLException {
+    protected void setPreparedStatementParams(PreparedStatement ps, Derivador entity)
+            throws SQLException {
         ps.setInt(1, entity.getId_componentes());
         ps.setDouble(2, entity.getAtenuacion_derivacion());
         ps.setDouble(3, entity.getAtenuacion_paso());

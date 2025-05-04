@@ -1,18 +1,37 @@
 package com.signalapp.models;
 
+/**
+ * Represents a component placed within a specific simulation's schematic diagram. Stores
+ * information about the component type, model, location (floor, x/y coordinates), and potentially
+ * the type of cable connecting to it. Corresponds to the 'Esquematicos' table.
+ */
 public class Esquematico {
-    private int id_esquematicos;
-    private int id_simulaciones;
-    private int piso;
-    private String tipo_componente;
-    private String modelo_componente;
-    private int posicion_x;
-    private int posicion_y;
-    private String cable_tipo;
+    private int id_esquematicos; // Primary key
+    private int id_simulaciones; // Foreign key referencing Simulaciones table
+    private int piso; // Floor number where the component is located
+    private String tipo_componente; // Type of the component (e.g., "derivador", "toma")
+    private String modelo_componente; // Model name of the component
+    private int posicion_x; // X-coordinate in the schematic view
+    private int posicion_y; // Y-coordinate in the schematic view
+    private String cable_tipo; // Type/model of cable connecting to this component (optional)
 
-    public Esquematico() {
-    }
+    /**
+     * Default constructor.
+     */
+    public Esquematico() {}
 
+    /**
+     * Constructor with all fields.
+     *
+     * @param id_esquematicos The primary key ID.
+     * @param id_simulaciones The foreign key ID linking to the simulation.
+     * @param piso The floor number.
+     * @param tipo_componente The type of the component.
+     * @param modelo_componente The model name of the component.
+     * @param posicion_x The X-coordinate.
+     * @param posicion_y The Y-coordinate.
+     * @param cable_tipo The type/model of the connecting cable.
+     */
     public Esquematico(int id_esquematicos, int id_simulaciones, int piso, String tipo_componente,
             String modelo_componente, int posicion_x, int posicion_y, String cable_tipo) {
         this.id_esquematicos = id_esquematicos;
@@ -25,7 +44,8 @@ public class Esquematico {
         this.cable_tipo = cable_tipo;
     }
 
-    // Getters and Setters
+    // --- Getters and Setters ---
+
     public int getId_esquematicos() {
         return id_esquematicos;
     }
@@ -88,5 +108,14 @@ public class Esquematico {
 
     public void setCable_tipo(String cable_tipo) {
         this.cable_tipo = cable_tipo;
+    }
+
+    @Override
+    public String toString() {
+        return "Esquematico{" + "id_esquematicos=" + id_esquematicos + ", id_simulaciones="
+                + id_simulaciones + ", piso=" + piso + ", tipo_componente='" + tipo_componente
+                + '\'' + ", modelo_componente='" + modelo_componente + '\'' + ", posicion_x="
+                + posicion_x + ", posicion_y=" + posicion_y + ", cable_tipo='" + cable_tipo + '\''
+                + '}';
     }
 }

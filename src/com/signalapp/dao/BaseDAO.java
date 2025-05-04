@@ -56,11 +56,12 @@ public abstract class BaseDAO<T> {
     /**
      * Sets the parameters for a PreparedStatement based on entity properties
      * 
-     * @param ps     The PreparedStatement to set parameters for
+     * @param ps The PreparedStatement to set parameters for
      * @param entity The entity containing the values to set
      * @throws SQLException if a database error occurs
      */
-    protected abstract void setPreparedStatementParams(PreparedStatement ps, T entity) throws SQLException;
+    protected abstract void setPreparedStatementParams(PreparedStatement ps, T entity)
+            throws SQLException;
 
     /**
      * Retrieves all records from the database table
@@ -88,7 +89,8 @@ public abstract class BaseDAO<T> {
      * @throws SQLException if a database error occurs
      */
     public T findById(int id) throws SQLException {
-        String sql = "SELECT * FROM " + getTableName() + " WHERE id_" + getTableName().toLowerCase() + " = ?";
+        String sql = "SELECT * FROM " + getTableName() + " WHERE id_" + getTableName().toLowerCase()
+                + " = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -101,8 +103,8 @@ public abstract class BaseDAO<T> {
     }
 
     /**
-     * Inserts a new record into the database
-     * Note: Derby uses GENERATED ALWAYS AS IDENTITY for auto-incrementing IDs
+     * Inserts a new record into the database Note: Derby uses GENERATED ALWAYS AS IDENTITY for
+     * auto-incrementing IDs
      * 
      * @param entity The entity to insert
      * @throws SQLException if a database error occurs
@@ -127,7 +129,8 @@ public abstract class BaseDAO<T> {
         }
         String placeholders = placeholdersBuilder.toString();
 
-        String sql = "INSERT INTO " + getTableName() + " (" + columnsStr + ") VALUES (" + placeholders + ")";
+        String sql = "INSERT INTO " + getTableName() + " (" + columnsStr + ") VALUES ("
+                + placeholders + ")";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             setPreparedStatementParams(ps, entity);
@@ -139,7 +142,7 @@ public abstract class BaseDAO<T> {
      * Updates an existing record in the database
      * 
      * @param entity The entity with updated values
-     * @param id     The ID of the record to update
+     * @param id The ID of the record to update
      * @throws SQLException if a database error occurs
      */
     public void update(T entity, int id) throws SQLException {
@@ -151,8 +154,8 @@ public abstract class BaseDAO<T> {
         }
 
         String setClause = String.join(" = ?, ", updateColumns) + " = ?";
-        String sql = "UPDATE " + getTableName() + " SET " + setClause + " WHERE id_" + getTableName().toLowerCase()
-                + " = ?";
+        String sql = "UPDATE " + getTableName() + " SET " + setClause + " WHERE id_"
+                + getTableName().toLowerCase() + " = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             setPreparedStatementParams(ps, entity);
@@ -168,7 +171,8 @@ public abstract class BaseDAO<T> {
      * @throws SQLException if a database error occurs
      */
     public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM " + getTableName() + " WHERE id_" + getTableName().toLowerCase() + " = ?";
+        String sql = "DELETE FROM " + getTableName() + " WHERE id_" + getTableName().toLowerCase()
+                + " = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();

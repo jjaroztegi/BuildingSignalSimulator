@@ -17,11 +17,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Servlet for handling component operations (GET, POST, PUT, DELETE). Provides endpoints to
+ * retrieve, create, update, and delete components and their specific properties.
+ */
 public class ComponentServlet extends HttpServlet {
 
     /**
-     * Handles GET requests for component information
-     * Retrieves a list of component models based on the specified component type
+     * Handles GET requests for component information Retrieves a list of component models based on
+     * the specified component type
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -57,43 +61,53 @@ public class ComponentServlet extends HttpServlet {
                 switch (type.toLowerCase()) {
                     case "coaxial":
                         CoaxialDAO coaxialDAO = new CoaxialDAO();
-                        Coaxial coaxial = coaxialDAO.findByComponenteId(componente.getId_componentes());
+                        Coaxial coaxial =
+                                coaxialDAO.findByComponenteId(componente.getId_componentes());
                         if (coaxial != null) {
-                            jsonBuilder.append("\"atenuacion_470mhz\":").append(coaxial.getAtenuacion_470mhz())
-                                    .append(",");
-                            jsonBuilder.append("\"atenuacion_694mhz\":").append(coaxial.getAtenuacion_694mhz());
+                            jsonBuilder.append("\"atenuacion_470mhz\":")
+                                    .append(coaxial.getAtenuacion_470mhz()).append(",");
+                            jsonBuilder.append("\"atenuacion_694mhz\":")
+                                    .append(coaxial.getAtenuacion_694mhz());
                         }
                         break;
                     case "derivador":
                         DerivadorDAO derivadorDAO = new DerivadorDAO();
-                        Derivador derivador = derivadorDAO.findByComponenteId(componente.getId_componentes());
+                        Derivador derivador =
+                                derivadorDAO.findByComponenteId(componente.getId_componentes());
                         if (derivador != null) {
                             jsonBuilder.append("\"atenuacion_derivacion\":")
                                     .append(derivador.getAtenuacion_derivacion()).append(",");
-                            jsonBuilder.append("\"atenuacion_paso\":").append(derivador.getAtenuacion_paso())
+                            jsonBuilder.append("\"atenuacion_paso\":")
+                                    .append(derivador.getAtenuacion_paso()).append(",");
+                            jsonBuilder.append("\"directividad\":")
+                                    .append(derivador.getDirectividad()).append(",");
+                            jsonBuilder.append("\"desacoplo\":").append(derivador.getDesacoplo())
                                     .append(",");
-                            jsonBuilder.append("\"directividad\":").append(derivador.getDirectividad()).append(",");
-                            jsonBuilder.append("\"desacoplo\":").append(derivador.getDesacoplo()).append(",");
-                            jsonBuilder.append("\"perdidas_retorno\":").append(derivador.getPerdidas_retorno());
+                            jsonBuilder.append("\"perdidas_retorno\":")
+                                    .append(derivador.getPerdidas_retorno());
                         }
                         break;
                     case "distribuidor":
                         DistribuidorDAO distribuidorDAO = new DistribuidorDAO();
-                        Distribuidor distribuidor = distribuidorDAO.findByComponenteId(componente.getId_componentes());
+                        Distribuidor distribuidor =
+                                distribuidorDAO.findByComponenteId(componente.getId_componentes());
                         if (distribuidor != null) {
-                            jsonBuilder.append("\"numero_salidas\":").append(distribuidor.getNumero_salidas())
-                                    .append(",");
+                            jsonBuilder.append("\"numero_salidas\":")
+                                    .append(distribuidor.getNumero_salidas()).append(",");
                             jsonBuilder.append("\"atenuacion_distribucion\":")
                                     .append(distribuidor.getAtenuacion_distribucion()).append(",");
-                            jsonBuilder.append("\"desacoplo\":").append(distribuidor.getDesacoplo()).append(",");
-                            jsonBuilder.append("\"perdidas_retorno\":").append(distribuidor.getPerdidas_retorno());
+                            jsonBuilder.append("\"desacoplo\":").append(distribuidor.getDesacoplo())
+                                    .append(",");
+                            jsonBuilder.append("\"perdidas_retorno\":")
+                                    .append(distribuidor.getPerdidas_retorno());
                         }
                         break;
                     case "toma":
                         TomaDAO tomaDAO = new TomaDAO();
                         Toma toma = tomaDAO.findByComponenteId(componente.getId_componentes());
                         if (toma != null) {
-                            jsonBuilder.append("\"atenuacion\":").append(toma.getAtenuacion()).append(",");
+                            jsonBuilder.append("\"atenuacion\":").append(toma.getAtenuacion())
+                                    .append(",");
                             jsonBuilder.append("\"desacoplo\":").append(toma.getDesacoplo());
                         }
                         break;
@@ -125,7 +139,8 @@ public class ComponentServlet extends HttpServlet {
                 case "derivador":
                     DerivadorDAO derivadorDAO = new DerivadorDAO();
                     for (Derivador derivador : derivadorDAO.findAll()) {
-                        Componente componente = componenteDAO.findById(derivador.getId_componentes());
+                        Componente componente =
+                                componenteDAO.findById(derivador.getId_componentes());
                         if (componente != null) {
                             components.add(componente.getModelo());
                         }
@@ -134,7 +149,8 @@ public class ComponentServlet extends HttpServlet {
                 case "distribuidor":
                     DistribuidorDAO distribuidorDAO = new DistribuidorDAO();
                     for (Distribuidor distribuidor : distribuidorDAO.findAll()) {
-                        Componente componente = componenteDAO.findById(distribuidor.getId_componentes());
+                        Componente componente =
+                                componenteDAO.findById(distribuidor.getId_componentes());
                         if (componente != null) {
                             components.add(componente.getModelo());
                         }
@@ -174,8 +190,8 @@ public class ComponentServlet extends HttpServlet {
     }
 
     /**
-     * Handles POST requests to add new components
-     * Creates a new component record with the specified type, model, and properties
+     * Handles POST requests to add new components Creates a new component record with the specified
+     * type, model, and properties
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -242,28 +258,35 @@ public class ComponentServlet extends HttpServlet {
                 case "coaxial":
                     Coaxial coaxial = new Coaxial();
                     coaxial.setId_componentes(idComponente);
-                    coaxial.setAtenuacion_470mhz(Double.parseDouble(properties.get("atenuacion_470mhz")));
-                    coaxial.setAtenuacion_694mhz(Double.parseDouble(properties.get("atenuacion_694mhz")));
+                    coaxial.setAtenuacion_470mhz(
+                            Double.parseDouble(properties.get("atenuacion_470mhz")));
+                    coaxial.setAtenuacion_694mhz(
+                            Double.parseDouble(properties.get("atenuacion_694mhz")));
                     new CoaxialDAO().insert(coaxial);
                     break;
                 case "derivador":
                     Derivador derivador = new Derivador();
                     derivador.setId_componentes(idComponente);
-                    derivador.setAtenuacion_derivacion(Double.parseDouble(properties.get("atenuacion_derivacion")));
-                    derivador.setAtenuacion_paso(Double.parseDouble(properties.get("atenuacion_paso")));
+                    derivador.setAtenuacion_derivacion(
+                            Double.parseDouble(properties.get("atenuacion_derivacion")));
+                    derivador.setAtenuacion_paso(
+                            Double.parseDouble(properties.get("atenuacion_paso")));
                     derivador.setDirectividad(Double.parseDouble(properties.get("directividad")));
                     derivador.setDesacoplo(Double.parseDouble(properties.get("desacoplo")));
-                    derivador.setPerdidas_retorno(Double.parseDouble(properties.get("perdidas_retorno")));
+                    derivador.setPerdidas_retorno(
+                            Double.parseDouble(properties.get("perdidas_retorno")));
                     new DerivadorDAO().insert(derivador);
                     break;
                 case "distribuidor":
                     Distribuidor distribuidor = new Distribuidor();
                     distribuidor.setId_componentes(idComponente);
-                    distribuidor.setNumero_salidas(Integer.parseInt(properties.get("numero_salidas")));
                     distribuidor
-                            .setAtenuacion_distribucion(Double.parseDouble(properties.get("atenuacion_distribucion")));
+                            .setNumero_salidas(Integer.parseInt(properties.get("numero_salidas")));
+                    distribuidor.setAtenuacion_distribucion(
+                            Double.parseDouble(properties.get("atenuacion_distribucion")));
                     distribuidor.setDesacoplo(Double.parseDouble(properties.get("desacoplo")));
-                    distribuidor.setPerdidas_retorno(Double.parseDouble(properties.get("perdidas_retorno")));
+                    distribuidor.setPerdidas_retorno(
+                            Double.parseDouble(properties.get("perdidas_retorno")));
                     new DistribuidorDAO().insert(distribuidor);
                     break;
                 case "toma":
@@ -287,8 +310,8 @@ public class ComponentServlet extends HttpServlet {
     }
 
     /**
-     * Handles PUT requests to update existing components
-     * Updates a component record with the specified type, model, and properties
+     * Handles PUT requests to update existing components Updates a component record with the
+     * specified type, model, and properties
      */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
@@ -338,19 +361,23 @@ public class ComponentServlet extends HttpServlet {
 
         // Basic validation
         if (type == null || type.trim().isEmpty()) {
-            sendError(response, out, HttpServletResponse.SC_BAD_REQUEST, "Falta el parametro: type");
+            sendError(response, out, HttpServletResponse.SC_BAD_REQUEST,
+                    "Falta el parametro: type");
             return;
         }
         if (modelo == null || modelo.trim().isEmpty()) {
-            sendError(response, out, HttpServletResponse.SC_BAD_REQUEST, "Falta el parametro: modelo");
+            sendError(response, out, HttpServletResponse.SC_BAD_REQUEST,
+                    "Falta el parametro: modelo");
             return;
         }
         if (costoStr == null || costoStr.trim().isEmpty()) {
-            sendError(response, out, HttpServletResponse.SC_BAD_REQUEST, "Falta el parametro: costo");
+            sendError(response, out, HttpServletResponse.SC_BAD_REQUEST,
+                    "Falta el parametro: costo");
             return;
         }
         if (propertiesJson == null || propertiesJson.trim().isEmpty()) {
-            sendError(response, out, HttpServletResponse.SC_BAD_REQUEST, "Falta el parametro: properties");
+            sendError(response, out, HttpServletResponse.SC_BAD_REQUEST,
+                    "Falta el parametro: properties");
             return;
         }
 
@@ -358,7 +385,8 @@ public class ComponentServlet extends HttpServlet {
         try {
             costo = Double.parseDouble(costoStr);
         } catch (NumberFormatException e) {
-            sendError(response, out, HttpServletResponse.SC_BAD_REQUEST, "Valor numerico invalido para costo");
+            sendError(response, out, HttpServletResponse.SC_BAD_REQUEST,
+                    "Valor numerico invalido para costo");
             return;
         }
 
@@ -387,7 +415,8 @@ public class ComponentServlet extends HttpServlet {
 
             // Validate the type matches the existing component (optional but recommended)
             int existingTypeId = componente.getId_tipos_componente();
-            int requestedTypeId = getTipoComponenteId(type.toLowerCase()); // throws SQLException if invalid
+            int requestedTypeId = getTipoComponenteId(type.toLowerCase()); // throws SQLException if
+                                                                           // invalid
             if (existingTypeId != requestedTypeId) {
                 sendError(response, out, HttpServletResponse.SC_BAD_REQUEST,
                         "El tipo (" + type + ") no coincide con el tipo existente del componente.");
@@ -406,8 +435,9 @@ public class ComponentServlet extends HttpServlet {
                     CoaxialDAO coaxialDAO = new CoaxialDAO();
                     Coaxial coaxial = coaxialDAO.findByComponenteId(componente.getId_componentes());
                     if (coaxial == null)
-                        throw new SQLException("Detalles de Coaxial no encontrados para el componente ID: "
-                                + componente.getId_componentes());
+                        throw new SQLException(
+                                "Detalles de Coaxial no encontrados para el componente ID: "
+                                        + componente.getId_componentes());
                     // Manually parse and update properties
                     for (String pair : propertyPairs) {
                         String[] keyValue = pair.split(":", 2);
@@ -425,10 +455,12 @@ public class ComponentServlet extends HttpServlet {
                     break;
                 case "derivador":
                     DerivadorDAO derivadorDAO = new DerivadorDAO();
-                    Derivador derivador = derivadorDAO.findByComponenteId(componente.getId_componentes());
+                    Derivador derivador =
+                            derivadorDAO.findByComponenteId(componente.getId_componentes());
                     if (derivador == null)
-                        throw new SQLException("Detalles de Derivador no encontrados para el componente ID: "
-                                + componente.getId_componentes());
+                        throw new SQLException(
+                                "Detalles de Derivador no encontrados para el componente ID: "
+                                        + componente.getId_componentes());
                     for (String pair : propertyPairs) {
                         String[] keyValue = pair.split(":", 2);
                         if (keyValue.length != 2)
@@ -451,10 +483,12 @@ public class ComponentServlet extends HttpServlet {
                     break;
                 case "distribuidor":
                     DistribuidorDAO distribuidorDAO = new DistribuidorDAO();
-                    Distribuidor distribuidor = distribuidorDAO.findByComponenteId(componente.getId_componentes());
+                    Distribuidor distribuidor =
+                            distribuidorDAO.findByComponenteId(componente.getId_componentes());
                     if (distribuidor == null)
-                        throw new SQLException("Detalles de Distribuidor no encontrados para el componente ID: "
-                                + componente.getId_componentes());
+                        throw new SQLException(
+                                "Detalles de Distribuidor no encontrados para el componente ID: "
+                                        + componente.getId_componentes());
                     for (String pair : propertyPairs) {
                         String[] keyValue = pair.split(":", 2);
                         if (keyValue.length != 2)
@@ -477,8 +511,9 @@ public class ComponentServlet extends HttpServlet {
                     TomaDAO tomaDAO = new TomaDAO();
                     Toma toma = tomaDAO.findByComponenteId(componente.getId_componentes());
                     if (toma == null)
-                        throw new SQLException("Detalles de Toma no encontrados para el componente ID: "
-                                + componente.getId_componentes());
+                        throw new SQLException(
+                                "Detalles de Toma no encontrados para el componente ID: "
+                                        + componente.getId_componentes());
                     for (String pair : propertyPairs) {
                         String[] keyValue = pair.split(":", 2);
                         if (keyValue.length != 2)
@@ -499,12 +534,13 @@ public class ComponentServlet extends HttpServlet {
                     return;
             }
 
-            out.write(
-                    "{\"success\":\"Componente actualizado exitosamente\", \"modelo\":\"" + escapeJson(modelo) + "\"}");
+            out.write("{\"success\":\"Componente actualizado exitosamente\", \"modelo\":\""
+                    + escapeJson(modelo) + "\"}");
 
         } catch (NumberFormatException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            out.write("{\"error\":\"Valor numerico invalido en las propiedades: " + escapeJson(e.getMessage()) + "\"}");
+            out.write("{\"error\":\"Valor numerico invalido en las propiedades: "
+                    + escapeJson(e.getMessage()) + "\"}");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\":\"" + escapeJson(e.getMessage()) + "\"}");
@@ -512,8 +548,8 @@ public class ComponentServlet extends HttpServlet {
     }
 
     /**
-     * Handles DELETE requests to remove components
-     * Deletes a component record based on the specified model
+     * Handles DELETE requests to remove components Deletes a component record based on the
+     * specified model
      */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
@@ -552,14 +588,16 @@ public class ComponentServlet extends HttpServlet {
                     break;
                 case "derivador":
                     DerivadorDAO derivadorDAO = new DerivadorDAO();
-                    Derivador derivador = derivadorDAO.findByComponenteId(componente.getId_componentes());
+                    Derivador derivador =
+                            derivadorDAO.findByComponenteId(componente.getId_componentes());
                     if (derivador != null) {
                         derivadorDAO.delete(derivador.getId_derivadores());
                     }
                     break;
                 case "distribuidor":
                     DistribuidorDAO distribuidorDAO = new DistribuidorDAO();
-                    Distribuidor distribuidor = distribuidorDAO.findByComponenteId(componente.getId_componentes());
+                    Distribuidor distribuidor =
+                            distribuidorDAO.findByComponenteId(componente.getId_componentes());
                     if (distribuidor != null) {
                         distribuidorDAO.delete(distribuidor.getId_distribuidores());
                     }
@@ -647,12 +685,8 @@ public class ComponentServlet extends HttpServlet {
     private String escapeJson(String input) {
         if (input == null)
             return "";
-        return input.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\b", "\\b")
-                .replace("\f", "\\f")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
+        return input.replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b")
+                .replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r")
                 .replace("\t", "\\t");
     }
 
@@ -660,11 +694,12 @@ public class ComponentServlet extends HttpServlet {
      * Helper method to send error responses
      * 
      * @param response The HTTP response object
-     * @param out      The PrintWriter for the response
-     * @param status   The HTTP status code
-     * @param message  The error message
+     * @param out The PrintWriter for the response
+     * @param status The HTTP status code
+     * @param message The error message
      */
-    private void sendError(HttpServletResponse response, PrintWriter out, int status, String message) {
+    private void sendError(HttpServletResponse response, PrintWriter out, int status,
+            String message) {
         response.setStatus(status);
         out.write("{\"error\":\"" + escapeJson(message) + "\"}");
     }

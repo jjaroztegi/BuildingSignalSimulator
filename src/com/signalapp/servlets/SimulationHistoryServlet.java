@@ -13,13 +13,16 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Servlet for handling simulation history operations (GET, POST, DELETE). Provides endpoints to
+ * retrieve, create, and delete simulation history records for a given configuration.
+ */
 public class SimulationHistoryServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Handles GET requests for simulation history
-     * Retrieves all simulations for a specific configuration and returns them as
-     * JSON
+     * Handles GET requests for simulation history Retrieves all simulations for a specific
+     * configuration and returns them as JSON
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -37,7 +40,8 @@ public class SimulationHistoryServlet extends HttpServlet {
 
         try {
             SimulacionDAO simulacionDAO = new SimulacionDAO();
-            List<Simulacion> simulaciones = simulacionDAO.getByConfiguracion(Integer.parseInt(idConfiguracion));
+            List<Simulacion> simulaciones =
+                    simulacionDAO.getByConfiguracion(Integer.parseInt(idConfiguracion));
 
             StringBuilder jsonBuilder = new StringBuilder("[");
             boolean first = true;
@@ -49,15 +53,24 @@ public class SimulationHistoryServlet extends HttpServlet {
 
                 // Build JSON object with proper escaping
                 jsonBuilder.append("{");
-                jsonBuilder.append("\"id_simulaciones\":").append(simulacion.getId_simulaciones()).append(",");
-                jsonBuilder.append("\"id_configuraciones\":").append(simulacion.getId_configuraciones()).append(",");
-                jsonBuilder.append("\"frecuencia\":").append(simulacion.getFrecuencia()).append(",");
-                jsonBuilder.append("\"tipo_senal\":\"").append(escapeJson(simulacion.getTipo_senal())).append("\",");
-                jsonBuilder.append("\"costo_total\":").append(simulacion.getCosto_total()).append(",");
-                jsonBuilder.append("\"estado\":\"").append(escapeJson(simulacion.getEstado())).append("\",");
-                jsonBuilder.append("\"fecha_simulacion\":\"").append(escapeJson(simulacion.getFecha_simulacion())).append("\",");
-                jsonBuilder.append("\"nombre_edificio\":\"").append(escapeJson(simulacion.getNombre_edificio())).append("\",");
-                jsonBuilder.append("\"nivel_cabecera\":").append(simulacion.getNivel_cabecera()).append(",");
+                jsonBuilder.append("\"id_simulaciones\":").append(simulacion.getId_simulaciones())
+                        .append(",");
+                jsonBuilder.append("\"id_configuraciones\":")
+                        .append(simulacion.getId_configuraciones()).append(",");
+                jsonBuilder.append("\"frecuencia\":").append(simulacion.getFrecuencia())
+                        .append(",");
+                jsonBuilder.append("\"tipo_senal\":\"")
+                        .append(escapeJson(simulacion.getTipo_senal())).append("\",");
+                jsonBuilder.append("\"costo_total\":").append(simulacion.getCosto_total())
+                        .append(",");
+                jsonBuilder.append("\"estado\":\"").append(escapeJson(simulacion.getEstado()))
+                        .append("\",");
+                jsonBuilder.append("\"fecha_simulacion\":\"")
+                        .append(escapeJson(simulacion.getFecha_simulacion())).append("\",");
+                jsonBuilder.append("\"nombre_edificio\":\"")
+                        .append(escapeJson(simulacion.getNombre_edificio())).append("\",");
+                jsonBuilder.append("\"nivel_cabecera\":").append(simulacion.getNivel_cabecera())
+                        .append(",");
                 jsonBuilder.append("\"num_pisos\":").append(simulacion.getNum_pisos());
                 jsonBuilder.append("}");
             }
@@ -70,8 +83,8 @@ public class SimulationHistoryServlet extends HttpServlet {
     }
 
     /**
-     * Handles POST requests to create new simulation history entries
-     * Creates a new simulation record with the specified parameters
+     * Handles POST requests to create new simulation history entries Creates a new simulation
+     * record with the specified parameters
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -96,8 +109,8 @@ public class SimulationHistoryServlet extends HttpServlet {
             String costoTotal = extractStringValue(json, "costo_total");
             String estado = extractStringValue(json, "estado");
 
-            if (idConfiguracion.isEmpty() || frecuencia.isEmpty() || tipoSenal.isEmpty() ||
-                    costoTotal.isEmpty() || estado.isEmpty()) {
+            if (idConfiguracion.isEmpty() || frecuencia.isEmpty() || tipoSenal.isEmpty()
+                    || costoTotal.isEmpty() || estado.isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 out.write("{\"error\":\"Faltan parametros requeridos\"}");
                 return;
@@ -119,13 +132,15 @@ public class SimulationHistoryServlet extends HttpServlet {
             simulacionDAO.insert(simulacion);
 
             // Get the generated ID
-            int idSimulacion = simulacionDAO.getLatestByConfiguracion(Integer.parseInt(idConfiguracion))
-                    .getId_simulaciones();
+            int idSimulacion =
+                    simulacionDAO.getLatestByConfiguracion(Integer.parseInt(idConfiguracion))
+                            .getId_simulaciones();
             if (idSimulacion == -1) {
                 throw new SQLException("No se pudo obtener el ID de la simulacion");
             }
 
-            out.write("{\"success\":\"Simulacion guardada exitosamente\",\"id\":" + idSimulacion + "}");
+            out.write("{\"success\":\"Simulacion guardada exitosamente\",\"id\":" + idSimulacion
+                    + "}");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\":\"" + escapeJson(e.getMessage()) + "\"}");
@@ -153,7 +168,8 @@ public class SimulationHistoryServlet extends HttpServlet {
         if (isString) {
             end = json.indexOf("\"", start);
         } else {
-            while (end < json.length() && (Character.isDigit(json.charAt(end)) || json.charAt(end) == '.'))
+            while (end < json.length()
+                    && (Character.isDigit(json.charAt(end)) || json.charAt(end) == '.'))
                 end++;
         }
 
@@ -161,8 +177,8 @@ public class SimulationHistoryServlet extends HttpServlet {
     }
 
     /**
-     * Handles DELETE requests to remove simulation history entries
-     * Deletes a simulation with the specified ID
+     * Handles DELETE requests to remove simulation history entries Deletes a simulation with the
+     * specified ID
      */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
@@ -203,12 +219,8 @@ public class SimulationHistoryServlet extends HttpServlet {
     private String escapeJson(String input) {
         if (input == null)
             return "";
-        return input.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\b", "\\b")
-                .replace("\f", "\\f")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
+        return input.replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b")
+                .replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r")
                 .replace("\t", "\\t");
     }
 }

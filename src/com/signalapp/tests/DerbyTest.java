@@ -11,7 +11,7 @@ public class DerbyTest {
         try (Connection connection = DerbyConnection.getConnection()) {
             DatabaseMetaData metadata = connection.getMetaData();
             // In Derby, "APP" is the default schema
-            ResultSet tables = metadata.getTables(null, "APP", "%", new String[] { "TABLE" });
+            ResultSet tables = metadata.getTables(null, "APP", "%", new String[] {"TABLE"});
 
             System.out.println("Tables found in Derby database:");
             System.out.println("------------------------------");

@@ -6,10 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Data Access Object for managing component types in the database.
- * Handles CRUD operations for the TiposComponente table, which stores
- * different categories of network components (e.g., cables, amplifiers,
- * splitters).
+ * Data Access Object for managing component types in the database. Handles CRUD operations for the
+ * TiposComponente table, which stores different categories of network components (e.g., cables,
+ * amplifiers, splitters).
  */
 public class TiposComponenteDAO extends BaseDAO<TipoComponente> {
 
@@ -30,9 +29,7 @@ public class TiposComponenteDAO extends BaseDAO<TipoComponente> {
      */
     @Override
     protected String[] getColumnNames() {
-        return new String[] {
-                "id_tipos_componente", "nombre", "descripcion"
-        };
+        return new String[] {"id_tipos_componente", "nombre", "descripcion"};
     }
 
     /**
@@ -44,21 +41,20 @@ public class TiposComponenteDAO extends BaseDAO<TipoComponente> {
      */
     @Override
     protected TipoComponente mapResultSetToEntity(ResultSet rs) throws SQLException {
-        return new TipoComponente(
-                rs.getInt("id_tipos_componente"),
-                rs.getString("nombre"),
+        return new TipoComponente(rs.getInt("id_tipos_componente"), rs.getString("nombre"),
                 rs.getString("descripcion"));
     }
 
     /**
      * Sets the parameters for database operations using a TipoComponente entity.
      * 
-     * @param ps     The PreparedStatement to set parameters for
+     * @param ps The PreparedStatement to set parameters for
      * @param entity The TipoComponente entity containing the data
      * @throws SQLException if there is an error setting the parameters
      */
     @Override
-    protected void setPreparedStatementParams(PreparedStatement ps, TipoComponente entity) throws SQLException {
+    protected void setPreparedStatementParams(PreparedStatement ps, TipoComponente entity)
+            throws SQLException {
         ps.setString(1, entity.getNombre());
         ps.setString(2, entity.getDescripcion());
     }

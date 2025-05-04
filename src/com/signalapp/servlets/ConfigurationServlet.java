@@ -16,12 +16,16 @@ import java.util.List;
 import java.net.URLDecoder;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Servlet for handling configuration operations (GET, POST, PUT, DELETE). Provides endpoints to
+ * retrieve, create, update, and delete building configurations.
+ */
 public class ConfigurationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Handles GET requests for configuration information
-     * Retrieves all configurations from the database and returns them as JSON
+     * Handles GET requests for configuration information Retrieves all configurations from the
+     * database and returns them as JSON
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -44,12 +48,16 @@ public class ConfigurationServlet extends HttpServlet {
 
                 // Build JSON object with proper escaping
                 jsonBuilder.append("{");
-                jsonBuilder.append("\"id_configuraciones\":").append(config.getId_configuraciones()).append(",");
-                jsonBuilder.append("\"nombre\":\"").append(escapeJson(config.getNombre())).append("\",");
-                jsonBuilder.append("\"nivel_cabecera\":").append(config.getNivel_cabecera()).append(",");
+                jsonBuilder.append("\"id_configuraciones\":").append(config.getId_configuraciones())
+                        .append(",");
+                jsonBuilder.append("\"nombre\":\"").append(escapeJson(config.getNombre()))
+                        .append("\",");
+                jsonBuilder.append("\"nivel_cabecera\":").append(config.getNivel_cabecera())
+                        .append(",");
                 jsonBuilder.append("\"num_pisos\":").append(config.getNum_pisos()).append(",");
                 jsonBuilder.append("\"costo_total\":").append(config.getCosto_total()).append(",");
-                jsonBuilder.append("\"fecha_creacion\":\"").append(escapeJson(config.getFecha_creacion())).append("\"");
+                jsonBuilder.append("\"fecha_creacion\":\"")
+                        .append(escapeJson(config.getFecha_creacion())).append("\"");
                 jsonBuilder.append("}");
             }
             jsonBuilder.append("]");
@@ -61,9 +69,8 @@ public class ConfigurationServlet extends HttpServlet {
     }
 
     /**
-     * Handles POST requests to create new configurations
-     * Creates a new configuration with the specified name, headend level, and
-     * number of floors
+     * Handles POST requests to create new configurations Creates a new configuration with the
+     * specified name, headend level, and number of floors
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -120,7 +127,8 @@ public class ConfigurationServlet extends HttpServlet {
                 throw new SQLException("No se pudo obtener el ID de la configuracion");
             }
 
-            out.write("{\"success\":\"Configuracion creada exitosamente\",\"id\":" + idConfiguracion + "}");
+            out.write("{\"success\":\"Configuracion creada exitosamente\",\"id\":" + idConfiguracion
+                    + "}");
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.write("{\"error\":\"" + escapeJson(e.getMessage()) + "\"}");
@@ -128,9 +136,8 @@ public class ConfigurationServlet extends HttpServlet {
     }
 
     /**
-     * Handles PUT requests to update existing configurations
-     * Updates a configuration with the specified ID, name, headend level, and
-     * number of floors
+     * Handles PUT requests to update existing configurations Updates a configuration with the
+     * specified ID, name, headend level, and number of floors
      */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
@@ -178,14 +185,15 @@ public class ConfigurationServlet extends HttpServlet {
                     }
                 } catch (UnsupportedEncodingException e) {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    out.write(
-                            "{\"error\":\"Error al decodificar los parametros: " + escapeJson(e.getMessage()) + "\"}");
+                    out.write("{\"error\":\"Error al decodificar los parametros: "
+                            + escapeJson(e.getMessage()) + "\"}");
                     return;
                 }
             }
         }
 
-        if (idConfiguracion == null || nombre == null || nivelCabecera == null || numPisos == null) {
+        if (idConfiguracion == null || nombre == null || nivelCabecera == null
+                || numPisos == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             out.write("{\"error\":\"Faltan parametros requeridos\"}");
             return;
@@ -214,7 +222,8 @@ public class ConfigurationServlet extends HttpServlet {
 
             // Check if another configuration with the same name exists (excluding current
             // config)
-            if (!nombre.equals(existingConfig.getNombre()) && configuracionDAO.existsByName(nombre)) {
+            if (!nombre.equals(existingConfig.getNombre())
+                    && configuracionDAO.existsByName(nombre)) {
                 response.setStatus(HttpServletResponse.SC_CONFLICT);
                 out.write("{\"error\":\"Ya existe una configuracion con ese nombre\"}");
                 return;
@@ -244,8 +253,8 @@ public class ConfigurationServlet extends HttpServlet {
     }
 
     /**
-     * Handles DELETE requests to remove configurations
-     * Deletes a configuration with the specified ID
+     * Handles DELETE requests to remove configurations Deletes a configuration with the specified
+     * ID
      */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
@@ -280,12 +289,8 @@ public class ConfigurationServlet extends HttpServlet {
     private String escapeJson(String input) {
         if (input == null)
             return "";
-        return input.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\b", "\\b")
-                .replace("\f", "\\f")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
+        return input.replace("\\", "\\\\").replace("\"", "\\\"").replace("\b", "\\b")
+                .replace("\f", "\\f").replace("\n", "\\n").replace("\r", "\\r")
                 .replace("\t", "\\t");
     }
 }

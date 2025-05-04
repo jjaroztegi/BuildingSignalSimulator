@@ -10,7 +10,7 @@ public class AccessTest {
 
         try (Connection connection = AccessConnection.getConnection()) {
             DatabaseMetaData metadata = connection.getMetaData();
-            ResultSet tables = metadata.getTables(null, null, "%", new String[] { "TABLE" });
+            ResultSet tables = metadata.getTables(null, null, "%", new String[] {"TABLE"});
 
             System.out.println("Tables found in MS Access database:");
             System.out.println("----------------------------------");

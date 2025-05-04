@@ -32,9 +32,10 @@ public class DatabaseInfoServlet extends HttpServlet {
             if (requestUri.endsWith("/dbtables_access")) {
                 dbType = "MS Access";
                 driverClass = "net.ucanaccess.jdbc.UcanaccessDriver";
-                String dbPath = getServletContext().getRealPath("/WEB-INF/database/signal_distribution.accdb");
+                String dbPath = getServletContext()
+                        .getRealPath("/WEB-INF/database/signal_distribution.accdb");
                 connectionString = "jdbc:ucanaccess://" + dbPath;
-                tableTypes = new String[] { "TABLE" }; // UCanAccess uses TABLE type
+                tableTypes = new String[] {"TABLE"}; // UCanAccess uses TABLE type
                 // MS Access doesn't use schemas in the same way; set schema to null
                 schema = null;
             } else if (requestUri.endsWith("/dbtables_derby")) {

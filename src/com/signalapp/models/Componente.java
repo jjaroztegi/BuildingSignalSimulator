@@ -1,14 +1,29 @@
 package com.signalapp.models;
 
+/**
+ * Represents a generic electronic component used in the signal distribution system. This is the
+ * base entity for specific component types like Coaxial, Derivador, etc. Corresponds to the
+ * 'Componentes' table.
+ */
 public class Componente {
-    private int id_componentes;
-    private int id_tipos_componente;
-    private String modelo;
-    private double costo;
+    private int id_componentes; // Primary key
+    private int id_tipos_componente; // Foreign key referencing TiposComponente table
+    private String modelo; // Model name/identifier of the component
+    private double costo; // Cost of the component
 
-    public Componente() {
-    }
+    /**
+     * Default constructor.
+     */
+    public Componente() {}
 
+    /**
+     * Constructor with all fields.
+     *
+     * @param id_componentes The primary key ID.
+     * @param id_tipos_componente The foreign key ID linking to the component type.
+     * @param modelo The model name.
+     * @param costo The cost.
+     */
     public Componente(int id_componentes, int id_tipos_componente, String modelo, double costo) {
         this.id_componentes = id_componentes;
         this.id_tipos_componente = id_tipos_componente;
@@ -16,7 +31,8 @@ public class Componente {
         this.costo = costo;
     }
 
-    // Getters and Setters
+    // --- Getters and Setters ---
+
     public int getId_componentes() {
         return id_componentes;
     }
@@ -47,5 +63,11 @@ public class Componente {
 
     public void setCosto(double costo) {
         this.costo = costo;
+    }
+
+    @Override
+    public String toString() {
+        return "Componente{" + "id_componentes=" + id_componentes + ", id_tipos_componente="
+                + id_tipos_componente + ", modelo='" + modelo + '\'' + ", costo=" + costo + '}';
     }
 }

@@ -1,16 +1,32 @@
 package com.signalapp.models;
 
+/**
+ * Represents a Distribuidor (Splitter/Distributor) component type. Splits the input signal into
+ * multiple outputs with specific attenuation. Corresponds to the 'Distribuidores' table.
+ */
 public class Distribuidor {
-    private int id_distribuidores;
-    private int id_componentes;
-    private int numero_salidas;
-    private double atenuacion_distribucion;
-    private double desacoplo;
-    private double perdidas_retorno;
+    private int id_distribuidores; // Primary key
+    private int id_componentes; // Foreign key referencing Componentes table
+    private int numero_salidas; // Number of output ports
+    private double atenuacion_distribucion; // Attenuation per output port (dB)
+    private double desacoplo; // Isolation/Decoupling between outputs (dB)
+    private double perdidas_retorno; // Return Loss (dB)
 
-    public Distribuidor() {
-    }
+    /**
+     * Default constructor.
+     */
+    public Distribuidor() {}
 
+    /**
+     * Constructor with all fields.
+     *
+     * @param id_distribuidores The primary key ID.
+     * @param id_componentes The foreign key ID linking to the base Componente.
+     * @param numero_salidas Number of outputs.
+     * @param atenuacion_distribucion Attenuation per output.
+     * @param desacoplo Isolation value.
+     * @param perdidas_retorno Return loss value.
+     */
     public Distribuidor(int id_distribuidores, int id_componentes, int numero_salidas,
             double atenuacion_distribucion, double desacoplo, double perdidas_retorno) {
         this.id_distribuidores = id_distribuidores;
@@ -21,7 +37,8 @@ public class Distribuidor {
         this.perdidas_retorno = perdidas_retorno;
     }
 
-    // Getters and Setters
+    // --- Getters and Setters ---
+
     public int getId_distribuidores() {
         return id_distribuidores;
     }
@@ -68,5 +85,13 @@ public class Distribuidor {
 
     public void setPerdidas_retorno(double perdidas_retorno) {
         this.perdidas_retorno = perdidas_retorno;
+    }
+
+    @Override
+    public String toString() {
+        return "Distribuidor{" + "id_distribuidores=" + id_distribuidores + ", id_componentes="
+                + id_componentes + ", numero_salidas=" + numero_salidas
+                + ", atenuacion_distribucion=" + atenuacion_distribucion + ", desacoplo="
+                + desacoplo + ", perdidas_retorno=" + perdidas_retorno + '}';
     }
 }
